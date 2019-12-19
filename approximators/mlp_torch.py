@@ -21,10 +21,11 @@ class MLPQFunction(QFunction):
             self._w = initial_params
 
     def init_weights(self):
-        if self._nn.single_layer:
-            self._w = np.zeros(self._nn.n_weights)
-        else:
-            self._w = np.random.randn(self._nn.n_weights) * 0.1
+        #if self._nn.single_layer:
+        #    self._w = np.zeros(self._nn.n_weights)
+        #else:
+        #    self._w = np.random.randn(self._nn.n_weights) * 0.1
+        self._w = np.random.randn(self._nn.n_weights) * 0.1
 
     @property
     def _w(self):
