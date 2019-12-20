@@ -134,9 +134,9 @@ results = []
 for i in range(timesteps):
     temp = []
     for j in range(samples_per_timestep):
-        r = run(mdps[i][j], seed)
         print("I: " + str(i) + ", J: " + str(j))
         print("MDP info: " + str(mdps[i][j].get_info()))
+        r = run(mdps[i][j], seed)
         print("Last learning reward: " + str(r[2][3][-1]))
         temp.append(r)
     results.append(temp)
