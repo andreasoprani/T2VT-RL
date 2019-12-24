@@ -25,7 +25,7 @@ parser.add_argument("--kappa", default=100.)
 parser.add_argument("--xi", default=0.5)
 parser.add_argument("--tau", default=0.0)
 parser.add_argument("--batch_size", default=50)
-parser.add_argument("--max_iter", default=20000)
+parser.add_argument("--max_iter", default=5000)
 parser.add_argument("--buffer_size", default=50000)
 parser.add_argument("--random_episodes", default=0)
 parser.add_argument("--train_freq", default=1)
@@ -37,16 +37,13 @@ parser.add_argument("--lambda_", default=0.000001)
 parser.add_argument("--time_coherent", default=False)
 parser.add_argument("--n_weights", default=10)
 parser.add_argument("--timesteps", default=10)
-parser.add_argument("--env", default="three-room-gw")
+parser.add_argument("--env", default="two-room-gw")
 parser.add_argument("--gw_size", default=10)
 parser.add_argument("--cholesky_clip", default=0.0001)
 # Door at -1 means random positions over all runs
-parser.add_argument("--door", default=-1)
-parser.add_argument("--door2", default=-1)
 parser.add_argument("--n_basis", default=11)
 parser.add_argument("--n_jobs", default=1)
 parser.add_argument("--n_runs", default=20)
-parser.add_argument("--file_name", default="rtde_2r_{}".format(datetime.datetime.now().strftime("%Y%m%d_%H%M%S")))
 parser.add_argument("--source_file", default=path + "/sources-2r")
 parser.add_argument("--tasks_file", default=path + "/tasks-2r")
 parser.add_argument("--eta", default=1e-6)  # learning rate for
@@ -55,7 +52,7 @@ parser.add_argument("--bandwidth", default=.00001)  # Bandwidth for the Kernel E
 parser.add_argument("--post_components", default=1)  # number of components of the posterior family
 parser.add_argument("--max_iter_ukl", default=60)
 # rtde arguments
-parser.add_argument("--temporal_bandwidth", default=0.33333)
+parser.add_argument("--temporal_bandwidth", default=0.3333)
 parser.add_argument("--kernel", default="epanechnikov")
 
 # Read arguments
@@ -79,12 +76,9 @@ timesteps = int(args.timesteps)
 cholesky_clip = float(args.cholesky_clip)
 env = str(args.env)
 gw_size = int(args.gw_size)
-door = float(args.door)
-door2 = float(args.door2)
 n_basis = int(args.n_basis)
 n_jobs = int(args.n_jobs)
 n_runs = int(args.n_runs)
-file_name = str(args.file_name)
 source_file = str(args.source_file)
 tasks_file = str(args.tasks_file)
 eps = float(args.eps)
@@ -94,6 +88,11 @@ bandwidth = float(args.bandwidth)
 max_iter_ukl = int(args.max_iter_ukl)
 temporal_bandwidth = float(args.temporal_bandwidth)
 kernel = str(args.kernel)
+
+file_name = "rtde_"
+file_name += str(post_components) + "c_"
+file_name += "2r_" if env == "two-room-gw" else ("3r_" if env == "three-room-gw" else "")
+file_name += datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
 # Seed to get reproducible results
 seed = 1

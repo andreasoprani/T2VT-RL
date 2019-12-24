@@ -290,13 +290,18 @@ def learn(mdp,
         np.random.shuffle(samples)
         ws.append(samples[0][1]) # 0: first sample (random), 1: weights
     ws = np.array(ws)
+
+    # The gaussian mixture weights are uniform if not provided.
+    c_bar = np.ones(timesteps)/timesteps if prior_weights is None else prior_weights
+
+    # Take only gaussians with non-zero weights
+    ws = ws[c_bar > 0]
+    timesteps = len(ws)
+    c_bar = c_bar[c_bar > 0]
     
     mu_bar = ws
     Sigma_bar = np.tile(np.eye(K) * bandwidth, (timesteps,1,1))
     Sigma_bar_inv = np.tile((1/bandwidth * np.eye(K))[np.newaxis], (timesteps, 1, 1))
-    
-    # The gaussian mixture weights are uniform if not provided.
-    c_bar = np.ones(timesteps)/timesteps if prior_weights is None else prior_weights
 
     # We initialize the parameters of the posterior to the best approximation of the posterior family to the prior
     c = np.ones(C) / C
