@@ -1,3 +1,8 @@
+import sys
+import os
+path = os.path.dirname(os.path.realpath(__file__))  # path to this directory
+sys.path.append(os.path.abspath(path + "/.."))
+
 from misc import utils
 import numpy as np
 import matplotlib.pyplot as plt
@@ -16,13 +21,13 @@ def plot_curves(x_data, y_mean_data, y_std_data=None, title="", x_label="Episode
     plt.rcParams['font.family'] = 'serif'
     plt.rcParams['font.serif'] = 'Ubuntu'
     plt.rcParams['font.monospace'] = 'Ubuntu Mono'
-    plt.rcParams['font.size'] = 20
-    plt.rcParams['axes.labelsize'] = 20
+    plt.rcParams['font.size'] = 10
+    plt.rcParams['axes.labelsize'] = 10
     # plt.rcParams['axes.labelweight'] = 'bold'
-    plt.rcParams['axes.titlesize'] = 20
-    plt.rcParams['xtick.labelsize'] = 16
-    plt.rcParams['ytick.labelsize'] = 16
-    plt.rcParams['legend.fontsize'] = 22
+    plt.rcParams['axes.titlesize'] = 15
+    plt.rcParams['xtick.labelsize'] = 10
+    plt.rcParams['ytick.labelsize'] = 10
+    plt.rcParams['legend.fontsize'] = 10
     plt.rcParams['figure.titlesize'] = 20
 
     fig, ax = plt.subplots()
@@ -75,11 +80,15 @@ def learning_rew(iterations, episodes_time, episode_rew, mean_episodes=5):
     return np.array(learning_rew)
 
 
-files = ["nt_mgw10x10_rnd10","gvt_mgw10x10_gen_ns10_rnd10_tc0","gvt_mgw10x10_gen_ns10_rnd10_tc1",
-         "mgvt_mgw10x10_gen_ns10_rnd10_tc0_c1", "mgvt_mgw10x10_gen_ns10_rnd10_tc1_c1",
-         "mgvt_mgw10x10_gen_ns10_rnd10_tc0_c2"]
-files = ["results/" + f for f in files]
-names = ["NT", "GVT", "GVT (TC)", "1-MGVT", "1-MGVT (TC)", "2-MGVT", "2-MGVT (TC)"]
+files = ["gvt_2r_2019-12-24_18-40-10", 
+        "mvgt_1c_2r_2019-12-24_19-59-48",
+        "mvgt_3c_2r_2019-12-25_12-22-14", 
+        "rtde_1c_2r_2019-12-24_17-11-23",
+        "rtde_3c_2r_2019-12-25_17-07-16"]
+path = "results/two-room-gw/"
+files = [path + f for f in files]
+names = ["GVT", "1-MGVT", "3-MGVT", "1-RTDE", "3-RTDE"]
+title = "two-room-gw"
 
 x = []
 y_mean = []
@@ -124,7 +133,7 @@ for file in files:
     y4_mean.append(np.mean(l_inf, axis=0))
     y4_std.append(2 * np.std(l_inf, axis=0) / np.sqrt(l_inf.shape[0]))
 
-plot_curves([a[1:] for a in x], [a[1:] for a in y_mean], [a[1:] for a in y_std], title="", x_label="Iterations", y_label="Learning Reward", names=names, file_name="lrev")
-plot_curves(x, y2_mean, y2_std, title="", x_label="Iterations", y_label="Evaluation Reward", names=names, file_name="erew")
-plot_curves(x, y3_mean, y3_std, title="", x_label="Iterations", y_label="L_2", names=names, file_name="l2")
-plot_curves(x, y4_mean, y4_std, title="", x_label="Iterations", y_label="L_INF", names=names, file_name="linf")
+plot_curves([a[1:] for a in x], [a[1:] for a in y_mean], [a[1:] for a in y_std], title=title, x_label="Iterations", y_label="Learning Reward", names=names, file_name=path + "lrev")
+plot_curves(x, y2_mean, y2_std, title=title, x_label="Iterations", y_label="Evaluation Reward", names=names, file_name=path + "erew")
+plot_curves(x, y3_mean, y3_std, title=title, x_label="Iterations", y_label="L_2", names=names, file_name=path + "l2")
+plot_curves(x, y4_mean, y4_std, title=title, x_label="Iterations", y_label="L_INF", names=names, file_name=path + "linf")

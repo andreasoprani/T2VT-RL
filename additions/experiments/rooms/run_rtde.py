@@ -49,7 +49,7 @@ parser.add_argument("--tasks_file", default=path + "/tasks-2r")
 parser.add_argument("--eta", default=1e-6)  # learning rate for
 parser.add_argument("--eps", default=0.001)  # precision for the initial posterior approximation and upperbound tighting
 parser.add_argument("--bandwidth", default=.00001)  # Bandwidth for the Kernel Estimator
-parser.add_argument("--post_components", default=1)  # number of components of the posterior family
+parser.add_argument("--post_components", default=3)  # number of components of the posterior family
 parser.add_argument("--max_iter_ukl", default=60)
 # rtde arguments
 parser.add_argument("--temporal_bandwidth", default=0.3333)
