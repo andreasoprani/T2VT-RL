@@ -80,15 +80,11 @@ def learning_rew(iterations, episodes_time, episode_rew, mean_episodes=5):
     return np.array(learning_rew)
 
 
-files = ["gvt_2r_2019-12-24_18-40-10", 
-        "mvgt_1c_2r_2019-12-24_19-59-48",
-        "mvgt_3c_2r_2019-12-25_12-22-14", 
-        "rtde_1c_2r_2019-12-24_17-11-23",
-        "rtde_3c_2r_2019-12-25_17-07-16"]
-path = "results/two-room-gw/"
+files = []
+path = ""
 files = [path + f for f in files]
-names = ["GVT", "1-MGVT", "3-MGVT", "1-RTDE", "3-RTDE"]
-title = "two-room-gw"
+names = []
+title = ""
 
 x = []
 y_mean = []

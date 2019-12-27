@@ -17,7 +17,7 @@ import datetime
 
 # Global parameters
 render = False
-verbose = True
+verbose = False
 
 # Command line arguments
 parser = argparse.ArgumentParser()
@@ -25,7 +25,7 @@ parser.add_argument("--kappa", default=100.)
 parser.add_argument("--xi", default=0.5)
 parser.add_argument("--tau", default=0.0)
 parser.add_argument("--batch_size", default=50)
-parser.add_argument("--max_iter", default=5000)
+parser.add_argument("--max_iter", default=10000)
 parser.add_argument("--buffer_size", default=50000)
 parser.add_argument("--random_episodes", default=0)
 parser.add_argument("--train_freq", default=1)
@@ -44,12 +44,12 @@ parser.add_argument("--cholesky_clip", default=0.0001)
 parser.add_argument("--n_basis", default=11)
 parser.add_argument("--n_jobs", default=1)
 parser.add_argument("--n_runs", default=20)
-parser.add_argument("--source_file", default=path + "/sources-2r")
-parser.add_argument("--tasks_file", default=path + "/tasks-2r")
+parser.add_argument("--source_file", default=path + "/sources")
+parser.add_argument("--tasks_file", default=path + "/tasks")
 parser.add_argument("--eta", default=1e-6)  # learning rate for
 parser.add_argument("--eps", default=0.001)  # precision for the initial posterior approximation and upperbound tighting
 parser.add_argument("--bandwidth", default=.00001)  # Bandwidth for the Kernel Estimator
-parser.add_argument("--post_components", default=3)  # number of components of the posterior family
+parser.add_argument("--post_components", default=1)  # number of components of the posterior family
 parser.add_argument("--max_iter_ukl", default=60)
 # rtde arguments
 parser.add_argument("--temporal_bandwidth", default=0.3333)
@@ -89,10 +89,10 @@ max_iter_ukl = int(args.max_iter_ukl)
 temporal_bandwidth = float(args.temporal_bandwidth)
 kernel = str(args.kernel)
 
-file_name = "rtde_"
-file_name += str(post_components) + "c_"
-file_name += "2r_" if env == "two-room-gw" else ("3r_" if env == "three-room-gw" else "")
-file_name += datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+file_name = "results/" + env + "/" + "rtde_" + str(post_components) + "c_" + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+
+source_file += "-2r" if env == "two-room-gw" else ("-3r" if env == "three-room-gw" else "")
+tasks_file += "-2r" if env == "two-room-gw" else ("-3r" if env == "three-room-gw" else "")
 
 # Seed to get reproducible results
 seed = 1

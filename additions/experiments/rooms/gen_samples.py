@@ -28,7 +28,7 @@ parser.add_argument("--kappa", default=100.)
 parser.add_argument("--xi", default=0.5)
 parser.add_argument("--tau", default=0.0)
 parser.add_argument("--batch_size", default=50)
-parser.add_argument("--max_iter", default=30000)
+parser.add_argument("--max_iter", default=50000)
 parser.add_argument("--buffer_size", default=50000)
 parser.add_argument("--random_episodes", default=0)
 parser.add_argument("--exploration_fraction", default=0.2)
@@ -45,8 +45,8 @@ parser.add_argument("--n_jobs", default=1)
 parser.add_argument("--timesteps", default=10)
 parser.add_argument("--samples_per_timestep", default=5)
 parser.add_argument("--doors_std", default=0.2)
-parser.add_argument("--sources_file_name", default=path + "/sources-2r")
-parser.add_argument("--tasks_file_name", default=path + "/tasks-2r")
+parser.add_argument("--sources_file_name", default=path + "/sources")
+parser.add_argument("--tasks_file_name", default=path + "/tasks")
 
 # Read arguments
 args = parser.parse_args()
@@ -74,6 +74,9 @@ doors_std = float(args.doors_std)
 sources_file_name = str(args.sources_file_name)
 tasks_file_name = str(args.tasks_file_name)
 
+sources_file_name += "-2r" if env == "two-room-gw" else ("-3r" if env == "three-room-gw" else "")
+tasks_file_name += "-2r" if env == "two-room-gw" else ("-3r" if env == "three-room-gw" else "")
+
 # Seed to get reproducible results
 seed = 1
 np.random.seed(seed)
@@ -99,7 +102,7 @@ for t in range(timesteps + 1):
     if env == "two-room-gw":
         mdps.append([TwoRoomGridworld(np.array([gw_size, gw_size]), door_x=d) for d in doors])
     elif env == "three-room-gw":
-        mdps = [ThreeRoomGridworld(np.array([gw_size, gw_size]), door_x=(d1,d2)) for (d1,d2) in zip(doors,doors2)]
+        mdps.append([ThreeRoomGridworld(np.array([gw_size, gw_size]), door_x=(d1,d2)) for (d1,d2) in zip(doors,doors2)])
 
 eval_states = [np.array([0., 0.]) for _ in range(10)]
 

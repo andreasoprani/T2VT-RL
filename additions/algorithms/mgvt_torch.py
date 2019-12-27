@@ -176,7 +176,7 @@ def gradient_KL(c, mu, L, c_bar, mu_bar, Sigma_bar, phi, psi, max_iter_ukl, C, K
 
 
 def init_posterior(c, mu, L, c_bar, mu_bar, Sigma_bar, phi, psi, C, K, cholesky_clip, max_iter_ukl, precision=None,
-                   max_iter=10000, eta=1e-5, eps=0.00001, ukl_tight_freq=100):
+                   max_iter=10000, eta=1e-5, eps=0.00001, ukl_tight_freq=100, verbose=True):
     i = 0
     ukl_prev = UKL(c, mu, None, c_bar, mu_bar, Sigma_bar, phi, psi, L=L)
     done = False
@@ -194,7 +194,8 @@ def init_posterior(c, mu, L, c_bar, mu_bar, Sigma_bar, phi, psi, C, K, cholesky_
         done = np.abs(ukl-ukl_prev) < eps
         ukl_prev = ukl
         i += 1
-        print("Initializing prior %d... UKL: %f" % (i, ukl))
+        if verbose:
+            print("Initializing prior %d... UKL: %f" % (i, ukl))
     return params, phi, psi
 
 
@@ -314,7 +315,7 @@ def learn(mdp,
 
     phi, psi = tight_ukl(c, mu, Sigma, c_bar, mu_bar, Sigma_bar, phi, psi, max_iter=max_iter_ukl, eps=eps)
     params, phi, psi = init_posterior(c, mu, Sigma, c_bar, mu_bar, Sigma_bar, phi, psi, C, K, cholesky_clip,
-                                      max_iter_ukl, max_iter=max_iter_ukl * 10, precision=Sigma_bar_inv, eta=eta, eps=eps)
+                                      max_iter_ukl, max_iter=max_iter_ukl * 10, precision=Sigma_bar_inv, eta=eta, eps=eps, verbose=verbose)
 
     # Add random episodes if needed
     init_samples = list()

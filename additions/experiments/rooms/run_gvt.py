@@ -17,7 +17,7 @@ import datetime
 
 # Global parameters
 render = False
-verbose = True
+verbose = False
 
 # Command line arguments
 parser = argparse.ArgumentParser()
@@ -25,7 +25,7 @@ parser.add_argument("--kappa", default=100.)
 parser.add_argument("--xi", default=0.5)
 parser.add_argument("--tau", default=0.0)
 parser.add_argument("--batch_size", default=50)
-parser.add_argument("--max_iter", default=5000)
+parser.add_argument("--max_iter", default=10000)
 parser.add_argument("--buffer_size", default=50000)
 parser.add_argument("--random_episodes", default=0)
 parser.add_argument("--train_freq", default=1)
@@ -45,8 +45,8 @@ parser.add_argument("--gw_size", default=10)
 parser.add_argument("--n_basis", default=11)
 parser.add_argument("--n_jobs", default=1)
 parser.add_argument("--n_runs", default=20)
-parser.add_argument("--source_file", default=path + "/sources-2r")
-parser.add_argument("--tasks_file", default=path + "/tasks-2r")
+parser.add_argument("--source_file", default=path + "/sources")
+parser.add_argument("--tasks_file", default=path + "/tasks")
 
 # Read arguments
 args = parser.parse_args()
@@ -76,9 +76,10 @@ n_runs = int(args.n_runs)
 source_file = str(args.source_file)
 tasks_file = str(args.tasks_file)
 
-file_name = "gvt_"
-file_name += "2r_" if env == "two-room-gw" else ("3r_" if env == "three-room-gw" else "")
-file_name += datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+file_name = "results/" + env + "/" + "gvt_" + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+
+source_file += "-2r" if env == "two-room-gw" else ("-3r" if env == "three-room-gw" else "")
+tasks_file += "-2r" if env == "two-room-gw" else ("-3r" if env == "three-room-gw" else "")
 
 # Seed to get reproducible results
 seed = 1
