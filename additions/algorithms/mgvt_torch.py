@@ -299,7 +299,7 @@ def learn(mdp,
     ws = ws[c_bar > 0]
     timesteps = len(ws)
     c_bar = c_bar[c_bar > 0]
-    
+
     mu_bar = ws
     Sigma_bar = np.tile(np.eye(K) * bandwidth, (timesteps,1,1))
     Sigma_bar_inv = np.tile((1/bandwidth * np.eye(K))[np.newaxis], (timesteps, 1, 1))
@@ -309,7 +309,6 @@ def learn(mdp,
     psi = c[:, np.newaxis] * c_bar[np.newaxis]
     phi = np.array(psi)
     
-
     mu = np.array([100 * np.random.randn(K) for _ in range(C)])
     Sigma = np.array([np.eye(K) for _ in range(C)])
 
@@ -453,5 +452,7 @@ def learn(mdp,
 
     run_info = [iterations, episodes, n_samples, learning_rewards, evaluation_rewards, l_2, l_inf, fvals, episode_rewards[:len(episode_t)], episode_t]
     weights = np.array(mu)
+
+    print("Task over: ", mdp.get_info(), " - Last evaluation reward: ", run_info[4][-1])
 
     return [mdp.get_info(), weights, run_info]

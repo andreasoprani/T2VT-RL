@@ -9,7 +9,7 @@ from envs.three_room_gw import ThreeRoomGridworld
 from features.agrbf import build_features_gw_state
 from additions.approximators.mlp_torch import MLPQFunction
 from operators.mellow_torch import MellowBellmanOperator
-from algorithms.nt import learn
+from additions.algorithms.nt import learn
 from misc import utils
 import argparse
 from joblib import Parallel, delayed
@@ -19,19 +19,16 @@ import datetime
 render = False
 verbose = False
 
-seed = 1
-np.random.seed(seed)
-
 # Command line arguments
 parser = argparse.ArgumentParser()
 parser.add_argument("--kappa", default=100.)
 parser.add_argument("--xi", default=0.5)
 parser.add_argument("--tau", default=0.0)
 parser.add_argument("--batch_size", default=50)
-parser.add_argument("--max_iter", default=50000)
+parser.add_argument("--max_iter", default=100000)
 parser.add_argument("--buffer_size", default=50000)
 parser.add_argument("--random_episodes", default=0)
-parser.add_argument("--exploration_fraction", default=0.2)
+parser.add_argument("--exploration_fraction", default=0.5)
 parser.add_argument("--eps_start", default=1.0)
 parser.add_argument("--eps_end", default=0.02)
 parser.add_argument("--train_freq", default=1)
@@ -42,9 +39,11 @@ parser.add_argument("--env", default="two-room-gw")
 parser.add_argument("--gw_size", default=10)
 parser.add_argument("--n_basis", default=11)
 parser.add_argument("--n_jobs", default=1)
+
 parser.add_argument("--timesteps", default=10)
 parser.add_argument("--samples_per_timestep", default=5)
 parser.add_argument("--doors_std", default=0.2)
+parser.add_argument("--just_one_timestep", default=-1) # Used to re-train for just one timestep. -1 = False, 0 -> (timesteps - 1) = timestep to re-train 
 parser.add_argument("--sources_file_name", default=path + "/sources")
 parser.add_argument("--tasks_file_name", default=path + "/tasks")
 
@@ -68,9 +67,11 @@ env = str(args.env)
 gw_size = int(args.gw_size)
 n_basis = int(args.n_basis)
 n_jobs = int(args.n_jobs)
+
 timesteps = int(args.timesteps)
 samples_per_timestep = int(args.samples_per_timestep)
 doors_std = float(args.doors_std)
+just_one_timestep = int(args.just_one_timestep)
 sources_file_name = str(args.sources_file_name)
 tasks_file_name = str(args.tasks_file_name)
 
@@ -83,8 +84,8 @@ np.random.seed(seed)
 
 # Generate tasks
 
-# door 1 ----->
-# door 2 <-----
+# door 1: ----->
+# door 2: <-----
 # the standard deviation for doors is added to the boundaries to prevent too much clipping
 doors_means = np.linspace(0.5 + doors_std, gw_size - 0.5 - doors_std, timesteps+1)
 doors2_means = np.flip(doors_means)
@@ -101,8 +102,10 @@ for t in range(timesteps + 1):
     # Append list of mdps
     if env == "two-room-gw":
         mdps.append([TwoRoomGridworld(np.array([gw_size, gw_size]), door_x=d) for d in doors])
+        print(doors)
     elif env == "three-room-gw":
         mdps.append([ThreeRoomGridworld(np.array([gw_size, gw_size]), door_x=(d1,d2)) for (d1,d2) in zip(doors,doors2)])
+        print([(d1,d2) for (d1,d2) in zip(doors,doors2)])
 
 eval_states = [np.array([0., 0.]) for _ in range(10)]
 
@@ -140,13 +143,29 @@ def run(mdp, seed=None):
                  render=render,
                  verbose=verbose)
 
-# Learn optimal policies for all sources
+# How many steps of evaluation to print
+last_rewards = 5
+
 results = []
-for i in range(timesteps):
-    print("Timestep", i)
-    results.append([run(mdps[i][j], seed) for j in range(samples_per_timestep)])
-    print("Door positions:", [t[0][1] for t in results[-1]])
-    print("Last rewards:", [t[2][3][-1] for t in results[-1]], "\n")
+
+if just_one_timestep in range(0, timesteps): # Learn optimal policies just for one timestep
+    print("Timestep", just_one_timestep)
+    timestep_results = []
+    for j in range(samples_per_timestep):
+        timestep_results.append(run(mdps[just_one_timestep][j], seed))
+        print("Last evaluation reward:", np.around(timestep_results[-1][2][4][-last_rewards:], decimals = 3))
+
+    results = utils.load_object(sources_file_name) # sources must already exist.
+    results[just_one_timestep] = timestep_results  # overwrite
+
+else: # Learn optimal policies for all sources
+    for i in range(timesteps):
+        print("Timestep", i)
+        timestep_results = []
+        for j in range(samples_per_timestep):
+            timestep_results.append(run(mdps[i][j], seed))
+            print("Last evaluation reward:", np.around(timestep_results[-1][2][4][-last_rewards:], decimals = 3))
+        results.append(timestep_results)
 
 # Save sources to file
 utils.save_object(results, sources_file_name)

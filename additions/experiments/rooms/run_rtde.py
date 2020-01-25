@@ -14,6 +14,7 @@ from misc import utils
 import argparse
 from joblib import Parallel, delayed
 import datetime
+from additions.temporal_kernel import temporal_kernel
 
 # Global parameters
 render = False
@@ -115,30 +116,7 @@ Q = MLPQFunction(K, n_actions, layers=None)
 # Create RBFs
 rbf = build_features_gw_state(gw_size, n_basis, state_dim)
 
-def normalized_epanechnikov_weights(samples, _lambda):
-    """Calculates the weights of the mixture of gaussians"""
-
-    def normalized_epanechnikov(x):
-        if x < 0 or x > 1:
-            return 0
-        else:
-            return 2 * (3/4) * (1-x**2)
-
-    weights = np.zeros(samples)
-
-    for i in range(samples):
-        t_i = (i + 1) / samples
-        weights[i] = normalized_epanechnikov((1-t_i)/_lambda) / (samples * _lambda)
-
-    # Normalization
-    weights = weights / np.sum(weights)
-
-    return weights
-
-if kernel == "epanechnikov":
-    prior_weights = normalized_epanechnikov_weights(timesteps, temporal_bandwidth)
-else:
-    prior_weights = None
+prior_weights = temporal_kernel(timesteps, temporal_bandwidth, kernel)
 
 def run(mdp, seed=None):
     return learn(mdp,
