@@ -80,7 +80,7 @@ def learning_rew(iterations, episodes_time, episode_rew, mean_episodes=5):
 
     return np.array(learning_rew)
 
-path = "results/two-room-gw/"
+path = "results/mountaincar/"
 experiments = ["mgvt_1c", 
                #"mgvt_3c", 
                "rtde_1c", 

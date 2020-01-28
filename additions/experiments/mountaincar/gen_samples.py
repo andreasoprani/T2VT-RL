@@ -25,7 +25,7 @@ parser.add_argument("--kappa", default=100.)
 parser.add_argument("--xi", default=0.5)
 parser.add_argument("--tau", default=0.0)
 parser.add_argument("--batch_size", default=32)
-parser.add_argument("--max_iter", default=200000)
+parser.add_argument("--max_iter", default=1500000)
 parser.add_argument("--buffer_size", default=50000)
 parser.add_argument("--random_episodes", default=0)
 parser.add_argument("--exploration_fraction", default=0.5)
@@ -48,6 +48,7 @@ parser.add_argument("--samples_per_timestep", default=5)
 parser.add_argument("--min_speed", default=0.001)
 parser.add_argument("--max_speed", default=0.0015)
 parser.add_argument("--speed_std", default=0.00002)
+parser.add_argument("--just_one_timestep", default=-1) # Used to re-train for just one timestep. -1 = False, 0 -> (timesteps - 1) = timestep to re-train 
 parser.add_argument("--sources_file_name", default=path + "/sources")
 parser.add_argument("--tasks_file_name", default=path + "/tasks")
 
@@ -79,6 +80,7 @@ samples_per_timestep = int(args.samples_per_timestep)
 min_speed = float(args.min_speed)
 max_speed = float(args.max_speed)
 speed_std = float(args.speed_std)
+just_one_timestep = int(args.just_one_timestep)
 sources_file_name = str(args.sources_file_name)
 tasks_file_name = str(args.tasks_file_name)
 
@@ -137,17 +139,29 @@ def run(mdp, seed=None):
                  render=render,
                  verbose=verbose)
 
+last_rewards = 5
 
 # Learn optimal policies for all sources
 results = []
 
-for i in range(timesteps):
-    print("Timestep", i)
+if just_one_timestep in range(0, timesteps): # Learn optimal policies just for one timestep
+    print("Timestep", just_one_timestep)
     timestep_results = []
     for j in range(samples_per_timestep):
-        timestep_results.append(run(mdps[i][j], seed))
-        print("Last evaluation reward:", timestep_results[-1][2][4][-1])
-    results.append(timestep_results)
+        timestep_results.append(run(mdps[just_one_timestep][j], seed))
+        print("Last evaluation reward:", np.around(timestep_results[-1][2][4][-last_rewards:], decimals = 3))
+
+    results = utils.load_object(sources_file_name) # sources must already exist.
+    results[just_one_timestep] = timestep_results  # overwrite
+
+else: # Learn optimal policies for all sources
+    for i in range(timesteps):
+        print("Timestep", i)
+        timestep_results = []
+        for j in range(samples_per_timestep):
+            timestep_results.append(run(mdps[i][j], seed))
+            print("Last evaluation reward:", np.around(timestep_results[-1][2][4][-last_rewards:], decimals = 3))
+        results.append(timestep_results)
 
 utils.save_object(results, sources_file_name)
 

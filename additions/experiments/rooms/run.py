@@ -13,8 +13,8 @@ files = ["gen_samples.py",
 
 env = "three-room-gw"
 max_iter = "12000" # 2000 for two-room, 12000 for three-room
-max_iter_gen = "1000000" # 100000 for two-room, 500000 for three-room
-exploration_gen = "0.7"
+max_iter_gen = "1500000" # 100000 for two-room, 500000 for three-room
+exploration_gen = "0.5"
 just_one_timestep = "8"
 
 for f in files:

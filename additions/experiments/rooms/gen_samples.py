@@ -174,4 +174,5 @@ utils.save_object(results, sources_file_name)
 tasks = mdps[-1]
 print("Tasks")
 print("Door positions:", [t.get_info()[1] for t in tasks])
+
 utils.save_object(tasks, tasks_file_name)
