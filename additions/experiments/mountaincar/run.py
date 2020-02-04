@@ -15,7 +15,7 @@ gen_samples = "gen_samples.py"
 max_iter_gen = "1000000"
 timesteps = 10
 
-max_iter = "50000"
+max_iter = "75000"
 
 if gen:
     for t in range(timesteps):

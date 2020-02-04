@@ -1,3 +1,4 @@
 *.pyc
 .DS_Store
 .vscode/settings.json
+additions/experiments/rooms/sources-3r.pkl

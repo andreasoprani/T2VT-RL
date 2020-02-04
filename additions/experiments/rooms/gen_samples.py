@@ -46,6 +46,9 @@ parser.add_argument("--doors_std", default=0.2)
 parser.add_argument("--just_one_timestep", default=-1) # Used to re-train for just one timestep. -1 = False, 0 -> (timesteps - 1) = timestep to re-train 
 parser.add_argument("--sources_file_name", default=path + "/sources")
 parser.add_argument("--tasks_file_name", default=path + "/tasks")
+parser.add_argument("--threshold_learn", default=False)
+parser.add_argument("--eval_threshold", default=0)
+parser.add_argument("--eval_consistency", default=5)
 
 # Read arguments
 args = parser.parse_args()
@@ -74,6 +77,9 @@ doors_std = float(args.doors_std)
 just_one_timestep = int(args.just_one_timestep)
 sources_file_name = str(args.sources_file_name)
 tasks_file_name = str(args.tasks_file_name)
+threshold_learn = bool(args.threshold_learn)
+eval_threshold = float(args.eval_threshold)
+eval_consistency = int(args.eval_consistency)
 
 sources_file_name += "-2r" if env == "two-room-gw" else ("-3r" if env == "three-room-gw" else "")
 tasks_file_name += "-2r" if env == "two-room-gw" else ("-3r" if env == "three-room-gw" else "")
@@ -102,10 +108,10 @@ for t in range(timesteps + 1):
     # Append list of mdps
     if env == "two-room-gw":
         mdps.append([TwoRoomGridworld(np.array([gw_size, gw_size]), door_x=d) for d in doors])
-        print(doors)
+        # print(doors)
     elif env == "three-room-gw":
         mdps.append([ThreeRoomGridworld(np.array([gw_size, gw_size]), door_x=(d1,d2)) for (d1,d2) in zip(doors,doors2)])
-        print([(d1,d2) for (d1,d2) in zip(doors,doors2)])
+        # print([(d1,d2) for (d1,d2) in zip(doors,doors2)])
 
 eval_states = [np.array([0., 0.]) for _ in range(10)]
 
@@ -121,12 +127,14 @@ Q = MLPQFunction(K, n_actions, layers=None)
 # Create RBFs
 rbf = build_features_gw_state(gw_size, n_basis, state_dim)
 
-
 def run(mdp, seed=None):
     return learn(mdp,
                  Q,
                  operator,
                  max_iter=max_iter,
+                 threshold_learn=threshold_learn,
+                 eval_threshold=eval_threshold,
+                 eval_consistency=eval_consistency,
                  buffer_size=buffer_size,
                  batch_size=batch_size,
                  alpha=alpha,
@@ -153,7 +161,10 @@ if just_one_timestep in range(0, timesteps): # Learn optimal policies just for o
     timestep_results = []
     for j in range(samples_per_timestep):
         timestep_results.append(run(mdps[just_one_timestep][j], seed))
-        print("Last evaluation reward:", np.around(timestep_results[-1][2][4][-last_rewards:], decimals = 3))
+        print("Last evaluation reward:", 
+              np.around(timestep_results[-1][2][4][-last_rewards:], decimals = 3), 
+              " - Iterations: ",
+              timestep_results[-1][2][0][-1])
 
     results = utils.load_object(sources_file_name) # sources must already exist.
     results[just_one_timestep] = timestep_results  # overwrite
@@ -172,7 +183,7 @@ utils.save_object(results, sources_file_name)
 
 # Save tasks to file
 tasks = mdps[-1]
-print("Tasks")
-print("Door positions:", [t.get_info()[1] for t in tasks])
+# print("Tasks")
+# print("Door positions:", [t.get_info()[1] for t in tasks])
 
 utils.save_object(tasks, tasks_file_name)

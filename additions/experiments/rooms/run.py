@@ -3,30 +3,42 @@ import datetime
 
 python = "C:/Users/andre/Anaconda3/python.exe"
 path = "d:/Documenti/GitHub/Thesis/additions/experiments/rooms/"
-files = ["gen_samples.py",
-        #"run_gvt.py",
-        #"run_mgvt.py --post_components=1",
-        #"run_mgvt.py --post_components=3",
-        #"run_rtde.py --post_components=1",
-        #"run_rtde.py --post_components=3"
+files = [
+         #"run_mgvt.py --post_components=1",
+         #"run_mgvt.py --post_components=3",
+         #"run_rtde.py --post_components=1",
+         #"run_rtde.py --post_components=3"
         ]
 
 env = "three-room-gw"
-max_iter = "12000" # 2000 for two-room, 12000 for three-room
-max_iter_gen = "1500000" # 100000 for two-room, 500000 for three-room
-exploration_gen = "0.5"
-just_one_timestep = "8"
+
+gen = True
+gen_samples = "gen_samples.py"
+max_iter_gen = "20000000"
+timesteps = range(10)
+threshold_learn = "True"
+eval_threshold = "0.5"
+eval_consistency = "5"
+
+max_iter = "50000"
+
+if gen:
+    for t in timesteps:
+        f = gen_samples
+        f += " --max_iter=" + max_iter_gen
+        f += " --just_one_timestep=" + str(t)
+        f += " --env=" + env
+        f += " --threshold_learn=" + threshold_learn
+        f += " --eval_threshold=" + eval_threshold
+        f += " --eval_consistency=" + eval_consistency
+
+        print(f + " - " + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S"))
+        subprocess.call(python + " " + path + f)
 
 for f in files:
-    if f == "gen_samples.py":
-        f += " --max_iter=" + max_iter_gen
-        f += " --just_one_timestep=" + just_one_timestep
-        f += " --exploration_fraction=" + exploration_gen
-    else:
-        f += " --max_iter=" + max_iter
-
+    f += " --max_iter=" + max_iter
     f += " --env=" + env
-    
+
     print(f + " - " + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S"))
     subprocess.call(python + " " + path + f)
 
