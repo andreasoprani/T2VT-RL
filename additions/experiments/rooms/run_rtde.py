@@ -55,6 +55,7 @@ parser.add_argument("--max_iter_ukl", default=60)
 # rtde arguments
 parser.add_argument("--temporal_bandwidth", default=0.3333)
 parser.add_argument("--kernel", default="epanechnikov")
+parser.add_argument("--experiment_type", default="linear")
 
 # Read arguments
 args = parser.parse_args()
@@ -76,6 +77,7 @@ n_weights = int(args.n_weights)
 timesteps = int(args.timesteps)
 cholesky_clip = float(args.cholesky_clip)
 env = str(args.env)
+experiment_type = str(args.experiment_type)
 gw_size = int(args.gw_size)
 n_basis = int(args.n_basis)
 n_jobs = int(args.n_jobs)
@@ -90,9 +92,11 @@ max_iter_ukl = int(args.max_iter_ukl)
 temporal_bandwidth = float(args.temporal_bandwidth)
 kernel = str(args.kernel)
 
-file_name = "results/" + env + "/" + "rtde_" + str(post_components) + "c_" + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+file_name = "results/" + env + "/" + experiment_type+ "/" + "rtde_" + str(post_components) + "c_" + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
+source_file += "-" + experiment_type
 source_file += "-2r" if env == "two-room-gw" else ("-3r" if env == "three-room-gw" else "")
+tasks_file += "-" + experiment_type
 tasks_file += "-2r" if env == "two-room-gw" else ("-3r" if env == "three-room-gw" else "")
 
 # Seed to get reproducible results

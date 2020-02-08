@@ -47,6 +47,7 @@ parser.add_argument("--n_jobs", default=1)
 parser.add_argument("--n_runs", default=20)
 parser.add_argument("--source_file", default=path + "/sources")
 parser.add_argument("--tasks_file", default=path + "/tasks")
+parser.add_argument("--experiment_type", default="linear")
 
 # Read arguments
 args = parser.parse_args()
@@ -69,6 +70,7 @@ timesteps = int(args.timesteps)
 sigma_reg = float(args.sigma_reg)
 cholesky_clip = float(args.cholesky_clip)
 env = str(args.env)
+experiment_type = str(args.experiment_type)
 gw_size = int(args.gw_size)
 n_basis = int(args.n_basis)
 n_jobs = int(args.n_jobs)
@@ -78,7 +80,9 @@ tasks_file = str(args.tasks_file)
 
 file_name = "results/" + env + "/" + "gvt_" + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
+source_file += "-" + experiment_type
 source_file += "-2r" if env == "two-room-gw" else ("-3r" if env == "three-room-gw" else "")
+tasks_file += "-" + experiment_type
 tasks_file += "-2r" if env == "two-room-gw" else ("-3r" if env == "three-room-gw" else "")
 
 # Seed to get reproducible results

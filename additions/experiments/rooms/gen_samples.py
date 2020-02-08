@@ -44,11 +44,9 @@ parser.add_argument("--timesteps", default=10)
 parser.add_argument("--samples_per_timestep", default=5)
 parser.add_argument("--doors_std", default=0.2)
 parser.add_argument("--just_one_timestep", default=-1) # Used to re-train for just one timestep. -1 = False, 0 -> (timesteps - 1) = timestep to re-train 
+parser.add_argument("--experiment_type", default="linear")
 parser.add_argument("--sources_file_name", default=path + "/sources")
 parser.add_argument("--tasks_file_name", default=path + "/tasks")
-parser.add_argument("--threshold_learn", default=False)
-parser.add_argument("--eval_threshold", default=0)
-parser.add_argument("--eval_consistency", default=5)
 
 # Read arguments
 args = parser.parse_args()
@@ -75,26 +73,40 @@ timesteps = int(args.timesteps)
 samples_per_timestep = int(args.samples_per_timestep)
 doors_std = float(args.doors_std)
 just_one_timestep = int(args.just_one_timestep)
+experiment_type = str(args.experiment_type)
 sources_file_name = str(args.sources_file_name)
 tasks_file_name = str(args.tasks_file_name)
-threshold_learn = bool(args.threshold_learn)
-eval_threshold = float(args.eval_threshold)
-eval_consistency = int(args.eval_consistency)
 
+sources_file_name += "-" + experiment_type
 sources_file_name += "-2r" if env == "two-room-gw" else ("-3r" if env == "three-room-gw" else "")
+tasks_file_name += "-" + experiment_type
 tasks_file_name += "-2r" if env == "two-room-gw" else ("-3r" if env == "three-room-gw" else "")
 
 # Seed to get reproducible results
 seed = 1
 np.random.seed(seed)
 
-# Generate tasks
+def gen_door_means(exp_type="linear"):
 
-# door 1: ----->
-# door 2: <-----
-# the standard deviation for doors is added to the boundaries to prevent too much clipping
-doors_means = np.linspace(0.5 + doors_std, gw_size - 0.5 - doors_std, timesteps+1)
-doors2_means = np.flip(doors_means)
+    if exp_type == "sin":
+        # door 1: sin(x) normalized on [0.5 + std, 9.5 - doors_std], x = 2pi * (i/(t+1))
+        # door 2: door 1 reversed
+        d_means = np.sin( (2 * np.pi) * np.linspace(0, 1, timesteps + 1) )
+        # normalize on range
+        d_means = d_means * ((gw_size - 1 - 2 * doors_std) / 2) + (gw_size / 2)
+        d2_means = np.flip(d_means)
+        return (d_means, d2_means)
+
+    else: # linear
+        # door 1: ----->
+        # door 2: <-----
+        # the standard deviation for doors is added to the boundaries to prevent too much clipping
+        d_means = np.linspace(0.5 + doors_std, gw_size - 0.5 - doors_std, timesteps+1)
+        d2_means = np.flip(d_means)
+        return (d_means, d2_means)
+
+# Generate tasks
+(doors_means, doors2_means) = gen_door_means(experiment_type)
 
 mdps = []
 
@@ -132,9 +144,6 @@ def run(mdp, seed=None):
                  Q,
                  operator,
                  max_iter=max_iter,
-                 threshold_learn=threshold_learn,
-                 eval_threshold=eval_threshold,
-                 eval_consistency=eval_consistency,
                  buffer_size=buffer_size,
                  batch_size=batch_size,
                  alpha=alpha,
@@ -161,10 +170,7 @@ if just_one_timestep in range(0, timesteps): # Learn optimal policies just for o
     timestep_results = []
     for j in range(samples_per_timestep):
         timestep_results.append(run(mdps[just_one_timestep][j], seed))
-        print("Last evaluation reward:", 
-              np.around(timestep_results[-1][2][4][-last_rewards:], decimals = 3), 
-              " - Iterations: ",
-              timestep_results[-1][2][0][-1])
+        print("Last evaluation reward:", np.around(timestep_results[-1][2][4][-last_rewards:], decimals = 3))
 
     results = utils.load_object(sources_file_name) # sources must already exist.
     results[just_one_timestep] = timestep_results  # overwrite

@@ -12,9 +12,6 @@ def learn(mdp,
           Q,
           operator,
           max_iter=5000,
-          threshold_learn=False,
-          eval_threshold=0,
-          eval_consistency=5,
           buffer_size=10000,
           batch_size=50,
           alpha=0.001,
@@ -144,13 +141,6 @@ def learn(mdp,
             if verbose:
                 print("Iter {} Episodes {} Rew(G) {} Rew(L) {} L2 {} L_inf {} time {:.1f} s".format(
                     i, episodes[-1], rew, learning_rew, l_2_err, l_inf_err, elapsed_time))
-
-            if threshold_learn and rew >= eval_threshold:
-                threshold_surpassed += 1
-                if threshold_surpassed >= eval_consistency:
-                    break
-            elif threshold_learn:
-                threshold_surpassed = 0
 
     run_info = [iterations, episodes, n_samples, learning_rewards, evaluation_rewards, l_2, l_inf, episode_rewards[:len(episode_t)], episode_t]
     weights = np.array(Q._w)

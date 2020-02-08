@@ -51,6 +51,7 @@ parser.add_argument("--eps", default=0.001)  # precision for the initial posteri
 parser.add_argument("--bandwidth", default=.00001)  # Bandwidth for the Kernel Estimator
 parser.add_argument("--post_components", default=1)  # number of components of the posterior family
 parser.add_argument("--max_iter_ukl", default=60)
+parser.add_argument("--experiment_type", default="linear")
 
 # Read arguments
 args = parser.parse_args()
@@ -72,6 +73,7 @@ n_weights = int(args.n_weights)
 timesteps = int(args.timesteps)
 cholesky_clip = float(args.cholesky_clip)
 env = str(args.env)
+experiment_type = str(args.experiment_type)
 gw_size = int(args.gw_size)
 n_basis = int(args.n_basis)
 n_jobs = int(args.n_jobs)
@@ -84,9 +86,11 @@ post_components = int(args.post_components)
 bandwidth = float(args.bandwidth)
 max_iter_ukl = int(args.max_iter_ukl)
 
-file_name = "results/" + env + "/" + "mgvt_" + str(post_components) + "c_" + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+file_name = "results/" + env + "/" + experiment_type + "/" + "mgvt_" + str(post_components) + "c_" + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
+source_file += "-" + experiment_type
 source_file += "-2r" if env == "two-room-gw" else ("-3r" if env == "three-room-gw" else "")
+tasks_file += "-" + experiment_type
 tasks_file += "-2r" if env == "two-room-gw" else ("-3r" if env == "three-room-gw" else "")
 
 
