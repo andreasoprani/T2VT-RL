@@ -4,10 +4,10 @@ import datetime
 python = "C:/Users/andre/Anaconda3/python.exe"
 path = "d:/Documenti/GitHub/Thesis/additions/experiments/rooms/"
 files = [
-         #"run_mgvt.py --post_components=1",
-         "run_mgvt.py --post_components=3",
-         #"run_rtde.py --post_components=1",
-         "run_rtde.py --post_components=3"
+         "run_mgvt.py --post_components=1",
+         #"run_mgvt.py --post_components=3",
+         "run_rtde.py --post_components=1",
+         #"run_rtde.py --post_components=3"
         ]
 
 env = "two-room-gw"
@@ -15,10 +15,9 @@ env = "two-room-gw"
 gen = False
 gen_samples = "gen_samples.py"
 max_iter_gen = "100000"
-timesteps = range(10)
-exp_type = "linear"
+exp_type = "periodic-no-rep"
 
-max_iter = "3000"
+max_iter = "10000"
 
 if gen:
     f = gen_samples

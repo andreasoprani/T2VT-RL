@@ -453,6 +453,6 @@ def learn(mdp,
     run_info = [iterations, episodes, n_samples, learning_rewards, evaluation_rewards, l_2, l_inf, fvals, episode_rewards[:len(episode_t)], episode_t]
     weights = np.array(mu)
 
-    print("Task over: ", mdp.get_info(), " - Last evaluation reward: ", run_info[4][-1])
+    print("Task over: ", mdp.get_info(), " - Last evaluation reward: ", np.around(run_info[4][-1], decimals=3))
 
     return [mdp.get_info(), weights, run_info]

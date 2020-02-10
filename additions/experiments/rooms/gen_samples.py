@@ -91,7 +91,18 @@ def gen_door_means(exp_type="linear"):
     if exp_type == "sin":
         # door 1: sin(x) normalized on [0.5 + std, 9.5 - doors_std], x = 2pi * (i/(t+1))
         # door 2: door 1 reversed
-        d_means = np.sin( (2 * np.pi) * np.linspace(0, 1, timesteps + 1) )
+        d_means = np.sin((2 * np.pi) * np.linspace(0, 1, timesteps + 1))
+        # normalize on range
+        d_means = d_means * ((gw_size - 1 - 2 * doors_std) / 2) + (gw_size / 2)
+        d2_means = np.flip(d_means)
+        return (d_means, d2_means)
+
+    if exp_type == "periodic-no-rep":
+        # periodic with no repetition
+        # door 1: as sin but x in [a, pi + a] where a is in [pi/4, pi/2]
+        # door 2: doo1 reversed
+        a = np.random.uniform(low = np.pi / 4, high = np.pi / 2)
+        d_means = np.sin(np.linspace(a, a + np.pi, timesteps + 1))
         # normalize on range
         d_means = d_means * ((gw_size - 1 - 2 * doors_std) / 2) + (gw_size / 2)
         d2_means = np.flip(d_means)

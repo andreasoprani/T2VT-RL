@@ -4,10 +4,10 @@ import datetime
 python = "C:/Users/andre/Anaconda3/python.exe"
 path = "d:/Documenti/GitHub/Thesis/additions/experiments/mountaincar/"
 files = [
-         "run_mgvt.py --post_components=1",
-         #"run_mgvt.py --post_components=3",
-         "run_rtde.py --post_components=1",
-         #"run_rtde.py --post_components=3"
+         #"run_mgvt.py --post_components=1",
+         "run_mgvt.py --post_components=3",
+         #"run_rtde.py --post_components=1",
+         "run_rtde.py --post_components=3"
         ]
 
 gen = False
