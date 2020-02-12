@@ -43,10 +43,12 @@ parser.add_argument("--n_jobs", default=1)
 parser.add_argument("--timesteps", default=10)
 parser.add_argument("--samples_per_timestep", default=5)
 parser.add_argument("--doors_std", default=0.2)
+parser.add_argument("--no_door_zone", default=0.0) # Used to avoid difficult tasks
 parser.add_argument("--just_one_timestep", default=-1) # Used to re-train for just one timestep. -1 = False, 0 -> (timesteps - 1) = timestep to re-train 
 parser.add_argument("--experiment_type", default="linear")
 parser.add_argument("--sources_file_name", default=path + "/sources")
 parser.add_argument("--tasks_file_name", default=path + "/tasks")
+
 
 # Read arguments
 args = parser.parse_args()
@@ -72,6 +74,7 @@ n_jobs = int(args.n_jobs)
 timesteps = int(args.timesteps)
 samples_per_timestep = int(args.samples_per_timestep)
 doors_std = float(args.doors_std)
+no_door_zone = float(args.no_door_zone)
 just_one_timestep = int(args.just_one_timestep)
 experiment_type = str(args.experiment_type)
 sources_file_name = str(args.sources_file_name)
@@ -93,7 +96,7 @@ def gen_door_means(exp_type="linear"):
         # door 2: door 1 reversed
         d_means = np.sin((2 * np.pi) * np.linspace(0, 1, timesteps + 1))
         # normalize on range
-        d_means = d_means * ((gw_size - 1 - 2 * doors_std) / 2) + (gw_size / 2)
+        d_means = d_means * ((gw_size - no_door_zone - 1 - 2 * doors_std) / 2) + ((gw_size - no_door_zone) / 2)
         d2_means = np.flip(d_means)
         return (d_means, d2_means)
 
@@ -104,7 +107,7 @@ def gen_door_means(exp_type="linear"):
         a = np.random.uniform(low = np.pi / 4, high = np.pi / 2)
         d_means = np.sin(np.linspace(a, a + np.pi, timesteps + 1))
         # normalize on range
-        d_means = d_means * ((gw_size - 1 - 2 * doors_std) / 2) + (gw_size / 2)
+        d_means = d_means * ((gw_size - no_door_zone - 1 - 2 * doors_std) / 2) + ((gw_size - no_door_zone) / 2)
         d2_means = np.flip(d_means)
         return (d_means, d2_means)
 
@@ -112,7 +115,7 @@ def gen_door_means(exp_type="linear"):
         # door 1: ----->
         # door 2: <-----
         # the standard deviation for doors is added to the boundaries to prevent too much clipping
-        d_means = np.linspace(0.5 + doors_std, gw_size - 0.5 - doors_std, timesteps+1)
+        d_means = np.linspace(0.5 + doors_std, gw_size - no_door_zone - 0.5 - doors_std, timesteps+1)
         d2_means = np.flip(d_means)
         return (d_means, d2_means)
 
