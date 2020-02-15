@@ -96,7 +96,7 @@ def gen_door_means(exp_type="linear"):
         # door 2: door 1 reversed
         d_means = np.sin((2 * np.pi) * np.linspace(0, 1, timesteps + 1))
         # normalize on range
-        d_means = d_means * ((gw_size - no_door_zone - 1 - 2 * doors_std) / 2) + ((gw_size - no_door_zone) / 2)
+        d_means = d_means * ((gw_size - 2 * no_door_zone - 1 - 2 * doors_std) / 2) + (gw_size / 2)
         d2_means = np.flip(d_means)
         return (d_means, d2_means)
 
@@ -107,7 +107,7 @@ def gen_door_means(exp_type="linear"):
         a = np.random.uniform(low = np.pi / 4, high = np.pi / 2)
         d_means = np.sin(np.linspace(a, a + np.pi, timesteps + 1))
         # normalize on range
-        d_means = d_means * ((gw_size - no_door_zone - 1 - 2 * doors_std) / 2) + ((gw_size - no_door_zone) / 2)
+        d_means = d_means * ((gw_size - 2 * no_door_zone - 1 - 2 * doors_std) / 2) + (gw_size / 2)
         d2_means = np.flip(d_means)
         return (d_means, d2_means)
 
@@ -115,7 +115,7 @@ def gen_door_means(exp_type="linear"):
         # door 1: ----->
         # door 2: <-----
         # the standard deviation for doors is added to the boundaries to prevent too much clipping
-        d_means = np.linspace(0.5 + doors_std, gw_size - no_door_zone - 0.5 - doors_std, timesteps+1)
+        d_means = np.linspace(0.5 + no_door_zone + doors_std, gw_size - no_door_zone - 0.5 - doors_std, timesteps+1)
         d2_means = np.flip(d_means)
         return (d_means, d2_means)
 

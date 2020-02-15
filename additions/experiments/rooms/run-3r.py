@@ -12,27 +12,29 @@ files = [
 
 env = "three-room-gw"
 
-gen = True
+gen = False
 gen_samples = "gen_samples.py"
-max_iter_gen = "3000000"
+max_iter_gen = 1000000
 exp_type = "linear"
+no_door_zone = 2.0
 timesteps = 10
 
-max_iter = "10000" 
+max_iter = 15000
 
 if gen:
-    for t in reversed(range(timesteps)):
+    for t in range(timesteps):
         f = gen_samples
-        f += " --max_iter=" + max_iter_gen
+        f += " --max_iter=" + str(max_iter_gen)
         f += " --env=" + env
         f += " --experiment_type=" + exp_type
+        f += " --no_door_zone=" + str(no_door_zone)
         f += " --just_one_timestep=" + str(t)
 
         print(f + " - " + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S"))
         subprocess.call(python + " " + path + f)
 
 for f in files:
-    f += " --max_iter=" + max_iter
+    f += " --max_iter=" + str(max_iter)
     f += " --env=" + env
     f += " --experiment_type=" + exp_type
 

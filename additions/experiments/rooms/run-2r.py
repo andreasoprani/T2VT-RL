@@ -12,16 +12,20 @@ files = [
 
 env = "two-room-gw"
 
-gen = False
-gen_samples = "gen_samples.py"
-max_iter_gen = "100000"
 exp_type = "periodic-no-rep"
 
-max_iter = "10000" # 3000 for linear and sin, 10000 for periodic-no-rep
+if exp_type == "periodic-no-rep":
+    max_iter = 10000
+else: # linear and sin
+    max_iter = 3000
+
+gen = False
+gen_samples = "gen_samples.py"
+max_iter_gen = 100000
 
 if gen:
     f = gen_samples
-    f += " --max_iter=" + max_iter_gen
+    f += " --max_iter=" + str(max_iter_gen)
     f += " --env=" + env
     f += " --experiment_type=" + exp_type
     
@@ -29,7 +33,7 @@ if gen:
     subprocess.call(python + " " + path + f)
 
 for f in files:
-    f += " --max_iter=" + max_iter
+    f += " --max_iter=" + str(max_iter)
     f += " --env=" + env
     f += " --experiment_type=" + exp_type
 

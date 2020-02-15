@@ -80,20 +80,20 @@ def learning_rew(iterations, episodes_time, episode_rew, mean_episodes=5):
 
     return np.array(learning_rew)
 
-path = "results/two-room-gw/periodic-no-rep/"
+path = "results/three-room-gw/linear/"
 experiments = ["mgvt_1c", 
-               "mgvt_3c", 
+               #"mgvt_3c", 
                "rtde_1c", 
-               "rtde_3c"
+               #"rtde_3c"
                ]
 files = [f[:-4] for sublist in [glob.glob(path + exp + "*.pkl") for exp in experiments] for f in sublist]
 
 names = ["1-MGVT", 
-         "3-MGVT", 
+         #"3-MGVT", 
          "1-RTDE", 
-         "3-RTDE"
+         #"3-RTDE"
          ]
-title = "two-room-gw - periodic (unseen task)"
+title = "three-room-gw - linear"
 
 x = []
 y_mean = []
