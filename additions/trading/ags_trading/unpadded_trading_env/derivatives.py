@@ -25,7 +25,7 @@ class TradingDerivatives(TradingMain):
         # Required for FQI
         self.action_dim = 1
         self.state_dim = self.observation_space.shape[0]
-        self.gamma = 1
+        self.gamma = 0.9999
 
     def _normalize(self, X):
         return (X)/self.std_delta
@@ -45,11 +45,15 @@ class TradingDerivatives(TradingMain):
         return (self.current_portfolio * (self.current_price - self.previous_price) - \
                 abs(self.current_portfolio - self.previous_portfolio) * self.fees) #percentage
 
-    def reset(self):
+    def reset(self, initial_state=None):
+        # initial_state is present only to respect the format of the other environments
         super().reset()
         # Compute derivatives once for all, pad with time_lag zeros
         self.derivatives = self._normalize(np.insert(self.prices[1:] - self.prices[:-1],0,0))
         return self._observation()
+
+    def get_info(self):
+        return ["TradingDerivatives", self.csv_path]
 
 # UNIT TESTING
 if __name__ == '__main__':
@@ -95,3 +99,6 @@ class TradingDerivativesWithStateReward(TradingDerivatives):
         self.last_x = step_observation
         obs = np.concatenate((last_x, step_observation))
         return obs, reward,  step_done, {}
+    
+    def get_info(self):
+        return ["TradingDerivativesWithStateReward", self.csv_path]

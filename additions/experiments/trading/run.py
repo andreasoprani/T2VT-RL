@@ -2,7 +2,7 @@ import subprocess
 import datetime
 
 python = "C:/Users/andre/Anaconda3/python.exe"
-path = "d:/Documenti/GitHub/Thesis/additions/experiments/rooms/"
+path = "d:/Documenti/GitHub/Thesis/additions/experiments/trading/"
 files = [
          "run_mgvt.py --post_components=1",
          #"run_mgvt.py --post_components=3",
@@ -10,43 +10,22 @@ files = [
          #"run_rtde.py --post_components=3"
         ]
 
-env = "three-room-gw"
-
-gen = False
+gen = True
 gen_samples = "gen_samples.py"
 max_iter_gen = 1000000
-exp_type = "linear"
-no_door_zone = 2.0
-# timesteps = 10
 
-max_iter = 15000
+max_iter = 100000
+n_runs = 1
 
 if gen:
     f = gen_samples
     f += " --max_iter=" + str(max_iter_gen)
-    f += " --env=" + env
-    f += " --experiment_type=" + exp_type
-    f += " --no_door_zone=" + str(no_door_zone)
-
     print(f + " - " + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S"))
     subprocess.call(python + " " + path + f)
 
-#    for t in range(timesteps):
-#        f = gen_samples
-#        f += " --max_iter=" + str(max_iter_gen)
-#        f += " --env=" + env
-#        f += " --experiment_type=" + exp_type
-#        f += " --no_door_zone=" + str(no_door_zone)
-#        f += " --just_one_timestep=" + str(t)
-#
-#        print(f + " - " + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S"))
-#        subprocess.call(python + " " + path + f)
-
 for f in files:
     f += " --max_iter=" + str(max_iter)
-    f += " --env=" + env
-    f += " --experiment_type=" + exp_type
-
+    f += " --n_runs=" + str(n_runs)
     print(f + " - " + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S"))
     subprocess.call(python + " " + path + f)
 

@@ -1,10 +1,13 @@
 import sys
 import os
 path = os.path.dirname(os.path.realpath(__file__))  # path to this directory
-sys.path.append(os.path.abspath(path + "/../../.."))
+sys.path.append(os.path.abspath(path + "/../../trading")) # add trading
+sys.path.append(os.path.abspath(path + "/../../..")) # add main folder
+
+import gym
+from ags_trading.unpadded_trading_env.derivatives import TradingDerivatives
 
 import numpy as np
-from envs.mountain_car import MountainCarEnv
 from additions.approximators.mlp_torch import MLPQFunction
 from operators.mellow_torch import MellowBellmanOperator
 from additions.algorithms.mgvt_torch import learn
@@ -13,10 +16,7 @@ import argparse
 from joblib import Parallel, delayed
 import datetime
 
-from additions.temporal_kernel import temporal_kernel
-
 # Global parameters
-render = False
 verbose = False
 
 # Command line arguments
@@ -25,7 +25,7 @@ parser.add_argument("--kappa", default=100.)
 parser.add_argument("--xi", default=0.5)
 parser.add_argument("--tau", default=0.0)
 parser.add_argument("--batch_size", default=500)
-parser.add_argument("--max_iter", default=50000)
+parser.add_argument("--max_iter", default=100000)
 parser.add_argument("--buffer_size", default=10000)
 parser.add_argument("--random_episodes", default=0)
 parser.add_argument("--train_freq", default=1)
@@ -36,7 +36,6 @@ parser.add_argument("--alpha_sgd", default=0.0001)
 parser.add_argument("--lambda_", default=0.0001)
 parser.add_argument("--time_coherent", default=False)
 parser.add_argument("--n_weights", default=10)
-parser.add_argument("--timesteps", default=10)
 parser.add_argument("--cholesky_clip", default=0.0001)
 parser.add_argument("--l1", default=64)
 parser.add_argument("--l2", default=0)
@@ -50,9 +49,6 @@ parser.add_argument("--max_iter_ukl", default=60)
 
 parser.add_argument("--source_file", default=path + "/sources")
 parser.add_argument("--tasks_file", default=path + "/tasks")
-# rtde arguments
-parser.add_argument("--temporal_bandwidth", default=0.3333)
-parser.add_argument("--kernel", default="epanechnikov")
 
 # Read arguments
 args = parser.parse_args()
@@ -84,15 +80,12 @@ max_iter_ukl = int(args.max_iter_ukl)
 
 source_file = str(args.source_file)
 tasks_file = str(args.tasks_file)
-timesteps = int(args.timesteps)
-temporal_bandwidth = float(args.temporal_bandwidth)
-kernel = str(args.kernel)
 
 # Seed to get reproducible results
 seed = 1
 np.random.seed(seed)
 
-file_name = "results/mountaincar/rtde_" + str(post_components) + "c_" + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+file_name = "results/trading/mgvt_" + str(post_components) + "c_" + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
 # Load tasks
 mdps = utils.load_object(tasks_file)
@@ -102,8 +95,6 @@ n_eval_episodes = 5
 state_dim = mdps[0].state_dim
 action_dim = 1
 n_actions = mdps[0].action_space.n
-
-prior_weights = temporal_kernel(timesteps, temporal_bandwidth, kernel)
 
 # Create BellmanOperator
 operator = MellowBellmanOperator(kappa, tau, xi, mdps[0].gamma, state_dim, action_dim)
@@ -123,6 +114,7 @@ def run(mdp, seed=None):
                  alpha_adam=alpha_adam,
                  alpha_sgd=alpha_sgd,
                  lambda_=lambda_,
+                 n_weights=n_weights,
                  train_freq=train_freq,
                  eval_freq=eval_freq,
                  random_episodes=random_episodes,
@@ -131,17 +123,14 @@ def run(mdp, seed=None):
                  cholesky_clip=cholesky_clip,
                  bandwidth=bandwidth,
                  post_components=post_components,
-                 prior_weights=prior_weights,
                  max_iter_ukl=max_iter_ukl,
                  eps=eps,
                  eta=eta,
                  time_coherent=time_coherent,
                  source_file=source_file,
                  seed=seed,
-                 render=render,
                  verbose=verbose,
                  ukl_tight_freq=1)
-
 
 seeds = [9, 44, 404, 240, 259, 141, 371, 794, 41, 507, 819, 959, 829, 558, 638, 127, 672, 4, 635, 687]
 seeds = seeds[:n_runs]

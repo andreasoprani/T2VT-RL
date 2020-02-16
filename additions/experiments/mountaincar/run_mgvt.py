@@ -81,7 +81,7 @@ tasks_file = str(args.tasks_file)
 
 # Seed to get reproducible results
 seed = 1
-np.random.seed(1)
+np.random.seed(seed)
 
 file_name = "results/mountaincar/mgvt_" + str(post_components) + "c_" + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 

@@ -1,10 +1,13 @@
 import sys
 import os
 path = os.path.dirname(os.path.realpath(__file__))  # path to this directory
-sys.path.append(os.path.abspath(path + "/../../.."))
+sys.path.append(os.path.abspath(path + "/../../trading")) # add trading
+sys.path.append(os.path.abspath(path + "/../../..")) # add main folder
+
+import gym
+from ags_trading.unpadded_trading_env.derivatives import TradingDerivatives
 
 import numpy as np
-from envs.mountain_car import MountainCarEnv
 from additions.approximators.mlp_torch import MLPQFunction
 from operators.mellow_torch import MellowBellmanOperator
 from additions.algorithms.nt import learn
@@ -14,9 +17,7 @@ from joblib import Parallel, delayed
 import datetime
 from algorithms.dqn import DQN
 
-
 # Global parameters
-render = False
 verbose = False
 
 # Command line arguments
@@ -25,7 +26,7 @@ parser.add_argument("--kappa", default=100.)
 parser.add_argument("--xi", default=0.5)
 parser.add_argument("--tau", default=0.0)
 parser.add_argument("--batch_size", default=32)
-parser.add_argument("--max_iter", default=1500000)
+parser.add_argument("--max_iter", default=1000000)
 parser.add_argument("--buffer_size", default=50000)
 parser.add_argument("--random_episodes", default=0)
 parser.add_argument("--exploration_fraction", default=0.5)
@@ -37,18 +38,10 @@ parser.add_argument("--mean_episodes", default=20)
 parser.add_argument("--l1", default=64)
 parser.add_argument("--l2", default=0)
 parser.add_argument("--alpha", default=0.001)
-# Car parameters (default = randomize)
-parser.add_argument("--speed", default=-1)
 parser.add_argument("--n_jobs", default=1)
 parser.add_argument("--n_runs", default=1)
 parser.add_argument("--dqn", default=False)
 
-parser.add_argument("--timesteps", default=10)
-parser.add_argument("--samples_per_timestep", default=5)
-parser.add_argument("--min_speed", default=0.001)
-parser.add_argument("--max_speed", default=0.0015)
-parser.add_argument("--speed_std", default=0.00002)
-parser.add_argument("--just_one_timestep", default=-1) # Used to re-train for just one timestep. -1 = False, 0 -> (timesteps - 1) = timestep to re-train 
 parser.add_argument("--sources_file_name", default=path + "/sources")
 parser.add_argument("--tasks_file_name", default=path + "/tasks")
 
@@ -70,17 +63,10 @@ mean_episodes = int(args.mean_episodes)
 l1 = int(args.l1)
 l2 = int(args.l2)
 alpha = float(args.alpha)
-speed = float(args.speed)
 n_jobs = int(args.n_jobs)
 n_runs = int(args.n_runs)
 dqn = bool(args.dqn)
 
-timesteps = int(args.timesteps)
-samples_per_timestep = int(args.samples_per_timestep)
-min_speed = float(args.min_speed)
-max_speed = float(args.max_speed)
-speed_std = float(args.speed_std)
-just_one_timestep = int(args.just_one_timestep)
 sources_file_name = str(args.sources_file_name)
 tasks_file_name = str(args.tasks_file_name)
 
@@ -88,22 +74,20 @@ tasks_file_name = str(args.tasks_file_name)
 seed = 1
 np.random.seed(seed)
 
-# speed: min -> max
-# No clipping is performed
-speed_means = np.linspace(min_speed, max_speed, timesteps + 1)
-mdps = []
-
-for t in range(timesteps + 1):
-    # Generate random speed
-    speeds = np.random.normal(loc = speed_means[t], scale = speed_std, size = samples_per_timestep)
-    print(speeds)
-    mdps.append([MountainCarEnv(s) for s in speeds])
+# All environments
+envs = [
+    'TradingDer2014-v2',
+    'TradingDer2015-v2',
+    'TradingDer2016-v2',
+    'TradingDer-v3' # 2017
+    ]
+mdps = [gym.make(env) for env in envs]
 
 n_eval_episodes = 5
 
-state_dim = mdps[0][0].state_dim
+state_dim = mdps[0].state_dim
 action_dim = 1
-n_actions = mdps[0][0].action_space.n
+n_actions = mdps[0].action_space.n
 
 layers = [l1]
 if l2 > 0:
@@ -111,11 +95,11 @@ if l2 > 0:
 
 if not dqn:
     # Create BellmanOperator
-    operator = MellowBellmanOperator(kappa, tau, xi, mdps[0][0].gamma, state_dim, action_dim)
+    operator = MellowBellmanOperator(kappa, tau, xi, mdps[0].gamma, state_dim, action_dim)
     # Create Q Function
     Q = MLPQFunction(state_dim, n_actions, layers=layers)
 else:
-    Q, operator = DQN(state_dim, action_dim, n_actions, mdps[0][0].gamma, layers=layers)
+    Q, operator = DQN(state_dim, action_dim, n_actions, mdps[0].gamma, layers=layers)
 
 def run(mdp, seed=None):
     return learn(mdp,
@@ -134,37 +118,17 @@ def run(mdp, seed=None):
                  eval_episodes=n_eval_episodes,
                  mean_episodes=mean_episodes,
                  seed=seed,
-                 render=render,
                  verbose=verbose)
 
 last_rewards = 5
 
 results = []
 
-if just_one_timestep in range(0, timesteps): # Learn optimal policies just for one timestep
-    print("Timestep", just_one_timestep)
-    timestep_results = []
-    for j in range(samples_per_timestep):
-        timestep_results.append(run(mdps[just_one_timestep][j], seed))
-        print("Last evaluation rewards:", np.around(timestep_results[-1][2][4][-last_rewards:], decimals = 3))
+for mdp in mdps:
+    print(mdp.get_info())
+    results.append([run(mdp, seed)])
+    print("Last evaluation rewards:", np.around(results[-1][2][4][-last_rewards:], decimals = 3))
+    utils.save_object(results, sources_file_name)
 
-    results = utils.load_object(sources_file_name) # sources must already exist.
-    results[just_one_timestep] = timestep_results  # overwrite
-
-else: # Learn optimal policies for all sources
-    for i in range(timesteps):
-        print("Timestep", i)
-        timestep_results = []
-        for j in range(samples_per_timestep):
-            timestep_results.append(run(mdps[i][j], seed))
-            print("Last evaluation rewards:", np.around(timestep_results[-1][2][4][-last_rewards:], decimals = 3))
-        results.append(timestep_results)
-
-utils.save_object(results, sources_file_name)
-
-# Save tasks to file
-tasks = mdps[-1]
-print("Tasks")
-print("Speeds:", [t.get_info()[1] for t in tasks])
-
+tasks = [gym.make('TradingDer2018-v2')]
 utils.save_object(tasks, tasks_file_name)

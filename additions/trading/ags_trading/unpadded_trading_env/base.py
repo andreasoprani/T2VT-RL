@@ -17,12 +17,14 @@ class TradingMain(gym.Env):
 # fees = 2/100000.
     def __init__(self, csv_path=None, fees = 2/100000, spread = 0, maximum_drowdown = -500/100000., norm_prices=False, time_lag=60, old_csv_path=None, testing=False):
         # Check data (prices CSV)
+        self.csv_path = csv_path
+
+        dir_path = os.path.dirname(os.path.realpath(__file__)) + "/../env_settings"
         assert csv_path is not None, "Need price data to create environment."
-        csv_path = os.path.join(os.path.expanduser('~') + '/NSD-RL+/ags_trading/env_settings', csv_path)
+        csv_path = os.path.join(dir_path, csv_path)
         if old_csv_path is None:
             old_csv_path = csv_path
-        else:
-            csv_path = os.path.join(os.path.expanduser('~') + '/NSD-RL/trading_env/ags_trading/env_settings', csv_path)
+            
         self.norm_prices = norm_prices
         self.time_lag = time_lag
         self.data = pd.read_csv(csv_path, index_col = 0) #FIXME:
@@ -129,3 +131,6 @@ class TradingMain(gym.Env):
         self.done = False
         self.profit = 0
         return None
+    
+    def get_info(self):
+        return ["TradingMain", self.csv_path]

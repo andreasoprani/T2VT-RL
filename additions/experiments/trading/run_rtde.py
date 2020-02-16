@@ -1,10 +1,13 @@
 import sys
 import os
 path = os.path.dirname(os.path.realpath(__file__))  # path to this directory
-sys.path.append(os.path.abspath(path + "/../../.."))
+sys.path.append(os.path.abspath(path + "/../../trading")) # add trading
+sys.path.append(os.path.abspath(path + "/../../..")) # add main folder
+
+import gym
+from ags_trading.unpadded_trading_env.derivatives import TradingDerivatives
 
 import numpy as np
-from envs.mountain_car import MountainCarEnv
 from additions.approximators.mlp_torch import MLPQFunction
 from operators.mellow_torch import MellowBellmanOperator
 from additions.algorithms.mgvt_torch import learn
@@ -16,7 +19,6 @@ import datetime
 from additions.temporal_kernel import temporal_kernel
 
 # Global parameters
-render = False
 verbose = False
 
 # Command line arguments
@@ -25,7 +27,7 @@ parser.add_argument("--kappa", default=100.)
 parser.add_argument("--xi", default=0.5)
 parser.add_argument("--tau", default=0.0)
 parser.add_argument("--batch_size", default=500)
-parser.add_argument("--max_iter", default=50000)
+parser.add_argument("--max_iter", default=100000)
 parser.add_argument("--buffer_size", default=10000)
 parser.add_argument("--random_episodes", default=0)
 parser.add_argument("--train_freq", default=1)
@@ -36,7 +38,6 @@ parser.add_argument("--alpha_sgd", default=0.0001)
 parser.add_argument("--lambda_", default=0.0001)
 parser.add_argument("--time_coherent", default=False)
 parser.add_argument("--n_weights", default=10)
-parser.add_argument("--timesteps", default=10)
 parser.add_argument("--cholesky_clip", default=0.0001)
 parser.add_argument("--l1", default=64)
 parser.add_argument("--l2", default=0)
@@ -51,7 +52,8 @@ parser.add_argument("--max_iter_ukl", default=60)
 parser.add_argument("--source_file", default=path + "/sources")
 parser.add_argument("--tasks_file", default=path + "/tasks")
 # rtde arguments
-parser.add_argument("--temporal_bandwidth", default=0.3333)
+parser.add_argument("--timesteps", default=4)
+parser.add_argument("--temporal_bandwidth", default=1)
 parser.add_argument("--kernel", default="epanechnikov")
 
 # Read arguments
@@ -92,7 +94,7 @@ kernel = str(args.kernel)
 seed = 1
 np.random.seed(seed)
 
-file_name = "results/mountaincar/rtde_" + str(post_components) + "c_" + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+file_name = "results/trading/rtde_" + str(post_components) + "c_" + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
 # Load tasks
 mdps = utils.load_object(tasks_file)
@@ -138,7 +140,6 @@ def run(mdp, seed=None):
                  time_coherent=time_coherent,
                  source_file=source_file,
                  seed=seed,
-                 render=render,
                  verbose=verbose,
                  ukl_tight_freq=1)
 
