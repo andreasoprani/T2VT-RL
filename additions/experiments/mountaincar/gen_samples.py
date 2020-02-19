@@ -150,6 +150,7 @@ if just_one_timestep in range(0, timesteps): # Learn optimal policies just for o
 
     results = utils.load_object(sources_file_name) # sources must already exist.
     results[just_one_timestep] = timestep_results  # overwrite
+    utils.save_object(results, sources_file_name)
 
 else: # Learn optimal policies for all sources
     for i in range(timesteps):
@@ -159,8 +160,9 @@ else: # Learn optimal policies for all sources
             timestep_results.append(run(mdps[i][j], seed))
             print("Last evaluation rewards:", np.around(timestep_results[-1][2][4][-last_rewards:], decimals = 3))
         results.append(timestep_results)
+        utils.save_object(results, sources_file_name)
 
-utils.save_object(results, sources_file_name)
+
 
 # Save tasks to file
 tasks = mdps[-1]

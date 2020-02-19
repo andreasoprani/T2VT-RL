@@ -1,8 +1,8 @@
 import subprocess
 import datetime
 
-python = "C:/Users/andre/Anaconda3/python.exe"
-path = "d:/Documenti/GitHub/Thesis/additions/experiments/rooms/"
+python = sys.executable
+path = os.path.dirname(os.path.realpath(__file__)) + "/"
 files = [
          "run_mgvt.py --post_components=1",
          #"run_mgvt.py --post_components=3",
@@ -29,7 +29,7 @@ if gen:
     f += " --no_door_zone=" + str(no_door_zone)
 
     print(f + " - " + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S"))
-    subprocess.call(python + " " + path + f)
+    subprocess.call(python + " " + path + f, shell=True)
 
 #    for t in range(timesteps):
 #        f = gen_samples
@@ -40,7 +40,7 @@ if gen:
 #        f += " --just_one_timestep=" + str(t)
 #
 #        print(f + " - " + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S"))
-#        subprocess.call(python + " " + path + f)
+#        subprocess.call(python + " " + path + f, shell=True)
 
 for f in files:
     f += " --max_iter=" + str(max_iter)
@@ -48,6 +48,6 @@ for f in files:
     f += " --experiment_type=" + exp_type
 
     print(f + " - " + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S"))
-    subprocess.call(python + " " + path + f)
+    subprocess.call(python + " " + path + f, shell=True)
 
 print("EXECUTION COMPLETE - " + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S"))

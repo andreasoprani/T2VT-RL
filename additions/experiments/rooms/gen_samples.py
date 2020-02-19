@@ -103,7 +103,7 @@ def gen_door_means(exp_type="linear"):
     if exp_type == "periodic-no-rep":
         # periodic with no repetition
         # door 1: as sin but x in [a, pi + a] where a is in [pi/4, pi/2]
-        # door 2: doo1 reversed
+        # door 2: door1 reversed
         a = np.random.uniform(low = np.pi / 4, high = np.pi / 2)
         d_means = np.sin(np.linspace(a, a + np.pi, timesteps + 1))
         # normalize on range
@@ -111,6 +111,24 @@ def gen_door_means(exp_type="linear"):
         d2_means = np.flip(d_means)
         return (d_means, d2_means)
 
+    if exp_type == "polynomial":
+        # polynomial of fourth order fit on the points (0,-1), (0.2,0), (0.5,0), (0.7,0), (1,1)
+        # door 2: door1 reversed
+        
+        a = -15.625 # x^4
+        b = 39.5833 # x^3
+        c = -31.875 # x^2 
+        d = 9.91667 # x
+        e = -1
+        
+        f = lambda x : a * x**4 + b * x**3 + c * x**2 + d * x + e
+        d_means = np.linspace(0, 1, timesteps + 1)
+        d_means = f(d_means)
+        d_means = d_means * ((gw_size - 2 * no_door_zone - 1 - 2 * doors_std) / 2) + (gw_size / 2)
+        
+        d2_means = np.flip(d_means)
+        return (d_means, d2_means)
+    
     else: # linear
         # door 1: ----->
         # door 2: <-----
@@ -188,6 +206,7 @@ if just_one_timestep in range(0, timesteps): # Learn optimal policies just for o
 
     results = utils.load_object(sources_file_name) # sources must already exist.
     results[just_one_timestep] = timestep_results  # overwrite
+    utils.save_object(results, sources_file_name)
 
 else: # Learn optimal policies for all sources
     for i in range(timesteps):
@@ -197,9 +216,7 @@ else: # Learn optimal policies for all sources
             timestep_results.append(run(mdps[i][j], seed))
             print("Last evaluation reward:", np.around(timestep_results[-1][2][4][-last_rewards:], decimals = 3))
         results.append(timestep_results)
-
-# Save sources to file
-utils.save_object(results, sources_file_name)
+        utils.save_object(results, sources_file_name)
 
 # Save tasks to file
 tasks = mdps[-1]
