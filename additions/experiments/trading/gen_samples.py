@@ -127,7 +127,7 @@ results = []
 for mdp in mdps:
     print(mdp.get_info())
     results.append([run(mdp, seed)])
-    print("Last evaluation rewards:", np.around(results[-1][2][4][-last_rewards:], decimals = 3))
+    print("Last learning rewards:", np.around(results[-1][0][2][3][-last_rewards:], decimals = 5))
     utils.save_object(results, sources_file_name)
 
 tasks = [gym.make('TradingDer2018-v2')]

@@ -1,8 +1,8 @@
 import subprocess
 import datetime
 
-python = sys.executable
-path = os.path.dirname(os.path.realpath(__file__)) + "/"
+python = sys.executable # path to current python executable
+path = os.path.dirname(os.path.realpath(__file__)) + "/" # path to this folder
 files = [
          #"run_mgvt.py --post_components=1",
          "run_mgvt.py --post_components=3",

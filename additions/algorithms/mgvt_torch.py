@@ -450,9 +450,12 @@ def learn(mdp,
                 print("Iter {} Episodes {} Rew(G) {} Rew(L) {} Fval {} L2 {} L_inf {} time {:.1f} s".format(
                     i, episodes[-1], rew, learning_rew, fval, l_2_err, l_inf_err, elapsed_time))
 
+        if (i * 100 / max_iter) % 10 == 0:
+            print("Progress: " + str(int(i * 100 / max_iter)) + "%")
+
     run_info = [iterations, episodes, n_samples, learning_rewards, evaluation_rewards, l_2, l_inf, fvals, episode_rewards[:len(episode_t)], episode_t]
     weights = np.array(mu)
 
-    print("Task over: ", mdp.get_info(), " - Last evaluation reward: ", np.around(run_info[4][-1], decimals=3))
+    print("Task over: ", mdp.get_info(), " - Last learning rewards: ", np.around(run_info[3][-5:], decimals=3))
 
     return [mdp.get_info(), weights, run_info]

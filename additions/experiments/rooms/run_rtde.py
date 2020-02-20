@@ -92,7 +92,10 @@ max_iter_ukl = int(args.max_iter_ukl)
 temporal_bandwidth = float(args.temporal_bandwidth)
 kernel = str(args.kernel)
 
-file_name = "results/" + env + "/" + experiment_type+ "/" + "rtde_" + str(post_components) + "c_" + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+file_name = "results/" + env + "/" + experiment_type+ "/"
+if experiment_type == "sin":
+    file_name += "lambda=" + str(temporal_bandwidth) + "/"
+file_name += "rtde_" + str(post_components) + "c_" + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
 source_file += "-" + experiment_type
 source_file += "-2r" if env == "two-room-gw" else ("-3r" if env == "three-room-gw" else "")

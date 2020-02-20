@@ -141,6 +141,9 @@ def learn(mdp,
             if verbose:
                 print("Iter {} Episodes {} Rew(G) {} Rew(L) {} L2 {} L_inf {} time {:.1f} s".format(
                     i, episodes[-1], rew, learning_rew, l_2_err, l_inf_err, elapsed_time))
+        
+        if (i * 100 / max_iter) % 10 == 0:
+            print("Progress: " + str(int(i * 100 / max_iter)) + "%")
 
     run_info = [iterations, episodes, n_samples, learning_rewards, evaluation_rewards, l_2, l_inf, episode_rewards[:len(episode_t)], episode_t]
     weights = np.array(Q._w)

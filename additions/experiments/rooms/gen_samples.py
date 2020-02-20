@@ -152,7 +152,7 @@ for t in range(timesteps + 1):
     # Append list of mdps
     if env == "two-room-gw":
         mdps.append([TwoRoomGridworld(np.array([gw_size, gw_size]), door_x=d) for d in doors])
-        # print(doors)
+        print(doors)
     elif env == "three-room-gw":
         mdps.append([ThreeRoomGridworld(np.array([gw_size, gw_size]), door_x=(d1,d2)) for (d1,d2) in zip(doors,doors2)])
         # print([(d1,d2) for (d1,d2) in zip(doors,doors2)])
