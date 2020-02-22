@@ -8,7 +8,7 @@ path = os.path.dirname(os.path.realpath(__file__)) + "/" # path to this folder
 files = [
          #"run_mgvt.py --post_components=1",
          #"run_mgvt.py --post_components=3",
-         "run_rtde.py --post_components=1",
+         #"run_rtde.py --post_components=1",
          #"run_rtde.py --post_components=3"
         ]
 
@@ -21,7 +21,7 @@ if exp_type == "periodic-no-rep":
 else: # linear, sin and polynomial
     max_iter = 3000
 
-_lambda = 1
+temporal_bandwidth = 1 # -1 for default
 
 gen = False
 gen_samples = "gen_samples.py"
@@ -40,7 +40,8 @@ for f in files:
     f += " --max_iter=" + str(max_iter)
     f += " --env=" + env
     f += " --experiment_type=" + exp_type
-    f += " --temporal_bandwidth=" + str(_lambda) 
+    if f.find("rtde") and temporal_bandwidth >= 0:
+        f += " --temporal_bandwidth=" + str(temporal_bandwidth) 
 
     print(f + " - " + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S"))
     subprocess.call(python + " " + path + f, shell=True)

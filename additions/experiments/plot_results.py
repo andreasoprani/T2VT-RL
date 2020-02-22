@@ -93,7 +93,7 @@ names = ["1-MGVT",
          "1-RTDE", 
          #"3-RTDE"
          ]
-title = "two-room-gw - polynomial"
+title = "two-room-gw - sin (lambda = 1)"
 
 x = []
 y_mean = []

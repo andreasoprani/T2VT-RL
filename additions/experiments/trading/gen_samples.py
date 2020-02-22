@@ -42,6 +42,7 @@ parser.add_argument("--n_jobs", default=1)
 parser.add_argument("--n_runs", default=1)
 parser.add_argument("--dqn", default=False)
 
+parser.add_argument("--just_one_timestep", default=-1) # Used to re-train for just one timestep. -1 = False, 2014 -> 2017 = timestep to train
 parser.add_argument("--sources_file_name", default=path + "/sources")
 parser.add_argument("--tasks_file_name", default=path + "/tasks")
 
@@ -67,6 +68,7 @@ n_jobs = int(args.n_jobs)
 n_runs = int(args.n_runs)
 dqn = bool(args.dqn)
 
+just_one_timestep = int(args.just_one_timestep)
 sources_file_name = str(args.sources_file_name)
 tasks_file_name = str(args.tasks_file_name)
 
@@ -75,13 +77,13 @@ seed = 1
 np.random.seed(seed)
 
 # All environments
-envs = [
-    'TradingDer2014-v2',
-    'TradingDer2015-v2',
-    'TradingDer2016-v2',
-    'TradingDer-v3' # 2017
-    ]
-mdps = [gym.make(env) for env in envs]
+envs = {
+    2014: 'TradingDer2014-v2',
+    2015: 'TradingDer2015-v2',
+    2016: 'TradingDer2016-v2',
+    2017: 'TradingDer-v3'
+    }
+mdps = [gym.make(envs[k]) for k in envs.keys()]
 
 n_eval_episodes = 5
 
@@ -124,11 +126,20 @@ last_rewards = 5
 
 results = []
 
-for mdp in mdps:
+if just_one_timestep in envs.keys():
+    results = utils.load_object(sources_file_name)
+    index = list(envs.keys()).index(just_one_timestep)
+    mdp = mdps[index]
     print(mdp.get_info())
-    results.append([run(mdp, seed)])
-    print("Last learning rewards:", np.around(results[-1][0][2][3][-last_rewards:], decimals = 5))
+    results[index] = [run(mdp, seed)]
+    print("Last learning rewards:", np.around(results[index][0][2][3][-last_rewards:], decimals = 5))
     utils.save_object(results, sources_file_name)
+else:
+    for mdp in mdps:
+        print(mdp.get_info())
+        results.append([run(mdp, seed)])
+        print("Last learning rewards:", np.around(results[-1][0][2][3][-last_rewards:], decimals = 5))
+        utils.save_object(results, sources_file_name)
 
 tasks = [gym.make('TradingDer2018-v2')]
 utils.save_object(tasks, tasks_file_name)
