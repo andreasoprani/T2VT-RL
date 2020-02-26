@@ -12,7 +12,7 @@ parser.add_argument("--gen_samples", default=True)
 parser.add_argument("--max_iter_gen", default=1000000)
 parser.add_argument("--mgvt_1", default=True)
 parser.add_argument("--mgvt_3", default=True)
-parser.add_argument("--mgvt_1", default=True)
+parser.add_argument("--rtde_1", default=True)
 parser.add_argument("--rtde_3", default=True)
 parser.add_argument("--max_iter", default=75000)
 
@@ -51,7 +51,7 @@ if gen:
 #        subprocess.call(python + " " + path + f, shell=True)
 
 for k, v in tasks.items():
-    if v: 
+    if not v: 
         continue
     f = k
     f += " --max_iter=" + str(max_iter)
