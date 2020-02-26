@@ -7,6 +7,15 @@ from misc import utils
 import numpy as np
 import matplotlib.pyplot as plt
 import glob
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--path", default="results/two-room-gw/linear/")
+parser.add_argument("--title", default="two-room-gw - linear")
+
+args = parser.parse_args()
+path = str(args.path)
+title = str(args.title)
 
 MARKERS = ["o", "D", "s", "^", "v", "p", "*"]
 COLORS = ["#0e5ad3", "#bc2d14", "#22aa16", "#a011a3", "#d1ba0e", "#14ccc2", "#d67413"]
@@ -80,20 +89,22 @@ def learning_rew(iterations, episodes_time, episode_rew, mean_episodes=5):
 
     return np.array(learning_rew)
 
-path = "results/two-room-gw/sin/lambda=1.0/"
-experiments = ["mgvt_1c", 
-               #"mgvt_3c", 
-               "rtde_1c", 
-               #"rtde_3c"
-               ]
-files = [f[:-4] for sublist in [glob.glob(path + exp + "*.pkl") for exp in experiments] for f in sublist]
+experiments = {
+    "mgvt_1c": "1-MGVT", 
+    "mgvt_3c": "3-MGVT", 
+    "rtde_1c": "1-RTDE", 
+    "rtde_3c": "3-RTDE"
+}
 
-names = ["1-MGVT", 
-         #"3-MGVT", 
-         "1-RTDE", 
-         #"3-RTDE"
-         ]
-title = "two-room-gw - sin (lambda = 1)"
+files = []
+names = []
+
+for exp, name in experiments.items():
+    fs = glob.glob(path + exp + "*.pkl")
+    if len(fs) == 0:
+        continue
+    files.append(fs[0][:-4])
+    names.append(name)
 
 x = []
 y_mean = []

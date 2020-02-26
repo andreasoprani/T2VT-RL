@@ -1,13 +1,15 @@
 import subprocess
 import datetime
+import os
+import sys
 
 python = sys.executable # path to current python executable
 path = os.path.dirname(os.path.realpath(__file__)) + "/" # path to this folder
 files = [
-         "run_mgvt.py --post_components=1",
-         #"run_mgvt.py --post_components=3",
-         "run_rtde.py --post_components=1",
-         #"run_rtde.py --post_components=3"
+         #"run_mgvt.py --post_components=1",
+         "run_mgvt.py --post_components=3",
+         #"run_rtde.py --post_components=1",
+         "run_rtde.py --post_components=3"
         ]
 
 env = "three-room-gw"

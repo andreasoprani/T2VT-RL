@@ -14,7 +14,6 @@ from joblib import Parallel, delayed
 import datetime
 from algorithms.dqn import DQN
 
-
 # Global parameters
 render = False
 verbose = False
@@ -161,8 +160,6 @@ else: # Learn optimal policies for all sources
             print("Last evaluation rewards:", np.around(timestep_results[-1][2][4][-last_rewards:], decimals = 3))
         results.append(timestep_results)
         utils.save_object(results, sources_file_name)
-
-
 
 # Save tasks to file
 tasks = mdps[-1]
