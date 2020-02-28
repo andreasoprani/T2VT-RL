@@ -14,10 +14,12 @@ file_name = "sources-sin-2r"
 sources = utils.load_object(sources_path + file_name)
 
 weights = []
+door_positions = []
 
 for i in range(10):
     for j in range(5):
         weights.append(sources[i][j][1])
+        door_positions.append(sources[i][j][0][1])
 weights = np.array(weights)
 
 # Normalize
@@ -52,6 +54,16 @@ for i in range(10):
     pc1 = weights[5*i : 5*(i+1),0]
     pc2 = weights[5*i : 5*(i+1), 1]
     ax.scatter(pc1, pc2, c = colors[i], s = 50)
+# annotations, set add_dp = false to disable them.
+add_dp = True
+x_offset = 0.2
+y_offset = 0.2
+if add_dp:
+    for i, dp in enumerate(door_positions):
+        x = weights[i,0]
+        y = weights[i,1]
+        dp = str(np.around(dp, decimals = 2))
+        ax.annotate(dp, (x + x_offset, y + y_offset))
 ax.legend(targets)
 ax.grid()
 
