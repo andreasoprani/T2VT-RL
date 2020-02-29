@@ -10,8 +10,8 @@ import glob
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--path", default="results/three-room-gw/linear/")
-parser.add_argument("--title", default="three-room-gw - linear")
+parser.add_argument("--path", default="results/mountaincar/")
+parser.add_argument("--title", default="mountaincar")
 
 args = parser.parse_args()
 path = str(args.path)
