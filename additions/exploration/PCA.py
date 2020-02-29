@@ -9,8 +9,8 @@ from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 import matplotlib.pyplot as plt
 
-sources_path = path + "/../experiments/rooms/"
-file_name = "sources-sin-2r"
+sources_path = path + "/../experiments/rooms/sources-"
+file_name = "sin-2r"
 sources = utils.load_object(sources_path + file_name)
 
 weights = []
@@ -67,6 +67,6 @@ if add_dp:
 ax.legend(targets)
 ax.grid()
 
-plt.savefig("additions/PCA/" + file_name + "_pca.pdf", format = 'pdf')
+plt.savefig("additions/exploration/pca_" + file_name + ".pdf", format = 'pdf')
 
 plt.show()
