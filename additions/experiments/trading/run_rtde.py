@@ -94,7 +94,10 @@ kernel = str(args.kernel)
 seed = 1
 np.random.seed(seed)
 
-file_name = "results/trading/rtde_" + str(post_components) + "c_" + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+file_path = "results/trading/"
+if not os.path.exists(file_path):
+    os.mkdir(file_path)
+file_name = "rtde_" + str(post_components) + "c_" + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
 # Load tasks
 mdps = utils.load_object(tasks_file)
@@ -154,4 +157,4 @@ if n_jobs == 1:
 elif n_jobs > 1:
     results = Parallel(n_jobs=n_jobs)(delayed(run)(mdp,seed) for (mdp,seed) in zip(mdps,seeds))
 
-utils.save_object(results, file_name)
+utils.save_object(results, file_path + file_name)

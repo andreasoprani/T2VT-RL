@@ -78,7 +78,10 @@ n_runs = int(args.n_runs)
 source_file = str(args.source_file)
 tasks_file = str(args.tasks_file)
 
-file_name = "results/" + env + "/" + "gvt_" + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+file_path = "results/" + env + "/" + experiment_type + "/"
+if not os.path.exists(file_path):
+    os.mkdir(file_path)
+file_name = "gvt_" + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
 source_file += "-" + experiment_type
 source_file += "-2r" if env == "two-room-gw" else ("-3r" if env == "three-room-gw" else "")
@@ -143,4 +146,4 @@ if n_jobs == 1:
 elif n_jobs > 1:
     results = Parallel(n_jobs=n_jobs)(delayed(run)(mdp,seed) for (mdp,seed) in zip(mdps,seeds))
 
-utils.save_object(results, file_name)
+utils.save_object(results, file_path + file_name)

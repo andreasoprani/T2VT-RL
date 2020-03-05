@@ -86,7 +86,10 @@ post_components = int(args.post_components)
 bandwidth = float(args.bandwidth)
 max_iter_ukl = int(args.max_iter_ukl)
 
-file_name = "results/" + env + "/" + experiment_type + "/" + "mgvt_" + str(post_components) + "c_" + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+file_path = "results/" + env + "/" + experiment_type + "/"
+if not os.path.exists(file_path):
+    os.mkdir(file_path)
+file_name = "mgvt_" + str(post_components) + "c_" + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
 source_file += "-" + experiment_type
 source_file += "-2r" if env == "two-room-gw" else ("-3r" if env == "three-room-gw" else "")
@@ -156,4 +159,4 @@ if n_jobs == 1:
 elif n_jobs > 1:
     results = Parallel(n_jobs=n_jobs)(delayed(run)(mdp,seed) for (mdp,seed) in zip(mdps,seeds))
 
-utils.save_object(results, file_name)
+utils.save_object(results, file_path + file_name)
