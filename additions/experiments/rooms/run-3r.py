@@ -8,13 +8,13 @@ python = sys.executable # path to current python executable
 path = os.path.dirname(os.path.realpath(__file__)) + "/" # path to this folder
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--exp_type", default="linear")
-parser.add_argument("--gen_samples", default=True)
-parser.add_argument("--max_iter_gen", default=1000000)
+parser.add_argument("--exp_type", default="periodic-no-rep")
+parser.add_argument("--gen_samples", default=False)
+parser.add_argument("--max_iter_gen", default=-1) # -1 for default
 parser.add_argument("--no_door_zone", default=2.0)
-parser.add_argument("--mgvt_1", default=True)
+parser.add_argument("--mgvt_1", default=False)
 parser.add_argument("--mgvt_3", default=True)
-parser.add_argument("--rtde_1", default=True)
+parser.add_argument("--rtde_1", default=False)
 parser.add_argument("--rtde_3", default=True)
 parser.add_argument("--max_iter", default=15000)
 parser.add_argument("--temporal_bandwidth", default=-1) # -1 for default
@@ -41,6 +41,13 @@ tasks = {
         }
 
 gen_samples = "gen_samples.py"
+
+if max_iter_gen == -1:
+    if exp_type == "periodic-no-rep":
+        max_iter_gen = 1500000
+    else:
+        max_iter_gen = 1000000
+
 # timesteps = 10
 
 if gen:
