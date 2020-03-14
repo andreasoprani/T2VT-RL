@@ -8,7 +8,7 @@ python = sys.executable # path to current python executable
 path = os.path.dirname(os.path.realpath(__file__)) + "/" # path to this folder
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--exp_type", default="polynomial")
+parser.add_argument("--exp_type", default="sin")
 parser.add_argument("--gen_samples", default=True)
 parser.add_argument("--max_iter_gen", default=-1) # -1 for default
 parser.add_argument("--no_door_zone", default=2.0)

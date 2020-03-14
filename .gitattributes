@@ -2,3 +2,4 @@
 * text=auto
 additions/experiments/rooms/sources-linear-3r.pkl filter=lfs diff=lfs merge=lfs -text
 additions/experiments/rooms/sources-polynomial-3r.pkl filter=lfs diff=lfs merge=lfs -text
+additions/experiments/rooms/sources-sin-3r.pkl filter=lfs diff=lfs merge=lfs -text
