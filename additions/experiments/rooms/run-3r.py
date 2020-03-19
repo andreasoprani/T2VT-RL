@@ -10,7 +10,7 @@ path = os.path.dirname(os.path.realpath(__file__)) + "/" # path to this folder
 parser = argparse.ArgumentParser()
 parser.add_argument("--exp_type", default="sin")
 parser.add_argument("--gen_samples", default=True)
-parser.add_argument("--max_iter_gen", default=-1) # -1 for default
+parser.add_argument("--max_iter_gen", default=1500000) 
 parser.add_argument("--no_door_zone", default=2.0)
 parser.add_argument("--mgvt_1", default=True)
 parser.add_argument("--mgvt_3", default=True)
@@ -23,7 +23,7 @@ args = parser.parse_args()
 exp_type = str(args.exp_type)
 gen = bool(args.gen_samples)
 max_iter_gen = int(args.max_iter_gen)
-no_door_zone = float(args.no_door_zone)
+no_door_zone = float(args.no_door_zone) 
 mgvt_1 = bool(args.mgvt_1)
 mgvt_3 = bool(args.mgvt_3)
 rtde_1 = bool(args.rtde_1)
@@ -41,12 +41,6 @@ tasks = {
         }
 
 gen_samples = "gen_samples.py"
-
-if max_iter_gen == -1:
-    if exp_type == "periodic-no-rep" or exp_type == "polynomial":
-        max_iter_gen = 1500000
-    else:
-        max_iter_gen = 1000000
 
 # timesteps = 10
 
