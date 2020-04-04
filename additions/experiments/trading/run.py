@@ -8,13 +8,13 @@ python = sys.executable # path to current python executable
 path = os.path.dirname(os.path.realpath(__file__)) + "/" # path to this folder
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--gen_samples", default=True)
+parser.add_argument("--gen_samples", default=False)
 parser.add_argument("--mgvt_1", default=True)
 parser.add_argument("--mgvt_3", default=False)
 parser.add_argument("--rtde_1", default=True)
 parser.add_argument("--rtde_3", default=False)
 parser.add_argument("--n_runs", default=1)
-parser.add_argument("--max_iter", default=10000000)
+parser.add_argument("--max_iter", default=30000000)
 
 args = parser.parse_args()
 gen = bool(args.gen_samples)
@@ -33,7 +33,7 @@ tasks = {
         }
 
 gen_samples = "gen_samples.py"
-timesteps = [#2014, 
+timesteps = [2014, 
              2015, 
              2016, 
              2017]

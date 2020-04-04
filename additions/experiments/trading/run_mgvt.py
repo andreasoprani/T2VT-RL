@@ -49,6 +49,7 @@ parser.add_argument("--max_iter_ukl", default=60)
 
 parser.add_argument("--source_file", default=path + "/sources")
 parser.add_argument("--tasks_file", default=path + "/tasks")
+parser.add_argument("--load_results", default = "")
 
 # Read arguments
 args = parser.parse_args()
@@ -80,6 +81,7 @@ max_iter_ukl = int(args.max_iter_ukl)
 
 source_file = str(args.source_file)
 tasks_file = str(args.tasks_file)
+load_results = str(args.load_results)
 
 # Seed to get reproducible results
 seed = 1
@@ -88,7 +90,11 @@ np.random.seed(seed)
 file_path = "results/trading/"
 if not os.path.exists(file_path):
     os.mkdir(file_path)
-file_name = "mgvt_" + str(post_components) + "c_" + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+
+if load_results:
+    file_name = load_results
+else:
+    file_name = "mgvt_" + str(post_components) + "c_" + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
 # Load tasks
 mdps = utils.load_object(tasks_file)
@@ -140,9 +146,19 @@ seeds = seeds[:n_runs]
 
 mdps = np.random.choice(mdps, len(seeds))
 
+if load_results:
+    old_results = utils.load_object(load_results)
+    skip = len(old_results)
+    mdps[skip:]
+    seeds[skip:]
+
 if n_jobs == 1:
     results = [run(mdp,seed) for (mdp,seed) in zip(mdps,seeds)]
 elif n_jobs > 1:
     results = Parallel(n_jobs=n_jobs)(delayed(run)(mdp,seed) for (mdp,seed) in zip(mdps,seeds))
 
-utils.save_object(results, file_path + file_name)
+if load_results:
+    old_results.extend(results)
+    utils.save_object(old_results, file_path + file_name)
+else:
+    utils.save_object(results, file_path + file_name)
