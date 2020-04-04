@@ -15,6 +15,8 @@ from misc import utils
 import argparse
 from joblib import Parallel, delayed
 import datetime
+import glob
+import errno
 
 # Global parameters
 verbose = False
@@ -49,7 +51,7 @@ parser.add_argument("--max_iter_ukl", default=60)
 
 parser.add_argument("--source_file", default=path + "/sources")
 parser.add_argument("--tasks_file", default=path + "/tasks")
-parser.add_argument("--load_results", default = "")
+parser.add_argument("--load_results", default = False)
 
 # Read arguments
 args = parser.parse_args()
@@ -81,7 +83,7 @@ max_iter_ukl = int(args.max_iter_ukl)
 
 source_file = str(args.source_file)
 tasks_file = str(args.tasks_file)
-load_results = str(args.load_results)
+load_results = bool(args.load_results)
 
 # Seed to get reproducible results
 seed = 1
@@ -92,9 +94,14 @@ if not os.path.exists(file_path):
     os.mkdir(file_path)
 
 if load_results:
-    file_name = load_results
+    file_name = "mgvt_" + str(post_components) + "c_"
+    f = file_path + file_name + "*.pkl"
+    fs = glob.glob(f)
+    if len(fs) == 0:
+        raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), f)
+    file_name = fs[0][:-4]
 else:
-    file_name = "mgvt_" + str(post_components) + "c_" + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    file_name = file_path + "mgvt_" + str(post_components) + "c_" + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
 # Load tasks
 mdps = utils.load_object(tasks_file)
@@ -147,10 +154,10 @@ seeds = seeds[:n_runs]
 mdps = np.random.choice(mdps, len(seeds))
 
 if load_results:
-    old_results = utils.load_object(load_results)
+    old_results = utils.load_object(file_name)
     skip = len(old_results)
-    mdps[skip:]
-    seeds[skip:]
+    mdps = mdps[skip:]
+    seeds = seeds[skip:]
 
 if n_jobs == 1:
     results = [run(mdp,seed) for (mdp,seed) in zip(mdps,seeds)]
@@ -159,6 +166,6 @@ elif n_jobs > 1:
 
 if load_results:
     old_results.extend(results)
-    utils.save_object(old_results, file_path + file_name)
+    utils.save_object(old_results, file_name)
 else:
-    utils.save_object(results, file_path + file_name)
+    utils.save_object(results, file_name)
