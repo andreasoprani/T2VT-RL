@@ -46,15 +46,16 @@ parser.add_argument("--cholesky_clip", default=0.0001)
 parser.add_argument("--n_basis", default=11)
 parser.add_argument("--n_jobs", default=1)
 parser.add_argument("--n_runs", default=50)
-parser.add_argument("--source_file", default=path + "/sources")
-parser.add_argument("--tasks_file", default=path + "/tasks")
-parser.add_argument("--load_results", default = False) # load previously found results and extend them
 parser.add_argument("--eta", default=1e-6)  # learning rate for
 parser.add_argument("--eps", default=0.001)  # precision for the initial posterior approximation and upperbound tighting
 parser.add_argument("--bandwidth", default=.00001)  # Bandwidth for the Kernel Estimator
 parser.add_argument("--post_components", default=1)  # number of components of the posterior family
 parser.add_argument("--max_iter_ukl", default=60)
+
 parser.add_argument("--experiment_type", default="linear")
+parser.add_argument("--source_file", default=path + "/sources")
+parser.add_argument("--tasks_file", default=path + "/tasks")
+parser.add_argument("--load_results", default = False) # load previously found results and extend them
 
 # Read arguments
 args = parser.parse_args()
@@ -76,19 +77,20 @@ n_weights = int(args.n_weights)
 timesteps = int(args.timesteps)
 cholesky_clip = float(args.cholesky_clip)
 env = str(args.env)
-experiment_type = str(args.experiment_type)
 gw_size = int(args.gw_size)
 n_basis = int(args.n_basis)
 n_jobs = int(args.n_jobs)
 n_runs = int(args.n_runs)
-source_file = str(args.source_file)
-tasks_file = str(args.tasks_file)
-load_results = bool(args.load_results)
 eps = float(args.eps)
 eta = float(args.eta)
 post_components = int(args.post_components)
 bandwidth = float(args.bandwidth)
 max_iter_ukl = int(args.max_iter_ukl)
+
+experiment_type = str(args.experiment_type)
+source_file = str(args.source_file)
+tasks_file = str(args.tasks_file)
+load_results = bool(args.load_results)
 
 file_path = "results/" + env + "/" + experiment_type + "/"
 if not os.path.exists(file_path):
