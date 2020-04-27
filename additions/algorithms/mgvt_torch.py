@@ -259,6 +259,7 @@ def learn(mdp,
 
     if seed is not None:
         np.random.seed(seed)
+    print(seed) # delete
 
     # Randomly initialize the weights in case an MLP is used
     if isinstance(Q, MLPQFunction):
