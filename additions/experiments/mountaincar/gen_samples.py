@@ -48,6 +48,7 @@ parser.add_argument("--min_speed", default=0.001)
 parser.add_argument("--max_speed", default=0.0015)
 parser.add_argument("--speed_std", default=0.00002)
 parser.add_argument("--just_one_timestep", default=-1) # Used to re-train for just one timestep. -1 = False, 0 -> (timesteps - 1) = timestep to re-train 
+parser.add_argument("--experiment_type", default="linear")
 parser.add_argument("--sources_file_name", default=path + "/sources")
 parser.add_argument("--tasks_file_name", default=path + "/tasks")
 
@@ -80,16 +81,56 @@ min_speed = float(args.min_speed)
 max_speed = float(args.max_speed)
 speed_std = float(args.speed_std)
 just_one_timestep = int(args.just_one_timestep)
+experiment_type = str(args.experiment_type)
 sources_file_name = str(args.sources_file_name)
 tasks_file_name = str(args.tasks_file_name)
+
+sources_file_name += "-" + experiment_type
+tasks_file_name += "-" + experiment_type
 
 # Seed to get reproducible results
 seed = 1
 np.random.seed(seed)
 
-# speed: min -> max
-# No clipping is performed
-speed_means = np.linspace(min_speed, max_speed, timesteps + 1)
+def gen_speed_means(exp_type="linear"):
+
+    if exp_type == "sin":
+        # sin(x) normalized on [min, max], x = 2pi * (i/(t+1))
+        s_means = np.sin((2 * np.pi) * np.linspace(0, 1, timesteps + 1))
+        s_means = s_means * ((max_speed - min_speed) / 2) + (max_speed + min_speed) / 2
+        
+        return s_means
+
+    if exp_type == "periodic-no-rep":
+        # as sin but x in [a, pi + a] where a is in [pi/4, pi/2]
+        a = np.random.uniform(low = np.pi/4, high = np.pi/2)
+        s_means = np.sin(np.linspace(a, a + np.pi, timesteps + 1))
+        s_means = s_means * ((max_speed - min_speed) / 2) + (max_speed + min_speed) / 2
+        
+        return s_means
+
+    if exp_type = "polynomial":
+        # polynomial of fourth order fit on the points (0,-1), (0.2,0), (0.5,0), (0.7,0), (1,1)
+        a = -15.625 # x^4
+        b = 39.5833 # x^3
+        c = -31.875 # x^2 
+        d = 9.91667 # x
+        e = -1
+
+        f = lambda x : a * x**4 + b * x**3 + c * x**2 + d * x + e
+        s_means = np.linspace(0, 1, timesteps + 1)
+        s_means = f(s_means)
+        s_means = s_means * ((max_speed - min_speed) / 2) + (max_speed + min_speed) / 2
+        
+        return s_means
+
+    else:
+        # min -> max
+        s_means = np.linspace(min_speed, max_speed, timesteps + 1)
+        return s_means
+    
+speed_means = gen_speed_means(experiment_type)
+
 mdps = []
 
 for t in range(timesteps + 1):
