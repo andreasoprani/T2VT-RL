@@ -178,6 +178,8 @@ if load_results:
     mdps = mdps[skip:]
     seeds = seeds[skip:]
 
+print("Seeds selected:", seeds)
+
 if n_jobs == 1:
     results = [run(mdp,seed) for (mdp,seed) in zip(mdps,seeds)]
 elif n_jobs > 1:
