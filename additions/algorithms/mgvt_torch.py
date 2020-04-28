@@ -259,7 +259,6 @@ def learn(mdp,
 
     if seed is not None:
         np.random.seed(seed)
-    print(seed) # delete
 
     # Randomly initialize the weights in case an MLP is used
     if isinstance(Q, MLPQFunction):
@@ -452,7 +451,7 @@ def learn(mdp,
                     i, episodes[-1], rew, learning_rew, fval, l_2_err, l_inf_err, elapsed_time))
 
         if (i * 100 / max_iter) % 10 == 0:
-            print("Progress: " + str(int(i * 100 / max_iter)) + "%")
+            print("Seed: " + str(seed) + " - Progress: " + str(int(i * 100 / max_iter)) + "%")
 
     run_info = [iterations, episodes, n_samples, learning_rewards, evaluation_rewards, l_2, l_inf, fvals, episode_rewards[:len(episode_t)], episode_t]
     weights = np.array(mu)
