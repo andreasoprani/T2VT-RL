@@ -143,9 +143,12 @@ def learn(mdp,
                     i, episodes[-1], rew, learning_rew, l_2_err, l_inf_err, elapsed_time))
         
         if (i * 100 / max_iter) % 10 == 0:
-            print("Progress: " + str(int(i * 100 / max_iter)) + "%")
+            print("MDP:", mdp.get_info(), "- Progress:", str(int(i * 100 / max_iter)) + "%")
 
     run_info = [iterations, episodes, n_samples, learning_rewards, evaluation_rewards, l_2, l_inf, episode_rewards[:len(episode_t)], episode_t]
     weights = np.array(Q._w)
+
+    last_rewards = 5
+    print("MDP:", mdp.get_info(), "- Last evaluation rewards:", np.around(evaluation_rewards[-last_rewards:], decimals = 3))
 
     return [mdp.get_info(), weights, run_info]

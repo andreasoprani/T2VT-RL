@@ -11,13 +11,13 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--exp_type", default="linear")
 parser.add_argument("--gen_samples", default=False)
 parser.add_argument("--max_iter_gen", default=1000000)
-parser.add_argument("--mgvt_1", default=False)
-parser.add_argument("--mgvt_3", default=False)
-parser.add_argument("--rtde_1", default=False)
+parser.add_argument("--mgvt_1", default=True)
+parser.add_argument("--mgvt_3", default=True)
+parser.add_argument("--rtde_1", default=True)
 parser.add_argument("--rtde_3", default=True)
 parser.add_argument("--max_iter", default=75000)
 parser.add_argument("--temporal_bandwidth", default=-1) # -1 for default
-parser.add_argument("--load_results", default=True)
+parser.add_argument("--load_results", default=False)
 parser.add_argument("--n_jobs", default=1)
 
 args = parser.parse_args()
@@ -47,6 +47,8 @@ if gen:
     f = gen_samples
     f += " --max_iter=" + str(max_iter_gen)
     f += " --experiment_type=" + exp_type
+    if n_jobs > 1:
+        f += " --n_jobs=" + str(n_jobs)
 
     print(f + " - " + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S"))
     subprocess.call(python + " " + path + f, shell=True)
