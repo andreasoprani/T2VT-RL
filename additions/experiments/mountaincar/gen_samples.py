@@ -109,7 +109,7 @@ def gen_speed_means(exp_type="linear"):
         
         return s_means
 
-    if exp_type = "polynomial":
+    if exp_type == "polynomial":
         # polynomial of fourth order fit on the points (0,-1), (0.2,0), (0.5,0), (0.7,0), (1,1)
         a = -15.625 # x^4
         b = 39.5833 # x^3
@@ -183,10 +183,10 @@ results = []
 
 if just_one_timestep in range(0, timesteps): # Learn optimal policies just for one timestep
     print("Timestep", just_one_timestep)
-    timestep_results = []
-    for j in range(samples_per_timestep):
-        timestep_results.append(run(mdps[just_one_timestep][j], seed))
-        print("Last evaluation rewards:", np.around(timestep_results[-1][2][4][-last_rewards:], decimals = 3))
+    if n_jobs == 1:
+        timestep_results = [run(mdp,seed) for mdp in mdps[just_one_timestep]]
+    elif n_jobs > 1:
+        timestep_results = Parallel(n_jobs=n_jobs)(delayed(run)(mdp,seed) for mdp in mdps[just_one_timestep])
 
     results = utils.load_object(sources_file_name) # sources must already exist.
     results[just_one_timestep] = timestep_results  # overwrite
@@ -194,11 +194,13 @@ if just_one_timestep in range(0, timesteps): # Learn optimal policies just for o
 
 else: # Learn optimal policies for all sources
     for i in range(timesteps):
+        
         print("Timestep", i)
-        timestep_results = []
-        for j in range(samples_per_timestep):
-            timestep_results.append(run(mdps[i][j], seed))
-            print("Last evaluation rewards:", np.around(timestep_results[-1][2][4][-last_rewards:], decimals = 3))
+        if n_jobs == 1:
+            timestep_results = [run(mdp,seed) for mdp in mdps[i]]
+        elif n_jobs > 1:
+            timestep_results = Parallel(n_jobs=n_jobs)(delayed(run)(mdp,seed) for mdp in mdps[i])
+
         results.append(timestep_results)
         utils.save_object(results, sources_file_name)
 
