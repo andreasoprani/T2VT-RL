@@ -17,7 +17,7 @@ import datetime
 import glob
 import errno
 
-from additions.temporal_kernel import temporal_kernel
+from additions.temporal_kernel import temporal_weights_calculator
 
 # Global parameters
 render = False
@@ -46,7 +46,8 @@ parser.add_argument("--cholesky_clip", default=0.0001)
 # Door at -1 means random positions over all runs
 parser.add_argument("--n_basis", default=11)
 parser.add_argument("--n_jobs", default=1)
-parser.add_argument("--n_runs", default=50)parser.add_argument("--eta", default=1e-6)  # learning rate for
+parser.add_argument("--n_runs", default=50)
+parser.add_argument("--eta", default=1e-6)  # learning rate for
 parser.add_argument("--eps", default=0.001)  # precision for the initial posterior approximation and upperbound tighting
 parser.add_argument("--bandwidth", default=.00001)  # Bandwidth for the Kernel Estimator
 parser.add_argument("--post_components", default=1)  # number of components of the posterior family
@@ -60,6 +61,8 @@ parser.add_argument("--load_results", default = False) # load previously found r
 parser.add_argument("--timesteps", default=10)
 parser.add_argument("--temporal_bandwidth", default=0.3333)
 parser.add_argument("--kernel", default="epanechnikov")
+parser.add_argument("--testing_lambda", default=False)
+parser.add_argument("--lambda_preset", default="fixed")
 
 # Read arguments
 args = parser.parse_args()
@@ -97,22 +100,31 @@ load_results = bool(args.load_results)
 timesteps = int(args.timesteps)
 temporal_bandwidth = float(args.temporal_bandwidth)
 kernel = str(args.kernel)
+testing_lambda = bool(args.testing_lambda)
+lambda_preset = str(args.lambda_preset)
 
 file_path = "results/" + env + "/" + experiment_type + "/"
 if experiment_type == "sin":
     file_path += "lambda=" + str(temporal_bandwidth) + "/"
 if not os.path.exists(file_path):
     os.mkdir(file_path)
+    
+file_name = "rtde_" + str(post_components) + "c_"
+
+if testing_lambda:
+    if lambda_preset != "fixed":
+        file_name += "l=" + lambda_preset + "_"
+    else:
+        file_name += "l=" + str(temporal_bandwidth) + "_"
 
 if load_results:
-    file_name = "rtde_" + str(post_components) + "c_"
     f = file_path + file_name + "*.pkl"
     fs = glob.glob(f)
     if len(fs) == 0:
         raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), f)
     file_name = fs[0][:-4]
 else:
-    file_name = file_path + "rtde_" + str(post_components) + "c_" + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    file_name = file_path + file_name + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
 source_file += "-" + experiment_type
 source_file += "-2r" if env == "two-room-gw" else ("-3r" if env == "three-room-gw" else "")
@@ -140,7 +152,7 @@ Q = MLPQFunction(K, n_actions, layers=None)
 # Create RBFs
 rbf = build_features_gw_state(gw_size, n_basis, state_dim)
 
-prior_weights = temporal_kernel(timesteps, temporal_bandwidth, kernel)
+weights_calculator = lambda x : temporal_weights_calculator(x, timesteps, lambda_preset, temporal_bandwidth, kernel)
 
 def run(mdp, seed=None):
     return learn(mdp,
@@ -162,7 +174,6 @@ def run(mdp, seed=None):
                  cholesky_clip=cholesky_clip,
                  bandwidth=bandwidth,
                  post_components=post_components,
-                 prior_weights=prior_weights,
                  max_iter_ukl=max_iter_ukl,
                  eps=eps,
                  eta=eta,
@@ -170,7 +181,8 @@ def run(mdp, seed=None):
                  source_file=source_file,
                  seed=seed,
                  render=render,
-                 verbose=verbose)
+                 verbose=verbose,
+                 weights_calculator=weights_calculator)
 
 
 seeds = [9, 44, 404, 240, 259, 141, 371, 794, 41, 507, 819, 959, 829, 558, 638, 127, 672, 4, 635, 687]

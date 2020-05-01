@@ -245,7 +245,6 @@ def learn(mdp,
           cholesky_clip=0.0001,
           bandwidth=0.00001,
           post_components=1,
-          prior_weights=None,
           max_iter_ukl=60,
           eps=0.001,
           eta=1e-6,
@@ -255,7 +254,9 @@ def learn(mdp,
           render=False,
           verbose=True,
           ukl_tight_freq=1,
-          sources=None):
+          sources=None,
+          # Lambda function to calculate the weights
+          weights_calculator=None):
 
     if seed is not None:
         np.random.seed(seed)
@@ -293,7 +294,8 @@ def learn(mdp,
     ws = np.array(ws)
 
     # The gaussian mixture weights are uniform if not provided.
-    c_bar = np.ones(timesteps)/timesteps if prior_weights is None else prior_weights
+    c_bar = np.ones(timesteps)/timesteps if weights_calculator is None else weights_calculator(ws)
+    print(c_bar)
 
     # Take only gaussians with non-zero weights
     ws = ws[c_bar > 0]

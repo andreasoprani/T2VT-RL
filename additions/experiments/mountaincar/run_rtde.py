@@ -15,7 +15,7 @@ import datetime
 import glob
 import errno
 
-from additions.temporal_kernel import temporal_kernel
+from additions.temporal_kernel import temporal_weights_calculator
 
 # Global parameters
 render = False
@@ -57,6 +57,8 @@ parser.add_argument("--load_results", default = False) # load previously found r
 parser.add_argument("--timesteps", default=10)
 parser.add_argument("--temporal_bandwidth", default=0.3333)
 parser.add_argument("--kernel", default="epanechnikov")
+parser.add_argument("--testing_lambda", default=False)
+parser.add_argument("--lambda_preset", default="fixed")
 
 # Read arguments
 args = parser.parse_args()
@@ -93,20 +95,29 @@ load_results = bool(args.load_results)
 timesteps = int(args.timesteps)
 temporal_bandwidth = float(args.temporal_bandwidth)
 kernel = str(args.kernel)
+testing_lambda = bool(args.testing_lambda)
+lambda_preset = str(args.lambda_preset)
 
 file_path = "results/mountaincar/" + experiment_type + "/"
 if not os.path.exists(file_path):
     os.mkdir(file_path)
 
+file_name = "rtde_" + str(post_components) + "c_"
+
+if testing_lambda:
+    if lambda_preset != "fixed":
+        file_name += "l=" + lambda_preset + "_"
+    else:
+        file_name += "l=" + str(temporal_bandwidth) + "_"
+
 if load_results:
-    file_name = "rtde_" + str(post_components) + "c_"
     f = file_path + file_name + "*.pkl"
     fs = glob.glob(f)
     if len(fs) == 0:
         raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), f)
     file_name = fs[0][:-4]
 else:
-    file_name = file_path + "rtde_" + str(post_components) + "c_" + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    file_name = file_path + file_name + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
 source_file += "-" + experiment_type
 tasks_file += "-" + experiment_type
@@ -124,8 +135,6 @@ state_dim = mdps[0].state_dim
 action_dim = 1
 n_actions = mdps[0].action_space.n
 
-prior_weights = temporal_kernel(timesteps, temporal_bandwidth, kernel)
-
 # Create BellmanOperator
 operator = MellowBellmanOperator(kappa, tau, xi, mdps[0].gamma, state_dim, action_dim)
 # Create Q Function
@@ -133,6 +142,8 @@ layers = [l1]
 if l2 > 0:
     layers.append(l2)
 Q = MLPQFunction(state_dim, n_actions, layers=layers)
+
+weights_calculator = lambda x : temporal_weights_calculator(x, timesteps, lambda_preset, temporal_bandwidth, kernel)
 
 def run(mdp, seed=None):
     return learn(mdp,
@@ -161,7 +172,7 @@ def run(mdp, seed=None):
                  seed=seed,
                  render=render,
                  verbose=verbose,
-                 ukl_tight_freq=1)
+                 weights_calculator=weights_calculator)
 
 
 seeds = [9, 44, 404, 240, 259, 141, 371, 794, 41, 507, 819, 959, 829, 558, 638, 127, 672, 4, 635, 687]
