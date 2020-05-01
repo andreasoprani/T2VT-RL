@@ -10,7 +10,7 @@ import glob
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--path", default="results/mountaincar/")
+parser.add_argument("--path", default="results/mountaincar/linear/")
 parser.add_argument("--title", default="mountaincar - linear")
 
 args = parser.parse_args()
