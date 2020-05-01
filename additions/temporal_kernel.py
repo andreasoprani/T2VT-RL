@@ -1,4 +1,6 @@
 import numpy as np
+from scipy.spatial import distance
+from scipy.stats import entropy
 
 def normalized_epanechnikov(x):
     """Normalized Epanechnikov kernel."""
@@ -62,3 +64,35 @@ def temporal_kernel(samples, _lambda, kernel = "epanechnikov"):
         return None
 
     return kernels[kernel](samples, _lambda)
+
+def shannon_kernel_weights(euc_distances, samples, kernel="epanechnikov"):
+    
+    s = entropy(euc_distances, base=2)
+    l = (1+s)/samples
+    
+    return temporal_kernel(samples, l, kernel)
+    
+def avg_kernel_weights(euc_distances, samples, kernel="epanechnikov"):
+
+    d = euc_distances[-1]
+    m = np.average(euc_distances)
+    l = (1 + 4 * m / d) / samples
+    
+    return temporal_kernel(samples, l, kernel)
+
+presets = {
+    "shannon": shannon_kernel_weights,
+    "avg": avg_kernel_weights
+}
+
+def temporal_weights_calculator(weights, samples, preset="fixed", _lambda=1, kernel="epanechnikov"):
+    
+    if preset == "fixed":
+        return temporal_kernel(samples, _lambda, kernel)
+    
+    if preset not in presets:
+        print("Preset not found.")
+        return None
+    
+    euc_distances = [distance.euclidean(weights[i], weights[i+1]) for i in range(len(weights)-1)]
+    return presets[preset](euc_distances, samples, kernel)
