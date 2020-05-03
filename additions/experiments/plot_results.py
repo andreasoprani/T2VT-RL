@@ -10,21 +10,23 @@ import glob
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--path", default="results/mountaincar/linear/")
-parser.add_argument("--title", default="mountaincar - linear")
+parser.add_argument("--path", default="results/two-room-gw/linear/")
+parser.add_argument("--title", default="two-room-gw - linear")
+parser.add_argument("--testing_lambda", default=False)
 
 args = parser.parse_args()
 path = str(args.path)
 title = str(args.title)
+testing_lambda = bool(args.testing_lambda)
 
 MARKERS = ["o", "D", "s", "^", "v", "p", "*"]
-COLORS = ["#0e5ad3", "#bc2d14", "#22aa16", "#a011a3", "#d1ba0e", "#14ccc2", "#d67413"]
+COLORS = ["#0e5ad3", "#bc2d14", "#22aa16", "#a011a3", "#d1ba0e", "#14ccc2", "#d67413", "#ef24d4", "#3eff8d", "#5e1046", "#215e10", "#5e4110"]
 LINES = ["solid", "dashed", "dashdot", "dotted", "solid", "dashed", "dashdot", "dotted"]
 
 
 def plot_curves(x_data, y_mean_data, y_std_data=None, title="", x_label="Episodes", y_label="Performance", names=None,
                 file_name=None):
-    assert len(x_data) < 8
+    assert len(x_data) < 13
 
     plt.style.use('ggplot')
 
@@ -95,6 +97,22 @@ experiments = {
     "rtde_1c": "1-RTDE", 
     "rtde_3c": "3-RTDE"
 }
+
+if testing_lambda:
+    experiments = {
+        "rtde_1c_l=0.1": "1-RTDE - lambda = 0.1",
+        "rtde_1c_l=0.2": "1-RTDE - lambda = 0.2",
+        "rtde_1c_l=0.4": "1-RTDE - lambda = 0.4",
+        "rtde_1c_l=0.3": "1-RTDE - lambda = 0.3",
+        "rtde_1c_l=0.5": "1-RTDE - lambda = 0.5",
+        "rtde_1c_l=0.6": "1-RTDE - lambda = 0.6",
+        "rtde_1c_l=0.7": "1-RTDE - lambda = 0.7",
+        "rtde_1c_l=0.8": "1-RTDE - lambda = 0.8",
+        "rtde_1c_l=0.9": "1-RTDE - lambda = 0.9",
+        "rtde_1c_l=1.0": "1-RTDE - lambda = 1.0",
+        "rtde_1c_l=avg": "1-RTDE - lambda = (1 + 4m/d)/n",
+        "rtde_1c_l=shannon": "1-RTDE - lambda = (1 + S)/n"
+    }
 
 files = []
 names = []
