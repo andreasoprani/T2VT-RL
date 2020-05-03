@@ -20,13 +20,13 @@ title = str(args.title)
 testing_lambda = bool(args.testing_lambda)
 
 MARKERS = ["o", "D", "s", "^", "v", "p", "*"]
-COLORS = ["#0e5ad3", "#bc2d14", "#22aa16", "#a011a3", "#d1ba0e", "#14ccc2", "#d67413", "#ef24d4", "#3eff8d", "#5e1046", "#215e10", "#5e4110"]
+COLORS = ["#0e5ad3", "#bc2d14", "#22aa16", "#a011a3", "#d1ba0e", "#14ccc2", "#d67413", "#ef24d4"]
 LINES = ["solid", "dashed", "dashdot", "dotted", "solid", "dashed", "dashdot", "dotted"]
 
 
 def plot_curves(x_data, y_mean_data, y_std_data=None, title="", x_label="Episodes", y_label="Performance", names=None,
                 file_name=None):
-    assert len(x_data) < 13
+    assert len(x_data) < 16
 
     plt.style.use('ggplot')
 
@@ -41,6 +41,8 @@ def plot_curves(x_data, y_mean_data, y_std_data=None, title="", x_label="Episode
     plt.rcParams['ytick.labelsize'] = 10
     plt.rcParams['legend.fontsize'] = 10
     plt.rcParams['figure.titlesize'] = 20
+    
+    plt.rcParams['figure.figsize'] = [16,9]
 
     fig, ax = plt.subplots()
 
@@ -52,12 +54,16 @@ def plot_curves(x_data, y_mean_data, y_std_data=None, title="", x_label="Episode
     plt.xlim([X.min(), X.max()])
 
     for i in range(len(x_data)):
+        
+        linestyle = i // len(COLORS)
+        linestyle = LINES[linestyle]
 
-        ax.plot(x_data[i], y_mean_data[i], linewidth=3, color=COLORS[i], marker=None, markersize=8.0,
-                linestyle="solid", label=names[i] if names is not None else None)
+        ax.plot(x_data[i], y_mean_data[i], linewidth=3, color=COLORS[i % len(COLORS)], marker=None, markersize=8.0,
+                linestyle=linestyle, label=names[i] if names is not None else None)
         if y_std_data is not None:
             ax.fill_between(x_data[i], y_mean_data[i] - y_std_data[i], y_mean_data[i] + y_std_data[i],
-                            facecolor=COLORS[i], edgecolor=COLORS[i], alpha=0.3)
+                            facecolor=COLORS[i % len(COLORS)], edgecolor=COLORS[i % len(COLORS)],
+                            linestyle=linestyle, alpha=0.3)
 
     if names is not None:
         ax.legend(loc='best', numpoints=1, fancybox=True, frameon=False)
