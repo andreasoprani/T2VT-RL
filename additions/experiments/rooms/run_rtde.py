@@ -104,7 +104,9 @@ testing_lambda = bool(args.testing_lambda)
 lambda_preset = str(args.lambda_preset)
 
 file_path = "results/" + env + "/" + experiment_type + "/"
-if experiment_type == "sin":
+if testing_lambda:
+    file_path += "lambda_test/"
+elif experiment_type == "sin":
     file_path += "lambda=" + str(temporal_bandwidth) + "/"
 if not os.path.exists(file_path):
     os.mkdir(file_path)
@@ -115,7 +117,7 @@ if testing_lambda:
     if lambda_preset != "fixed":
         file_name += "l=" + lambda_preset + "_"
     else:
-        file_name += "l=" + str(temporal_bandwidth) + "_"
+        file_name += "l=" + str(np.around(temporal_bandwidth, decimals = 1)) + "_"
 
 if load_results:
     f = file_path + file_name + "*.pkl"
