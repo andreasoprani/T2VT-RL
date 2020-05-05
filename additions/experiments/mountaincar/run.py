@@ -20,17 +20,19 @@ parser.add_argument("--temporal_bandwidth", default=-1) # -1 for default
 parser.add_argument("--load_results", default=False)
 parser.add_argument("--n_jobs", default=1)
 
+to_bool = lambda x : x in [True, "True", "true", "1"]
+
 args = parser.parse_args()
 exp_type = str(args.exp_type)
-gen = bool(args.gen_samples)
+gen = to_bool(args.gen_samples)
 max_iter_gen = int(args.max_iter_gen)
-mgvt_1 = bool(args.mgvt_1)
-mgvt_3 = bool(args.mgvt_3)
-rtde_1 = bool(args.rtde_1)
-rtde_3 = bool(args.rtde_3)
+mgvt_1 = to_bool(args.mgvt_1)
+mgvt_3 = to_bool(args.mgvt_3)
+rtde_1 = to_bool(args.rtde_1)
+rtde_3 = to_bool(args.rtde_3)
 max_iter = int(args.max_iter)
 temporal_bandwidth = float(args.temporal_bandwidth)
-load_results = bool(args.load_results)
+load_results = to_bool(args.load_results)
 n_jobs = int(args.n_jobs)
 
 tasks = {
