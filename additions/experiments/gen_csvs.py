@@ -19,6 +19,8 @@ data_index = 3
 
 def gen_csv(results_path):
     
+    print(results_path)
+    
     out = {
         "i": []
     }
@@ -35,7 +37,7 @@ def gen_csv(results_path):
         data = [r[i][2][data_index] for i in range(len(r))]
         
         mean = np.mean(data, axis = 0)
-        std = 2 * np.std(data, axis = 0) / np.sqrt(np.array(data).shape[0])
+        std = 2 * np.std(data, axis = 0, ddof = 1) / np.sqrt(np.array(data).shape[0])
         
         out["mean-" + name] = mean
         out["std-" + name] = std
