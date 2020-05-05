@@ -59,6 +59,9 @@ if gen:
 #        f = gen_samples
 #        f += " --max_iter=" + str(max_iter_gen)
 #        f += " --just_one_timestep=" + str(t)
+#        f += " --experiment_type=" + exp_type
+#        if n_jobs > 1:
+#           f += " --n_jobs=" + str(n_jobs)
 #
 #        print(f + " - " + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S"))
 #        subprocess.call(python + " " + path + f, shell=True)
