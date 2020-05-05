@@ -295,7 +295,6 @@ def learn(mdp,
 
     # The gaussian mixture weights are uniform if not provided.
     c_bar = np.ones(timesteps)/timesteps if weights_calculator is None else weights_calculator(ws)
-    print(c_bar)
 
     # Take only gaussians with non-zero weights
     ws = ws[c_bar > 0]
