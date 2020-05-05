@@ -10,11 +10,13 @@ import glob
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--path", default="results/two-room-gw/linear/")
-parser.add_argument("--title", default="two-room-gw - linear")
+parser.add_argument("--show", default=True)
+parser.add_argument("--path", default="results/two-room-gw/sin/lambda=1.0/")
+parser.add_argument("--title", default="")
 parser.add_argument("--testing_lambda", default=False)
 
 args = parser.parse_args()
+show = args.show
 path = str(args.path)
 title = str(args.title)
 testing_lambda = bool(args.testing_lambda)
@@ -71,7 +73,8 @@ def plot_curves(x_data, y_mean_data, y_std_data=None, title="", x_label="Episode
     if file_name is not None:
         plt.savefig(file_name + ".pdf", format='pdf')
 
-    plt.show()
+    if show == True:
+        plt.show()
 
 
 def learning_rew(iterations, episodes_time, episode_rew, mean_episodes=5):
@@ -100,24 +103,24 @@ def learning_rew(iterations, episodes_time, episode_rew, mean_episodes=5):
 experiments = {
     "mgvt_1c": "1-MGVT", 
     "mgvt_3c": "3-MGVT", 
-    "rtde_1c": "1-RTDE", 
-    "rtde_3c": "3-RTDE"
+    "rtde_1c": "1-T2VT", 
+    "rtde_3c": "3-T2VT"
 }
 
 if testing_lambda:
     experiments = {
-        "rtde_1c_l=0.1": "1-RTDE - lambda = 0.1",
-        "rtde_1c_l=0.2": "1-RTDE - lambda = 0.2",
-        "rtde_1c_l=0.4": "1-RTDE - lambda = 0.4",
-        "rtde_1c_l=0.3": "1-RTDE - lambda = 0.3",
-        "rtde_1c_l=0.5": "1-RTDE - lambda = 0.5",
-        "rtde_1c_l=0.6": "1-RTDE - lambda = 0.6",
-        "rtde_1c_l=0.7": "1-RTDE - lambda = 0.7",
-        "rtde_1c_l=0.8": "1-RTDE - lambda = 0.8",
-        "rtde_1c_l=0.9": "1-RTDE - lambda = 0.9",
-        "rtde_1c_l=1.0": "1-RTDE - lambda = 1.0",
-        "rtde_1c_l=avg": "1-RTDE - lambda = (1 + 4m/d)/n",
-        "rtde_1c_l=shannon": "1-RTDE - lambda = (1 + S)/n"
+        "rtde_1c_l=0.1": "1-T2VT - lambda = 0.1",
+        "rtde_1c_l=0.2": "1-T2VT - lambda = 0.2",
+        "rtde_1c_l=0.4": "1-T2VT - lambda = 0.4",
+        "rtde_1c_l=0.3": "1-T2VT - lambda = 0.3",
+        "rtde_1c_l=0.5": "1-T2VT - lambda = 0.5",
+        "rtde_1c_l=0.6": "1-T2VT - lambda = 0.6",
+        "rtde_1c_l=0.7": "1-T2VT - lambda = 0.7",
+        "rtde_1c_l=0.8": "1-T2VT - lambda = 0.8",
+        "rtde_1c_l=0.9": "1-T2VT - lambda = 0.9",
+        "rtde_1c_l=1.0": "1-T2VT - lambda = 1.0",
+        "rtde_1c_l=avg": "1-T2VT - lambda = (1 + 4m/d)/n",
+        "rtde_1c_l=shannon": "1-T2VT - lambda = (1 + S)/n"
     }
 
 files = []
