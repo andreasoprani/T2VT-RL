@@ -64,6 +64,8 @@ parser.add_argument("--kernel", default="epanechnikov")
 parser.add_argument("--testing_lambda", default=False)
 parser.add_argument("--lambda_preset", default="fixed")
 
+to_bool = lambda x : x in [True, "True", "true", "1"]
+
 # Read arguments
 args = parser.parse_args()
 kappa = float(args.kappa)
@@ -96,11 +98,11 @@ max_iter_ukl = int(args.max_iter_ukl)
 experiment_type = str(args.experiment_type)
 source_file = str(args.source_file)
 tasks_file = str(args.tasks_file)
-load_results = bool(args.load_results)
+load_results = to_bool(args.load_results)
 timesteps = int(args.timesteps)
 temporal_bandwidth = float(args.temporal_bandwidth)
 kernel = str(args.kernel)
-testing_lambda = bool(args.testing_lambda)
+testing_lambda = to_bool(args.testing_lambda)
 lambda_preset = str(args.lambda_preset)
 
 file_path = "results/" + env + "/" + experiment_type + "/"

@@ -57,6 +57,8 @@ parser.add_argument("--source_file", default=path + "/sources")
 parser.add_argument("--tasks_file", default=path + "/tasks")
 parser.add_argument("--load_results", default = False) # load previously found results and extend them
 
+to_bool = lambda x : x in [True, "True", "true", "1"]
+
 # Read arguments
 args = parser.parse_args()
 kappa = float(args.kappa)
@@ -90,7 +92,7 @@ max_iter_ukl = int(args.max_iter_ukl)
 experiment_type = str(args.experiment_type)
 source_file = str(args.source_file)
 tasks_file = str(args.tasks_file)
-load_results = bool(args.load_results)
+load_results = to_bool(args.load_results)
 
 file_path = "results/" + env + "/" + experiment_type + "/"
 if not os.path.exists(file_path):

@@ -52,13 +52,15 @@ parser.add_argument("--max_iter_ukl", default=60)
 parser.add_argument("--experiment_type", default="linear")
 parser.add_argument("--source_file", default=path + "/sources")
 parser.add_argument("--tasks_file", default=path + "/tasks")
-parser.add_argument("--load_results", default = False) # load previously found results and extend them
+parser.add_argument("--load_results", default=False) # load previously found results and extend them
 # rtde arguments
 parser.add_argument("--timesteps", default=10)
 parser.add_argument("--temporal_bandwidth", default=0.3333)
 parser.add_argument("--kernel", default="epanechnikov")
 parser.add_argument("--testing_lambda", default=False)
 parser.add_argument("--lambda_preset", default="fixed")
+
+to_bool = lambda x : x in [True, "True", "true", "1"]
 
 # Read arguments
 args = parser.parse_args()
@@ -91,11 +93,11 @@ max_iter_ukl = int(args.max_iter_ukl)
 experiment_type = str(args.experiment_type)
 source_file = str(args.source_file)
 tasks_file = str(args.tasks_file)
-load_results = bool(args.load_results)
+load_results = to_bool(args.load_results)
 timesteps = int(args.timesteps)
 temporal_bandwidth = float(args.temporal_bandwidth)
 kernel = str(args.kernel)
-testing_lambda = bool(args.testing_lambda)
+testing_lambda = to_bool(args.testing_lambda)
 lambda_preset = str(args.lambda_preset)
 
 file_path = "results/mountaincar/" + experiment_type + "/"
@@ -163,7 +165,6 @@ def run(mdp, seed=None):
                  cholesky_clip=cholesky_clip,
                  bandwidth=bandwidth,
                  post_components=post_components,
-                 prior_weights=prior_weights,
                  max_iter_ukl=max_iter_ukl,
                  eps=eps,
                  eta=eta,
