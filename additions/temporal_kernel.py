@@ -26,8 +26,11 @@ def normalized_epanechnikov_weights(samples, _lambda):
     the list of weights
     """
     
-    #if _lambda > 1:
-    #    _lambda = 1
+    # Clipping
+    if _lambda > 1:
+        _lambda = 1
+    elif _lambda < 0:
+        _lambda = 0
 
     weights = np.zeros(samples)
 
