@@ -11,7 +11,7 @@ import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--show", default=True)
-parser.add_argument("--path", default="results/two-room-gw/sin/lambda=1.0/")
+parser.add_argument("--path", default="results/two-room-gw/linear/")
 parser.add_argument("--title", default="")
 parser.add_argument("--testing_lambda", default=False)
 
@@ -120,7 +120,8 @@ if testing_lambda:
         "rtde_1c_l=0.9": "1-T2VT - lambda = 0.9",
         "rtde_1c_l=1.0": "1-T2VT - lambda = 1.0",
         "rtde_1c_l=avg": "1-T2VT - lambda = (1 + 4m/d)/n",
-        "rtde_1c_l=shannon": "1-T2VT - lambda = (1 + S)/n"
+        "rtde_1c_l=shannon": "1-T2VT - lambda = (1 + S)/n",
+        "rtde_1c_l=timelag": "1-T2VT - lambda = W.Sum(tau)/n"
     }
 
 files = []

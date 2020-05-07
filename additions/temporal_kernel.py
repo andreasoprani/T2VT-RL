@@ -71,14 +71,18 @@ def temporal_kernel(samples, _lambda, kernel = "epanechnikov"):
 
     return kernels[kernel](samples, _lambda)
 
-def shannon_kernel_weights(euc_distances, samples, kernel="epanechnikov"):
+def shannon_kernel_weights(weights, samples, kernel="epanechnikov"):
+    
+    euc_distances = [distance.euclidean(weights[i], weights[i+1]) for i in range(len(weights)-1)]
     
     s = entropy(euc_distances, base=2)
     l = (1+s)/samples
     
     return temporal_kernel(samples, l, kernel)
     
-def avg_kernel_weights(euc_distances, samples, kernel="epanechnikov"):
+def avg_kernel_weights(weights, samples, kernel="epanechnikov"):
+    
+    euc_distances = [distance.euclidean(weights[i], weights[i+1]) for i in range(len(weights)-1)]
 
     d = euc_distances[-1]
     m = np.average(euc_distances)
@@ -86,9 +90,29 @@ def avg_kernel_weights(euc_distances, samples, kernel="epanechnikov"):
     
     return temporal_kernel(samples, l, kernel)
 
+def timelag_kernel_weights(weights, samples, kernel="epanechnikov"):
+    
+    timelag_weights = []
+    
+    for tau in range(1, len(weights)):
+        dists = []
+        for i in range(0, len(weights) - tau):
+            dists.append(distance.euclidean(weights[i], weights[i + tau]))
+        d = np.average(dists)
+        w = 1/d
+        timelag_weights.append((tau, w))
+
+    w_sum = np.sum([w for (_, w) in timelag_weights])
+    weighted_timelags = [tau * w / w_sum for (tau, w) in timelag_weights]
+    
+    l = np.sum(weighted_timelags) / samples
+    
+    return temporal_kernel(samples, l, kernel)
+
 presets = {
     "shannon": shannon_kernel_weights,
-    "avg": avg_kernel_weights
+    "avg": avg_kernel_weights,
+    "timelag": timelag_kernel_weights
 }
 
 def temporal_weights_calculator(weights, samples, preset="fixed", _lambda=1, kernel="epanechnikov"):
@@ -100,5 +124,4 @@ def temporal_weights_calculator(weights, samples, preset="fixed", _lambda=1, ker
         print("Preset not found.")
         return None
     
-    euc_distances = [distance.euclidean(weights[i], weights[i+1]) for i in range(len(weights)-1)]
-    return presets[preset](euc_distances, samples, kernel)
+    return presets[preset](weights, samples, kernel)
