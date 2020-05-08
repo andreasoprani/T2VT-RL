@@ -32,9 +32,9 @@ def gen_csv(results_path):
         r = utils.load_object(fs[0][:-4])
         
         if not out["i"]:
-            out["i"] = r[0][2][0]
+            out["i"] = r[0][2][0][1:]
             
-        data = [r[i][2][data_index] for i in range(len(r))]
+        data = [r[i][2][data_index][1:] for i in range(len(r))]
         
         mean = np.mean(data, axis = 0)
         std = 2 * np.std(data, axis = 0, ddof = 1) / np.sqrt(np.array(data).shape[0])
