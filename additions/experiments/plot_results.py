@@ -111,8 +111,8 @@ if testing_lambda:
     experiments = {
         "rtde_1c_l=0.1": "1-T2VT - lambda = 0.1",
         "rtde_1c_l=0.2": "1-T2VT - lambda = 0.2",
-        "rtde_1c_l=0.4": "1-T2VT - lambda = 0.4",
-        "rtde_1c_l=0.3": "1-T2VT - lambda = 0.3",
+        "rtde_1c_l=0.4": "1-T2VT - lambda = 0.3",
+        "rtde_1c_l=0.3": "1-T2VT - lambda = 0.4",
         "rtde_1c_l=0.5": "1-T2VT - lambda = 0.5",
         "rtde_1c_l=0.6": "1-T2VT - lambda = 0.6",
         "rtde_1c_l=0.7": "1-T2VT - lambda = 0.7",
