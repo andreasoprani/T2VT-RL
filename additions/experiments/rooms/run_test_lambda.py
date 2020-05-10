@@ -42,7 +42,8 @@ task += " --n_jobs=" + str(n_jobs)
 lambdas = np.linspace(0.1, 1, 10)
 lambda_presets = ["shannon", 
                   "avg",
-                  "timelag"
+                  "timelag",
+                  "timelag_softmax"
                   ]
 
 for l in lambdas:
