@@ -27,7 +27,7 @@ parser.add_argument("--kappa", default=100.)
 parser.add_argument("--xi", default=0.5)
 parser.add_argument("--tau", default=0.0)
 parser.add_argument("--batch_size", default=500)
-parser.add_argument("--max_iter", default=50000)
+parser.add_argument("--max_iter", default=75000)
 parser.add_argument("--buffer_size", default=10000)
 parser.add_argument("--random_episodes", default=0)
 parser.add_argument("--train_freq", default=1)
@@ -101,6 +101,8 @@ testing_lambda = to_bool(args.testing_lambda)
 lambda_preset = str(args.lambda_preset)
 
 file_path = "results/mountaincar/" + experiment_type + "/"
+if experiment_type == "sin":
+    file_path += "lambda=" + str(temporal_bandwidth) + "/"
 if not os.path.exists(file_path):
     os.mkdir(file_path)
 
