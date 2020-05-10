@@ -109,10 +109,30 @@ def timelag_kernel_weights(weights, samples, kernel="epanechnikov"):
     
     return temporal_kernel(samples, l, kernel)
 
+def timelag_softmax_kernel_weights(weights, samples, kernel="epanechnikov"):
+    
+    timelag_weights = []
+    
+    for tau in range(1, len(weights)):
+        dists = []
+        for i in range(0, len(weights) - tau):
+            dists.append(distance.euclidean(weights[i], weights[i + tau]))
+        d = np.average(dists)
+        w = np.exp(1/d)
+        timelag_weights.append((tau, w))
+
+    w_sum = np.sum([w for (_, w) in timelag_weights])
+    weighted_timelags = [tau * w / w_sum for (tau, w) in timelag_weights]
+    
+    l = np.sum(weighted_timelags) / samples
+    
+    return temporal_kernel(samples, l, kernel)
+
 presets = {
     "shannon": shannon_kernel_weights,
     "avg": avg_kernel_weights,
-    "timelag": timelag_kernel_weights
+    "timelag": timelag_kernel_weights,
+    "timelag_softmax": timelag_softmax_kernel_weights
 }
 
 def temporal_weights_calculator(weights, samples, preset="fixed", _lambda=1, kernel="epanechnikov"):

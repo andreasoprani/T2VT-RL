@@ -15,11 +15,13 @@ parser.add_argument("--path", default="results/two-room-gw/linear/")
 parser.add_argument("--title", default="")
 parser.add_argument("--testing_lambda", default=False)
 
+to_bool = lambda x : x in [True, "True", "true", "1"]
+
 args = parser.parse_args()
-show = args.show
+show = to_bool(args.show)
 path = str(args.path)
 title = str(args.title)
-testing_lambda = bool(args.testing_lambda)
+testing_lambda = to_bool(args.testing_lambda)
 
 MARKERS = ["o", "D", "s", "^", "v", "p", "*"]
 COLORS = ["#0e5ad3", "#bc2d14", "#22aa16", "#a011a3", "#d1ba0e", "#14ccc2", "#d67413", "#ef24d4"]
@@ -109,19 +111,20 @@ experiments = {
 
 if testing_lambda:
     experiments = {
-        "rtde_1c_l=0.1": "1-T2VT - lambda = 0.1",
-        "rtde_1c_l=0.2": "1-T2VT - lambda = 0.2",
-        "rtde_1c_l=0.4": "1-T2VT - lambda = 0.3",
-        "rtde_1c_l=0.3": "1-T2VT - lambda = 0.4",
-        "rtde_1c_l=0.5": "1-T2VT - lambda = 0.5",
-        "rtde_1c_l=0.6": "1-T2VT - lambda = 0.6",
-        "rtde_1c_l=0.7": "1-T2VT - lambda = 0.7",
-        "rtde_1c_l=0.8": "1-T2VT - lambda = 0.8",
-        "rtde_1c_l=0.9": "1-T2VT - lambda = 0.9",
-        "rtde_1c_l=1.0": "1-T2VT - lambda = 1.0",
-        "rtde_1c_l=avg": "1-T2VT - lambda = (1 + 4m/d)/n",
-        "rtde_1c_l=shannon": "1-T2VT - lambda = (1 + S)/n",
-        "rtde_1c_l=timelag": "1-T2VT - lambda = W.Sum(tau)/n"
+        "rtde_1c_l=0.1": "1-T2VT - l = 0.1",
+        "rtde_1c_l=0.2": "1-T2VT - l = 0.2",
+        "rtde_1c_l=0.4": "1-T2VT - l = 0.3",
+        "rtde_1c_l=0.3": "1-T2VT - l = 0.4",
+        "rtde_1c_l=0.5": "1-T2VT - l = 0.5",
+        "rtde_1c_l=0.6": "1-T2VT - l = 0.6",
+        "rtde_1c_l=0.7": "1-T2VT - l = 0.7",
+        "rtde_1c_l=0.8": "1-T2VT - l = 0.8",
+        "rtde_1c_l=0.9": "1-T2VT - l = 0.9",
+        "rtde_1c_l=1.0": "1-T2VT - l = 1.0",
+        "rtde_1c_l=avg": "1-T2VT - l = (1 + 4m/d)/n",
+        "rtde_1c_l=shannon": "1-T2VT - l = (1 + S)/n",
+        "rtde_1c_l=timelag": "1-T2VT - l = W.Sum(tau)/n",
+        "rtde_1c_l=timelag_softmax": "1-T2VT - l = W.Sum(sm_tau)/n"
     }
 
 files = []
