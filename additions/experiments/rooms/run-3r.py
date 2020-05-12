@@ -19,6 +19,7 @@ parser.add_argument("--rtde_3", default=True)
 parser.add_argument("--max_iter", default=15000)
 parser.add_argument("--temporal_bandwidth", default=-1) # -1 for default
 parser.add_argument("--load_results", default=False)
+parser.add_argument("--n_jobs", default=1)
 
 to_bool = lambda x : x in [True, "True", "true", "1"]
 
@@ -54,6 +55,8 @@ if gen:
     f += " --env=" + env
     f += " --experiment_type=" + exp_type
     f += " --no_door_zone=" + str(no_door_zone)
+    if n_jobs > 1:
+        f += " --n_jobs=" + str(n_jobs)
 
     print(f + " - " + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S"))
     subprocess.call(python + " " + path + f, shell=True)
@@ -79,6 +82,8 @@ for k, v in tasks.items():
     if f.find("rtde") and temporal_bandwidth >= 0:
         f += " --temporal_bandwidth=" + str(temporal_bandwidth)
     f += " --load_results=" + str(load_results)
+    if n_jobs > 1:
+        f += " --n_jobs=" + str(n_jobs)
         
     print(f + " - " + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S"))
     subprocess.call(python + " " + path + f, shell=True)
