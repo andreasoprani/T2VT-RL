@@ -10,7 +10,7 @@ python = sys.executable # path to current python executable
 path = os.path.dirname(os.path.realpath(__file__)) + "/" # path to this folder
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--exp_type", default="periodic-no-rep")
+parser.add_argument("--exp_type", default="linear")
 parser.add_argument("--max_iter", default=-1) # -1 for default
 parser.add_argument("--load_results", default=False)
 parser.add_argument("--n_runs", default=20)
@@ -43,7 +43,8 @@ lambdas = np.linspace(0.1, 1, 10)
 lambda_presets = ["shannon", 
                   "avg",
                   "timelag",
-                  "timelag_softmax"
+                  "timelag_softmax",
+                  "likelihood"
                   ]
 
 for l in lambdas:

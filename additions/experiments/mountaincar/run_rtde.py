@@ -147,7 +147,7 @@ if l2 > 0:
     layers.append(l2)
 Q = MLPQFunction(state_dim, n_actions, layers=layers)
 
-weights_calculator = lambda x : temporal_weights_calculator(x, timesteps, lambda_preset, temporal_bandwidth, kernel)
+weights_calculator = lambda x : temporal_weights_calculator(x, timesteps, lambda_preset, temporal_bandwidth, 1.0, kernel)
 
 def run(mdp, seed=None):
     return learn(mdp,
