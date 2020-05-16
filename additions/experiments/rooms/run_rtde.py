@@ -156,7 +156,7 @@ Q = MLPQFunction(K, n_actions, layers=None)
 # Create RBFs
 rbf = build_features_gw_state(gw_size, n_basis, state_dim)
 
-weights_calculator = lambda x : temporal_weights_calculator(x, timesteps, lambda_preset, temporal_bandwidth, kernel)
+weights_calculator = lambda x : temporal_weights_calculator(x, timesteps, lambda_preset, temporal_bandwidth, 1.0, kernel)
 
 def run(mdp, seed=None):
     return learn(mdp,
