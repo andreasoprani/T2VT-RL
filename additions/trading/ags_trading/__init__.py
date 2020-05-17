@@ -38,7 +38,8 @@ gym.envs.register(
      entry_point='ags_trading.unpadded_trading_env.derivatives:TradingDerivatives',
      kwargs={
         'csv_path': '2017-EURUSD-BGN-Curncy-1m.csv',
-        'fees': 1e-6,
+        #'fees': 1e-6,
+        'fees': 2e-5,
      }
 )
 
@@ -56,7 +57,8 @@ gym.envs.register(
      entry_point='ags_trading.unpadded_trading_env.derivatives:TradingDerivatives',
      kwargs={
         'csv_path': '2018-EURUSD-BGN-Curncy-1m.csv',
-        'fees': 1e-6,
+        #'fees': 1e-6,
+        'fees': 2e-5,
      }
 )
 
@@ -66,7 +68,8 @@ gym.envs.register(
      entry_point='ags_trading.unpadded_trading_env.derivatives:TradingDerivatives',
      kwargs={
         'csv_path': '2016-EURUSD_BGN_Curncy-1m.csv',
-        'fees': 1e-6,
+        #'fees': 1e-6,
+        'fees': 2e-5,
      }
 )
 
@@ -76,7 +79,8 @@ gym.envs.register(
      entry_point='ags_trading.unpadded_trading_env.derivatives:TradingDerivatives',
      kwargs={
         'csv_path': '2015-EURUSD_BGN_Curncy-1m.csv',
-        'fees': 1e-6,
+        #'fees': 1e-6,
+        'fees': 2e-5,
      }
 )
 
@@ -86,7 +90,8 @@ gym.envs.register(
      entry_point='ags_trading.unpadded_trading_env.derivatives:TradingDerivatives',
      kwargs={
         'csv_path': '2014-EURUSD_BGN_Curncy-1m.csv',
-        'fees': 1e-6,
+        #'fees': 1e-6,
+        'fees': 2e-5,
      }
 )
 
@@ -96,7 +101,8 @@ gym.envs.register(
      entry_point='ags_trading.unpadded_trading_env.derivatives:TradingDerivatives',
      kwargs={
         'csv_path': '2018-EURUSD-BGN-Curncy-1m.csv',
-        'fees': 1e-6,
+        #'fees': 1e-6,
+        'fees': 2e-5,
         'testing': True,
      }
 )
