@@ -4,10 +4,13 @@ path = os.path.dirname(os.path.realpath(__file__))  # path to this directory
 sys.path.append(os.path.abspath(path + "/../../trading")) # add trading
 sys.path.append(os.path.abspath(path + "/../../..")) # add main folder
 
+from joblib import Parallel, delayed
 import numpy as np
 from misc import utils
 import gym
 from ags_trading.unpadded_trading_env.derivatives import TradingDerivatives
+
+n_jobs = 4
 
 save_dataset_path = "additions/experiments/trading/dataset-"
 save_actions_path = "visualize-actions/"
@@ -33,8 +36,14 @@ etrs = {
     }
 }
 
-def year_pass(Q, task):
+def year_pass(k, v):
     
+    Q = utils.load_object(etr_path + v["policy"])
+    task = v["task"]
+    
+    task.starting_day_index = 0
+    task.reset()
+
     days = []
     rewards = np.zeros((task.n_days, len(task.prices) - task.time_lag))
     actions = np.zeros((task.n_days, len(task.prices) - task.time_lag))
@@ -45,8 +54,6 @@ def year_pass(Q, task):
     
         task.starting_day_index = di
         s = task.reset()
-        
-        print("Day index:", di)
 
         days.append(task.selected_day)
 
@@ -56,7 +63,6 @@ def year_pass(Q, task):
             a_list = Q._q_values([s])
             
             state_value_list.append([s, a_list])
-            print([s, a_list])
 
             a = np.argmax(a_list)
             s, r, done, _ = task.step(a)
@@ -64,20 +70,16 @@ def year_pass(Q, task):
             actions[di, task.current_timestep] = a - 1 # [0, 2] -> [-1, 1] 
             rewards[di, task.current_timestep] = r
         
-        print("Cumulative reward:", np.sum(rewards))
-            
-    return state_value_list, [days, actions, rewards]
+        print("{0:s} - Day: {1:4d}, Cumulative reward: {2:8.6f}".format(k, di, np.sum(rewards)))
+    
+    utils.save_object(state_value_list, save_dataset_path + k)
+    utils.save_object([days, actions, rewards], save_actions_path + k)
 
-for k, v in etrs.items():
-    print(k)
-    
-    Q = utils.load_object(etr_path + v["policy"])
-    task = v["task"]
-    
-    task.starting_day_index = 0
-    task.reset()
-    
-    output_dataset, output_actions = year_pass(Q, task)
-    
-    utils.save_object(output_dataset, save_dataset_path + k)
-    utils.save_object(output_actions, save_actions_path + k)
+    return k
+
+if n_jobs == 1:
+    output = [year_pass(k, v) for (k,v) in etrs.items()]
+elif n_jobs > 1:
+    output = Parallel(n_jobs=n_jobs)(delayed(year_pass)(k, v) for (k,v) in etrs.items())
+
+print(output)
