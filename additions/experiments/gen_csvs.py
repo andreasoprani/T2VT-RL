@@ -44,7 +44,7 @@ def gen_csv(results_path):
         
     keys = list(out.keys())
     
-    with open(results_path + "results.csv", "w") as outfile:
+    with open(results_path + "results.csv", "w", newline='') as outfile:
         writer = csv.writer(outfile)
         writer.writerow(keys)
         writer.writerows(zip(*[out[key] for key in keys]))
@@ -62,7 +62,7 @@ paths = [
     "results/three-room-gw/sin/lambda=1.0/",
     "results/mountaincar/linear/",
     "results/mountaincar/periodic-no-rep/",
-    #"results/mountaincar/polynomial/",
+    "results/mountaincar/polynomial/",
     "results/mountaincar/sin/lambda=0.3333/",
     "results/mountaincar/sin/lambda=1.0/"
 ]
