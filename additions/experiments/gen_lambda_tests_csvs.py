@@ -50,7 +50,7 @@ def gen_csv(results_path):
         
     keys = list(out.keys())
     
-    with open(results_path + "results.csv", "w", newline='') as outfile:
+    with open(results_path + "sensitivity.csv", "w", newline='') as outfile:
         writer = csv.writer(outfile)
         writer.writerow(keys)
         writer.writerows(zip(*[out[key] for key in keys]))
