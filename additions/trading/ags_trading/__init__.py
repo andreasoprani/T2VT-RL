@@ -180,3 +180,70 @@ gym.envs.register(
         'csv_path': '2017-EURUSD-BGN-Curncy-1m-short.csv',
      }
 )
+
+# 2014 Vec Prices
+gym.envs.register(
+     id='VecTradingPrices2014-v2',
+     entry_point='ags_trading.vectorized_trading_env.prices:VecTradingPrices',
+     kwargs={
+        'csv_path': '2014-EURUSD_BGN_Curncy-1m.csv',
+        #'fees': 1e-6,
+        'fees': 2e-5,
+     }
+)
+
+# 2015 Vec Prices
+gym.envs.register(
+     id='VecTradingPrices2015-v2',
+     entry_point='ags_trading.vectorized_trading_env.prices:VecTradingPrices',
+     kwargs={
+        'csv_path': '2015-EURUSD_BGN_Curncy-1m.csv',
+        #'fees': 1e-6,
+        'fees': 2e-5,
+     }
+)
+
+# 2016 Vec Prices
+gym.envs.register(
+     id='VecTradingPrices2016-v2',
+     entry_point='ags_trading.vectorized_trading_env.prices:VecTradingPrices',
+     kwargs={
+        'csv_path': '2016-EURUSD_BGN_Curncy-1m.csv',
+        #'fees': 1e-6,
+        'fees': 2e-5,
+     }
+)
+
+# 2017 Vec Prices
+gym.envs.register(
+     id='VecTradingPrices-v3',
+     entry_point='ags_trading.vectorized_trading_env.prices:VecTradingPrices',
+     kwargs={
+        'csv_path': '2017-EURUSD-BGN-Curncy-1m.csv',
+        #'fees': 1e-6,
+        'fees': 2e-5,
+     }
+)
+
+# 2018 non-sequential Vec Prices
+gym.envs.register(
+     id='VecTradingPrices2018-v2',
+     entry_point='ags_trading.vectorized_trading_env.prices:VecTradingPrices',
+     kwargs={
+        'csv_path': '2018-EURUSD-BGN-Curncy-1m.csv',
+        #'fees': 1e-6,
+        'fees': 2e-5,
+     }
+)
+
+# 2018 sequential Vec Prices
+gym.envs.register(
+     id='VecTradingPrices2018-v3',
+     entry_point='ags_trading.vectorized_trading_env.prices:VecTradingPrices',
+     kwargs={
+        'csv_path': '2018-EURUSD-BGN-Curncy-1m.csv',
+        #'fees': 1e-6,
+        'fees': 2e-5,
+        'testing': True,
+     }
+)
