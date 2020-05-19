@@ -5,7 +5,6 @@ import numpy as np
 import pandas as pd
 import random
 import os
-import custompaths
 
 class VecTradingMain(gym.Env):
     """
@@ -17,8 +16,13 @@ class VecTradingMain(gym.Env):
 
     def __init__(self, csv_path=None, n_envs=1, fees = 2/100000., spread = 0, maximum_drowdown = -500/100000.):
         # Check data (prices CSV)
+        self.csv_path = csv_path
+
+        dir_path = os.path.dirname(os.path.realpath(__file__)) + "/../env_settings"
         assert csv_path is not None, "Need price data to create environment."
-        csv_path = os.path.join(custompaths.PATHS["TRADING_DATA"], csv_path)
+        csv_path = os.path.join(dir_path, csv_path)
+        old_csv_path = csv_path
+        
         self.data = pd.read_csv(csv_path, index_col = 0) #FIXME:
         self.days = self.data['day'].unique()
         self.n_days = len(self.days)

@@ -10,12 +10,16 @@ from matplotlib.ticker import MultipleLocator, FuncFormatter, MaxNLocator
 import numpy as np
 
 filenames = [
-    "mgvt_1c",
-    "rtde_1c",
-    "source_2014",
-    "source_2015",
-    "source_2016",
-    "source_2017"
+    #"mgvt_1c",
+    #"rtde_1c",
+    #"source_2014",
+    #"source_2015",
+    #"source_2016",
+    #"source_2017",
+    #"2015",
+    #"2016",
+    #"2017",
+    #"2018"
 ]
 
 for filename in filenames:
