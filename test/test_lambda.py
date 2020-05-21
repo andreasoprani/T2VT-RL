@@ -8,19 +8,26 @@ from additions.temporal_kernel import temporal_weights_calculator
 import numpy as np
 import datetime
 
-np.random.seed(3)
-h = 1
-weights_path = "additions/experiments/rooms/sources-polynomial-2r"
-weights = utils.load_object(weights_path)
+#sys.setrecursionlimit(3000)
 
-timesteps = 10
+for s in range(1):
+    np.random.seed(s)
+    h = 1/np.sqrt(4 * np.pi)
+    weights_path = "additions/experiments/rooms/sources-polynomial-2r"
+    weights = utils.load_object(weights_path)
 
-ws = []
-for i in range(timesteps):
-    t_ws = weights[i]
-    np.random.shuffle(t_ws)
-    ws.append(t_ws[0][1])
+    timesteps = 10
 
-print(temporal_weights_calculator(ws, timesteps, "crossval", h=h))
+    ws = []
+    for i in range(timesteps):
+        t_ws = weights[i]
+        np.random.shuffle(t_ws)
+        ws.append(t_ws[0][1])
 
-print(datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S"))
+    print(s)
+
+    print(datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S"))  
+
+    print(temporal_weights_calculator(ws, timesteps, "crossval", h=h))
+
+    print(datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S"))
