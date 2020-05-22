@@ -4,6 +4,18 @@ from scipy.stats import entropy, norm
 from scipy.integrate import quad
 import torch
 from torch import autograd
+  
+def epanechnikov(x):
+    if x < -1 or x > 1:
+        return 0
+    else:
+        return (3/4) * (1 - x**2)
+    
+def epanechnikov_integral(low, high):
+    
+    F = lambda x : - (x * (x ** 2 - 3)) / 4
+
+    return F(high) - F(low)
 
 def normalized_epanechnikov(x):
     """Normalized Epanechnikov kernel."""
@@ -53,7 +65,7 @@ def normalized_epanechnikov_torch(x, epsilon = 0.00001):
         return 0
     #elif x == 0:
     #    return 2 * (3/4) * (1 - (x + epsilon).pow(2))
-    return 2 * (3/4) * (1 - x.pow(2))
+    return 2 * (3/4) * (1 - x ** 2)
 
 def normalized_epanechnikov_weights_torch(samples, _lambda, epsilon = 0.00001):
     
@@ -169,47 +181,83 @@ def timelag_softmax_kernel_weights(weights, samples, h, kernel="epanechnikov"):
     
     return temporal_kernel(samples, l, kernel)
 
-def likelihood_kernel_weights(weights, samples, h, learning_rate=0.01, kernel="epanechnikov"):
+def likelihood_kernel_weights(weights, samples, h, optimization="grid-search",learning_rate=0.01, kernel="epanechnikov"):
+    
+    def compute_temporal_kernel(ts, t, l):
+        
+        xs = torch.zeros(len(ts), dtype=torch.float64)
+        
+        for i in range(len(ts)):
+            if t == ts[i]:
+                xs[i] = 0
+            else:
+                xs[i] = epanechnikov((t-ts[i])/l) / (samples * l)
+                
+        lower_boundary = 1 / samples
+        upper_boundary = 1
+            
+        if t < lower_boundary + l:
+            xs /= epanechnikov_integral(-1, (t - lower_boundary) / l)
+        elif t > upper_boundary - l:
+            xs /= epanechnikov_integral((t - upper_boundary) / l, 1)
+        
+        xs /= xs.sum()
+        
+        return xs
     
     def compute_spatial_kernel(qs, q, h):
         
         xs = torch.zeros(len(qs), dtype=torch.float64)
+        
         for i in range(len(xs)):
             xs[i] = torch.norm((torch.tensor(q, dtype=torch.float64) - torch.tensor(qs[i], dtype=torch.float64)) / h)
         
         ks = torch.tensor(list(map(norm.pdf, xs)), dtype=torch.float64)
+        
         dim = len(q)
         
-        return ks / (h**dim)
+        return ks / (h ** dim)
     
     def compute_loglikelihood(l):
         
-        likelihood_components = torch.zeros(len(weights) - 1, dtype=torch.float64)
+        likelihood_components = torch.zeros(samples, dtype=torch.float64)
         
-        for x in range(1, len(weights)):
-            qs = weights[0:x]
-            q = weights[x]
-            k_t = normalized_epanechnikov_weights_torch(len(qs), l)
-            k_s = compute_spatial_kernel(qs, q, h)
-            likelihood_components[x-1] = torch.dot(k_t, k_s)
+        dim = len(weights[0])
+        
+        for x in range(samples):
+            ts = torch.linspace(1/samples, 1, samples)
+            t = (x + 1) / samples
+            k_t = compute_temporal_kernel(ts, t, l)
             
+            qs = weights
+            q = weights[x]
+            k_s = compute_spatial_kernel(qs, q, h)
+            
+            #print("L: {0:4.3f}, I: {1:1d}".format(l, x))
+            #print("Kt:", k_t.numpy())
+            #print("Ks:", k_s.numpy())
+            
+            likelihood_components[x] = torch.dot(k_t, k_s)
+        
+        #print(likelihood_components)
+           
         return torch.log(torch.prod(likelihood_components))
         
     def gradient_ascent_step(l):
         
         l_torch = torch.tensor(l, dtype=torch.float64, requires_grad = True)
         
-        with autograd.detect_anomaly():
-            loglikelihood = compute_loglikelihood(l_torch)
-        
-            loglikelihood.backward(l_torch)
-            grad = l_torch.grad
-            grad = float(grad)
+        loglikelihood = compute_loglikelihood(l_torch)
+    
+        loglikelihood.backward(l_torch)
+        grad = l_torch.grad
+        grad = float(grad)
         
         l += learning_rate * grad
-        return np.clip(l, 1/samples, 1)
+        epsilon = 0.00001
+        return np.clip(l, 1/samples + epsilon, 1)
     
-    def gradient_ascent_loop(l, max_iter=50, epsilon=0.01):
+    def gradient_ascent_loop(l, max_iter=50, min_diff=0.01):
         i = 0
         while True:
             i += 1
@@ -218,33 +266,36 @@ def likelihood_kernel_weights(weights, samples, h, learning_rate=0.01, kernel="e
             #print("I:", i, "lambda:", l)
             if max_iter is not None and i > max_iter:
                 break
-            elif epsilon is not None and np.abs(l - old_l) < epsilon:
+            elif epsilon is not None and np.abs(l - old_l) < min_diff:
                 break
         
         return l
-        
-    ls = np.linspace(1/samples, 1, num = 20)
-    ls = [gradient_ascent_loop(l) for l in ls]
-    ls = [torch.tensor(l) for l in ls]
-    l = float(max(ls, key=compute_loglikelihood))
+
+    epsilon = 0.0001
+    points = 20
     
-    print(l)
+    if optimization == "gradient-ascent":   
+        ls = np.linspace(1/samples + epsilon, 1, num = points)
+        ls = [gradient_ascent_loop(l) for l in ls]
+        ls = [torch.tensor(l) for l in ls]
+        lks = [compute_loglikelihood(l).numpy() for l in ls]
+        #for l, lk in zip(ls, lks):
+        #    print("Lambda: {0:4.3f}, Log-Likelihood: {1:8.6f}".format(l, lk))  
+        l = ls[np.nanargmax(lks)]
+    elif optimization == "grid-search":
+        ls = np.linspace(1/samples + epsilon, 1, num = points)
+        lks = [compute_loglikelihood(l).numpy() for l in ls]
+        #for l, lk in zip(ls, lks):
+        #    print("Lambda: {0:4.3f}, Log-Likelihood: {1:8.6f}".format(l, lk))   
+        l = ls[np.nanargmax(lks)]
+    else:
+        print("Invalid optimization method:", optimization)
+    
+    print("Selected Lambda: {:6.3f}".format(l))
     
     return temporal_kernel(samples, l, kernel)
 
 def crossval_kernel_weights(weights, samples, h, kernel="epanechnikov"):
-    
-    def epanechnikov(x):
-        if x < -1 or x > 1:
-            return 0
-        else:
-            return (3/4) * (1 - x**2)
-    
-    def epanechnikov_integral(low, high):
-
-        F = lambda x : - (x * (x ** 2 - 3)) / 4
-
-        return F(high) - F(low)
 
     def f(x0, t0, t1, t2, t3, t4):
         """Function to be integered
@@ -267,10 +318,10 @@ def crossval_kernel_weights(weights, samples, h, kernel="epanechnikov"):
         
         out = epanechnikov((t - t_i)/l) * epanechnikov((t - t_j)/l)
 
-        if t < l:
-            out /= (epanechnikov_integral(-1, (lower_boundary + t)/l))**2
+        if t < lower_boundary + l:
+            out /= (epanechnikov_integral(-1, (t - lower_boundary) / l))**2
         elif t > upper_boundary - l:
-            out /= (epanechnikov_integral(- (upper_boundary - t) / l, 1))**2
+            out /= (epanechnikov_integral((t - upper_boundary) / l, 1))**2
         
         return out 
     
@@ -297,47 +348,51 @@ def crossval_kernel_weights(weights, samples, h, kernel="epanechnikov"):
     
     def estimator_without_i(i, l):
         
-        t_i = i/samples
+        t_i = (i + 1) / samples
         q_i = np.array(weights[i], dtype=np.float64)
-        
-        temporal_components = np.zeros(samples - 1, dtype=np.float64)
-        spatial_components = np.zeros(samples - 1, dtype=np.float64)
-        
-        index = 0
-        
-        for j in range(samples):
-            
-            if j == i:
-                continue
-            
-            q_j = np.array(weights[j], dtype=np.float64)
-            
-            temporal_components[index] = epanechnikov(np.abs(i-j)/(samples*l))
-            spatial_components[index] = norm.pdf(np.linalg.norm(q_i - q_j)/h)
-            
-            index += 1
-
-        temporal_components = [t / np.sum(temporal_components) for t in temporal_components]
 
         dim = len(q_i)
         
-        return np.dot(temporal_components, spatial_components) / (samples * l * (h**dim))
+        temporal_components = np.zeros(samples, dtype=np.float64)
+        spatial_components = np.zeros(samples, dtype=np.float64)
+        
+        lower_boundary = 1 / samples
+        upper_boundary = 1
+        
+        for j in range(samples):
+            
+            q_j = np.array(weights[j], dtype=np.float64)
+            if i == j:
+                temporal_components[j] = 0
+                spatial_components[j] = 0
+            else:
+                t_j = (j+1)/samples
+                temporal_components[j] = epanechnikov((t_i - t_j) / l) / (samples * l)
+                spatial_components[j] = norm.pdf(np.linalg.norm(q_i - q_j) / h) / (h**dim)
+
+        if t_i < lower_boundary + l:
+            temporal_components /= epanechnikov_integral(-1, (t_i - lower_boundary) / l)
+        elif t_i > upper_boundary - l:
+            temporal_components /= epanechnikov_integral((t_i - upper_boundary) / l, 1)
+            
+        temporal_components /= np.sum(temporal_components)
+        
+        return np.dot(temporal_components, spatial_components)
 
     def calculate_cv(l):
 
         integral_component = integral_calculation(l)
         estimator_component = (2 / samples) * np.sum([estimator_without_i(i, l) for i in range(samples)])
+        cv = integral_component - estimator_component
 
-        print("Lambda: {0:4.3f}, IC: {1:8.6f}, EC: {2:8.6f}".format(l, integral_component, estimator_component))
+        #print("Lambda: {0:4.3f}, IC: {1:8.6f}, EC: {2:8.6f}, CV: {3:8.6f}".format(l, integral_component, estimator_component, cv))
 
-        return integral_component - estimator_component
+        return cv
 
-    epsilon = 0.001
-    ls = np.linspace(1/samples + epsilon, 1, num = 20)
+    epsilon = 0.00001
+    points = 20
+    ls = np.linspace(1/samples + epsilon, 1, num = points)
     cvs = [calculate_cv(l) for l in ls]
-    
-    #for l, cv in zip(ls, cvs):
-    #    print("Lambda: {0:4.3f}, CV: {1:8.6f}".format(l, cv))
        
     l = ls[np.argmin(cvs)]
     
