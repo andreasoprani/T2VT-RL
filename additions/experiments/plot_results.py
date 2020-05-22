@@ -121,10 +121,11 @@ if testing_lambda:
         "rtde_1c_l=0.8": "1-T2VT - l = 0.8",
         "rtde_1c_l=0.9": "1-T2VT - l = 0.9",
         "rtde_1c_l=1.0": "1-T2VT - l = 1.0",
-        "rtde_1c_l=avg": "1-T2VT - l = (1 + 4m/d)/n",
-        "rtde_1c_l=shannon": "1-T2VT - l = (1 + S)/n",
-        "rtde_1c_l=timelag": "1-T2VT - l = W.Sum(tau)/n",
-        "rtde_1c_l=timelag_softmax": "1-T2VT - l = W.Sum(sm_tau)/n"
+        #"rtde_1c_l=avg": "1-T2VT - l = (1 + 4m/d)/n",
+        #"rtde_1c_l=shannon": "1-T2VT - l = (1 + S)/n",
+        #"rtde_1c_l=timelag": "1-T2VT - l = W.Sum(tau)/n",
+        #"rtde_1c_l=timelag_softmax": "1-T2VT - l = W.Sum(sm_tau)/n",
+        "rtde_1c_l=likelihood": "1-T2VT - l = max log-likelihood"
     }
 
 files = []
