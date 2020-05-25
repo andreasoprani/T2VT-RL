@@ -11,8 +11,8 @@ import csv
 experiments = {
     "1-MGVT": "mgvt_1c",
     "3-MGVT": "mgvt_3c",
-    "1-T2VT": "rtde_1c",
-    "3-T2VT": "rtde_3c"
+    "1-T2VT": "t2vt_1c",
+    "3-T2VT": "t2vt_3c"
 }
 
 data_index = 3

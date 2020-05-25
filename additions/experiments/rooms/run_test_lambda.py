@@ -41,7 +41,7 @@ if exp_type != "":
 
 for i, e in enumerate(exps):
 
-    task = "run_rtde.py"
+    task = "run_t2vt.py"
     task += " --post_components=1"
     task += " --testing_lambda=True"
     task += " --experiment_type=" + e

@@ -18,10 +18,10 @@ w_dict = {
         "filepath": "results/trading/",
         "filename": "mgvt_1c_2020-03-30_11-21-20"
     },
-    "rtde_1c": {
+    "t2vt_1c": {
         "task": gym.make('TradingDer2018-v2'),
         "filepath": "results/trading/",
-        "filename": "rtde_1c_2020-04-02_14-21-18"
+        "filename": "t2vt_1c_2020-04-02_14-21-18"
     },
     "source_2014": {
         "task": gym.make('TradingDer2014-v2'),

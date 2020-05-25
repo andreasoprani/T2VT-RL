@@ -105,27 +105,23 @@ def learning_rew(iterations, episodes_time, episode_rew, mean_episodes=5):
 experiments = {
     "mgvt_1c": "1-MGVT", 
     "mgvt_3c": "3-MGVT", 
-    "rtde_1c": "1-T2VT", 
-    "rtde_3c": "3-T2VT"
+    "t2vt_1c": "1-T2VT", 
+    "t2vt_3c": "3-T2VT"
 }
 
 if testing_lambda:
     experiments = {
-        "rtde_1c_l=0.1": "1-T2VT - l = 0.1",
-        "rtde_1c_l=0.2": "1-T2VT - l = 0.2",
-        "rtde_1c_l=0.4": "1-T2VT - l = 0.3",
-        "rtde_1c_l=0.3": "1-T2VT - l = 0.4",
-        "rtde_1c_l=0.5": "1-T2VT - l = 0.5",
-        "rtde_1c_l=0.6": "1-T2VT - l = 0.6",
-        "rtde_1c_l=0.7": "1-T2VT - l = 0.7",
-        "rtde_1c_l=0.8": "1-T2VT - l = 0.8",
-        "rtde_1c_l=0.9": "1-T2VT - l = 0.9",
-        "rtde_1c_l=1.0": "1-T2VT - l = 1.0",
-        #"rtde_1c_l=avg": "1-T2VT - l = (1 + 4m/d)/n",
-        #"rtde_1c_l=shannon": "1-T2VT - l = (1 + S)/n",
-        #"rtde_1c_l=timelag": "1-T2VT - l = W.Sum(tau)/n",
-        #"rtde_1c_l=timelag_softmax": "1-T2VT - l = W.Sum(sm_tau)/n",
-        "rtde_1c_l=likelihood": "1-T2VT - l = max log-likelihood"
+        "t2vt_1c_l=0.1": "1-T2VT - l = 0.1",
+        "t2vt_1c_l=0.2": "1-T2VT - l = 0.2",
+        "t2vt_1c_l=0.4": "1-T2VT - l = 0.3",
+        "t2vt_1c_l=0.3": "1-T2VT - l = 0.4",
+        "t2vt_1c_l=0.5": "1-T2VT - l = 0.5",
+        "t2vt_1c_l=0.6": "1-T2VT - l = 0.6",
+        "t2vt_1c_l=0.7": "1-T2VT - l = 0.7",
+        "t2vt_1c_l=0.8": "1-T2VT - l = 0.8",
+        "t2vt_1c_l=0.9": "1-T2VT - l = 0.9",
+        "t2vt_1c_l=1.0": "1-T2VT - l = 1.0",
+        "t2vt_1c_l=likelihood": "1-T2VT - l = max log-likelihood"
     }
 
 files = []

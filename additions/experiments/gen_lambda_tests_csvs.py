@@ -9,16 +9,16 @@ import glob
 import csv
 
 experiments = {
-    "lambda = 0.1": "rtde_1c_l=0.1",
-    "lambda = 0.2": "rtde_1c_l=0.2",
-    "lambda = 0.3": "rtde_1c_l=0.3",
-    "lambda = 0.4": "rtde_1c_l=0.4",
-    "lambda = 0.5": "rtde_1c_l=0.5",
-    "lambda = 0.6": "rtde_1c_l=0.6",
-    "lambda = 0.7": "rtde_1c_l=0.7",
-    "lambda = 0.8": "rtde_1c_l=0.8",
-    "lambda = 0.9": "rtde_1c_l=0.9",
-    "lambda = 1.0": "rtde_1c_l=1.0"
+    "lambda = 0.1": "t2vt_1c_l=0.1",
+    "lambda = 0.2": "t2vt_1c_l=0.2",
+    "lambda = 0.3": "t2vt_1c_l=0.3",
+    "lambda = 0.4": "t2vt_1c_l=0.4",
+    "lambda = 0.5": "t2vt_1c_l=0.5",
+    "lambda = 0.6": "t2vt_1c_l=0.6",
+    "lambda = 0.7": "t2vt_1c_l=0.7",
+    "lambda = 0.8": "t2vt_1c_l=0.8",
+    "lambda = 0.9": "t2vt_1c_l=0.9",
+    "lambda = 1.0": "t2vt_1c_l=1.0"
 }
 
 data_index = 3

@@ -14,8 +14,8 @@ parser.add_argument("--max_iter_gen", default=1500000)
 parser.add_argument("--no_door_zone", default=2.0)
 parser.add_argument("--mgvt_1", default=True)
 parser.add_argument("--mgvt_3", default=True)
-parser.add_argument("--rtde_1", default=True)
-parser.add_argument("--rtde_3", default=True)
+parser.add_argument("--t2vt_1", default=True)
+parser.add_argument("--t2vt_3", default=True)
 parser.add_argument("--max_iter", default=15000)
 parser.add_argument("--temporal_bandwidth", default=-1) # -1 for default
 parser.add_argument("--load_results", default=False)
@@ -30,8 +30,8 @@ max_iter_gen = int(args.max_iter_gen)
 no_door_zone = float(args.no_door_zone) 
 mgvt_1 = to_bool(args.mgvt_1)
 mgvt_3 = to_bool(args.mgvt_3)
-rtde_1 = to_bool(args.rtde_1)
-rtde_3 = to_bool(args.rtde_3)
+t2vt_1 = to_bool(args.t2vt_1)
+t2vt_3 = to_bool(args.t2vt_3)
 max_iter = int(args.max_iter)
 temporal_bandwidth = float(args.temporal_bandwidth)
 load_results = to_bool(args.load_results)
@@ -42,8 +42,8 @@ env = "three-room-gw"
 tasks = {
          "run_mgvt.py --post_components=1": mgvt_1,
          "run_mgvt.py --post_components=3": mgvt_3,
-         "run_rtde.py --post_components=1": rtde_1,
-         "run_rtde.py --post_components=3": rtde_3
+         "run_t2vt.py --post_components=1": t2vt_1,
+         "run_t2vt.py --post_components=3": t2vt_3
         }
 
 gen_samples = "gen_samples.py"
@@ -80,7 +80,7 @@ for k, v in tasks.items():
     f += " --max_iter=" + str(max_iter)
     f += " --env=" + env
     f += " --experiment_type=" + exp_type
-    if f.find("rtde") and temporal_bandwidth >= 0:
+    if f.find("t2vt") and temporal_bandwidth >= 0:
         f += " --temporal_bandwidth=" + str(temporal_bandwidth)
     f += " --load_results=" + str(load_results)
     if n_jobs > 1:
