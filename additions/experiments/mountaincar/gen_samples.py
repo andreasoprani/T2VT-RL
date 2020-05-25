@@ -101,14 +101,6 @@ def gen_speed_means(exp_type="linear"):
         
         return s_means
 
-    if exp_type == "periodic-no-rep":
-        # as sin but x in [a, pi + a] where a is in [pi/4, pi/2]
-        a = np.random.uniform(low = np.pi/4, high = np.pi/2)
-        s_means = np.sin(np.linspace(a, a + np.pi, timesteps + 1))
-        s_means = s_means * ((max_speed - min_speed) / 2) + (max_speed + min_speed) / 2
-        
-        return s_means
-
     if exp_type == "polynomial":
         # polynomial of fourth order fit on the points (0,-1), (0.2,0), (0.5,0), (0.7,0), (1,1)
         a = -15.625 # x^4
@@ -124,10 +116,12 @@ def gen_speed_means(exp_type="linear"):
         
         return s_means
 
-    else:
+    if exp_type == "linear":
         # min -> max
         s_means = np.linspace(min_speed, max_speed, timesteps + 1)
         return s_means
+
+    print("Wrong experiment type:", exp_type)
     
 speed_means = gen_speed_means(experiment_type)
 

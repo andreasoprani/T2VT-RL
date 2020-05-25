@@ -1,3 +1,5 @@
+# This is a modification of the original mgvt_torch script that can be found in algorithms/mgvt_torch.py
+
 import numpy as np
 from misc.policies import EpsilonGreedy
 from additions.approximators.mlp_torch import MLPQFunction
