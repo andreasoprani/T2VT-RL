@@ -247,7 +247,7 @@ def likelihood_kernel_weights(weights, samples, h, optimization="grid-search", l
         
         return l
 
-    epsilon = 0.0001
+    epsilon = 0.000001
     points = 20
     
     if optimization == "gradient-ascent":   

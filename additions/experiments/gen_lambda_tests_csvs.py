@@ -9,16 +9,17 @@ import glob
 import csv
 
 experiments = {
-    "lambda = 0.1": "t2vt_1c_l=0.1",
-    "lambda = 0.2": "t2vt_1c_l=0.2",
-    "lambda = 0.3": "t2vt_1c_l=0.3",
-    "lambda = 0.4": "t2vt_1c_l=0.4",
-    "lambda = 0.5": "t2vt_1c_l=0.5",
-    "lambda = 0.6": "t2vt_1c_l=0.6",
-    "lambda = 0.7": "t2vt_1c_l=0.7",
-    "lambda = 0.8": "t2vt_1c_l=0.8",
-    "lambda = 0.9": "t2vt_1c_l=0.9",
-    "lambda = 1.0": "t2vt_1c_l=1.0"
+    "lambda=0.1": "t2vt_1c_l=0.1",
+    "lambda=0.2": "t2vt_1c_l=0.2",
+    "lambda=0.3": "t2vt_1c_l=0.3",
+    "lambda=0.4": "t2vt_1c_l=0.4",
+    "lambda=0.5": "t2vt_1c_l=0.5",
+    "lambda=0.6": "t2vt_1c_l=0.6",
+    "lambda=0.7": "t2vt_1c_l=0.7",
+    "lambda=0.8": "t2vt_1c_l=0.8",
+    "lambda=0.9": "t2vt_1c_l=0.9",
+    "lambda=1.0": "t2vt_1c_l=1.0",
+    "likelihood": "t2vt_1c_l=likelihood"
 }
 
 data_index = 3
@@ -50,14 +51,13 @@ def gen_csv(results_path):
         
     keys = list(out.keys())
     
-    with open(results_path + "sensitivity.csv", "w", newline='') as outfile:
+    with open(results_path + "results.csv", "w", newline='') as outfile:
         writer = csv.writer(outfile)
         writer.writerow(keys)
         writer.writerows(zip(*[out[key] for key in keys]))
      
 paths = [
     "results/two-room-gw/linear/lambda_test/",
-    "results/two-room-gw/periodic-no-rep/lambda_test/",
     "results/two-room-gw/polynomial/lambda_test/",
     "results/two-room-gw/sin/lambda_test/"
 ]
