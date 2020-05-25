@@ -11,8 +11,8 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--gen_samples", default=False)
 parser.add_argument("--mgvt_1", default=True)
 parser.add_argument("--mgvt_3", default=False)
-parser.add_argument("--rtde_1", default=True)
-parser.add_argument("--rtde_3", default=False)
+parser.add_argument("--t2vt_1", default=True)
+parser.add_argument("--t2vt_3", default=False)
 parser.add_argument("--n_runs", default=1)
 parser.add_argument("--max_iter", default=30000000)
 
@@ -20,16 +20,16 @@ args = parser.parse_args()
 gen = bool(args.gen_samples)
 mgvt_1 = bool(args.mgvt_1)
 mgvt_3 = bool(args.mgvt_3)
-rtde_1 = bool(args.rtde_1)
-rtde_3 = bool(args.rtde_3)
+t2vt_1 = bool(args.t2vt_1)
+t2vt_3 = bool(args.t2vt_3)
 n_runs = int(args.n_runs)
 max_iter = int(args.max_iter)
 
 tasks = {
          "run_mgvt.py --post_components=1": mgvt_1,
          "run_mgvt.py --post_components=3": mgvt_3,
-         "run_rtde.py --post_components=1": rtde_1,
-         "run_rtde.py --post_components=3": rtde_3
+         "run_t2vt.py --post_components=1": t2vt_1,
+         "run_t2vt.py --post_components=3": t2vt_3
         }
 
 gen_samples = "gen_samples.py"

@@ -72,8 +72,8 @@ Parameters:
 --max_iter_gen (int): number of iterations for samples generation.
 --mgvt_1 (bool): to perform MGVT with 1 posterior component or not.
 --mgvt_3 (bool): to perform MGVT with 3 posterior components or not.
---rtde_1 (bool): to perform T2VT with 1 posterior component or not.
---rtde_3 (bool): to perform T2VT with 3 posterior components or not.
+--t2vt_1 (bool): to perform T2VT with 1 posterior component or not.
+--t2vt_3 (bool): to perform T2VT with 3 posterior components or not.
 --max_iter (int): number of iterations for algorithms test (-1 for default).
 --temporal_bandwidth (float in [0,1]): temporal bandwidth for T2VT (-1 for default).
 --load_results (bool): used during testing to augment the number of seeds.
@@ -126,7 +126,7 @@ python3 additions/experiments/mountaincar/gen_samples.py --experiment_type=exper
 
 ## Algorithms tests
 
-Algorithm tests are performed for MGVT with ```run_mgvt.py``` scripts and for T2VT with ```run_rtde.py``` scripts.
+Algorithm tests are performed for MGVT with ```run_mgvt.py``` scripts and for T2VT with ```run_t2vt.py``` scripts.
 
 See these scripts for the parameters.
 
@@ -134,21 +134,21 @@ See these scripts for the parameters.
 
 ```
 python3 additions/experiments/rooms/run_mgvt.py --env=two-room-gw --experiment_type=experiment_type --post_components=pc ... other params
-python3 additions/experiments/rooms/run_rtde.py --env=two-room-gw --experiment_type=experiment_type --post_components=pc ... other params
+python3 additions/experiments/rooms/run_t2vt.py --env=two-room-gw --experiment_type=experiment_type --post_components=pc ... other params
 ```
 
 ### Three-room
 
 ```
 python3 additions/experiments/rooms/run_mgvt.py --env=three-room-gw --experiment_type=experiment_type --post_components=pc ... other params
-python3 additions/experiments/rooms/run_rtde.py --env=three-room-gw --experiment_type=experiment_type --post_components=pc ... other params
+python3 additions/experiments/rooms/run_t2vt.py --env=three-room-gw --experiment_type=experiment_type --post_components=pc ... other params
 ```
 
 ### Mountaincar
 
 ```
 python3 additions/experiments/mountaincar/run_mgvt.py --experiment_type=experiment_type --post_components=pc ... other params
-python3 additions/experiments/mountaincar/run_rtde.py --experiment_type=experiment_type --post_components=pc ... other params
+python3 additions/experiments/mountaincar/run_t2vt.py --experiment_type=experiment_type --post_components=pc ... other params
 ```
 
 ## Plotting
