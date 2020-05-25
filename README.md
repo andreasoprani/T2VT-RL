@@ -21,10 +21,18 @@ This repository is the official implementation of Time-Variant Variational Trans
 
 ## Requirements
 
-To install requirements:
+```
+python 3.7
 
-```setup
-pip install -r requirements.txt
+glob
+gym (by OpenAI)
+joblib
+matplotlib
+numpy 1.17.4
+pickle
+scipy
+sklearn
+torch (PyTorch)
 ```
 
 Note: the version 1.17.4 of numpy is necessary to open the provided pickle files.
@@ -37,7 +45,6 @@ The experiments performed are divided into three environments: ```two-room```, `
 
 For each environment there are four possible experiment types:
 * ```linear```
-* ```periodic-no-rep```
 * ```polynomial```
 * ```sin```
 
@@ -47,7 +54,7 @@ For each environment and experiment type we tested the MGVT and T2VT algorithms,
 
 Complete run files allow to generate sources and run all the experiments with a single python command. We suggest to use these scripts to test the same experiments we performed, the single samples generation and algorithms testing scripts are available too but they necessitate far more parameters.
 
-With ```experiment_type``` we refer to the 4 experiment types cited above (```linear```, ```periodic-no-rep```, ```polynomial``` and ```sin```).
+With ```experiment_type``` we refer to the 4 experiment types cited above (```linear```, ```polynomial``` and ```sin```).
 
 The default values are the ones used in our experiments.
 

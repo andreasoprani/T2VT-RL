@@ -35,6 +35,7 @@ rtde_3 = to_bool(args.rtde_3)
 max_iter = int(args.max_iter)
 temporal_bandwidth = float(args.temporal_bandwidth)
 load_results = to_bool(args.load_results)
+n_jobs = str(args.n_jobs)
 
 env = "three-room-gw"
 

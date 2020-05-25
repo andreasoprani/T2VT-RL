@@ -51,17 +51,14 @@ def gen_csv(results_path):
       
 paths = [
     "results/two-room-gw/linear/",
-    "results/two-room-gw/periodic-no-rep/",
     "results/two-room-gw/polynomial/",
     "results/two-room-gw/sin/lambda=0.3333/",
     "results/two-room-gw/sin/lambda=1.0/",
     "results/three-room-gw/linear/",
-    "results/three-room-gw/periodic-no-rep/",
     "results/three-room-gw/polynomial/",
     "results/three-room-gw/sin/lambda=0.3333/",
     "results/three-room-gw/sin/lambda=1.0/",
     "results/mountaincar/linear/",
-    "results/mountaincar/periodic-no-rep/",
     "results/mountaincar/polynomial/",
     "results/mountaincar/sin/lambda=0.3333/",
     "results/mountaincar/sin/lambda=1.0/"

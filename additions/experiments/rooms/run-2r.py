@@ -15,7 +15,7 @@ parser.add_argument("--mgvt_1", default=True)
 parser.add_argument("--mgvt_3", default=True)
 parser.add_argument("--rtde_1", default=True)
 parser.add_argument("--rtde_3", default=True)
-parser.add_argument("--max_iter", default=-1) # -1 for default
+parser.add_argument("--max_iter", default=3000)
 parser.add_argument("--temporal_bandwidth", default=-1) # -1 for default
 parser.add_argument("--load_results", default=False)
 parser.add_argument("--n_jobs", default=1)
@@ -33,6 +33,7 @@ rtde_3 = to_bool(args.rtde_3)
 max_iter = int(args.max_iter)
 temporal_bandwidth = float(args.temporal_bandwidth)
 load_results = to_bool(args.load_results)
+n_jobs = str(args.n_jobs)
 
 env = "two-room-gw"
 
@@ -42,12 +43,6 @@ tasks = {
          "run_rtde.py --post_components=1": rtde_1,
          "run_rtde.py --post_components=3": rtde_3
         }
-
-if max_iter == -1:
-    if exp_type == "periodic-no-rep":
-        max_iter = 10000
-    else: # linear, sin and polynomial
-        max_iter = 3000
         
 gen_samples = "gen_samples.py"
 

@@ -19,10 +19,9 @@ result_paths = [
     "results/three-room-gw/sin/lambda=0.3333/",
     "results/three-room-gw/sin/lambda=1.0/",
     "results/mountaincar/linear/",
-    #"results/mountaincar/periodic-no-rep/",
-    #"results/mountaincar/polynomial/",
-    #"results/mountaincar/sin/lambda=0.3333/",
-    #"results/mountaincar/sin/lambda=1.0/"
+    "results/mountaincar/polynomial/",
+    "results/mountaincar/sin/lambda=0.3333/",
+    "results/mountaincar/sin/lambda=1.0/"
 ]
 
 for result_path in result_paths:
