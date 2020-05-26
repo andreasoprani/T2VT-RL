@@ -25,7 +25,7 @@ n_jobs = int(args.n_jobs)
 
 env = "two-room-gw"
 
-lambdas = []#np.linspace(0.1, 1, 10)
+lambdas = np.linspace(0.1, 1, 10)
 lambda_presets = [
     "likelihood"
     ]
