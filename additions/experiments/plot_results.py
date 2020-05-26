@@ -13,15 +13,15 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--show", default=True)
 parser.add_argument("--path", default="results/two-room-gw/linear/")
 parser.add_argument("--title", default="")
-parser.add_argument("--testing_lambda", default=False)
+parser.add_argument("--lambda_test", default=False)
 
 to_bool = lambda x : x in [True, "True", "true", "1"]
 
 args = parser.parse_args()
 show = to_bool(args.show)
-path = str(args.path)
+results_path = str(args.path)
 title = str(args.title)
-testing_lambda = to_bool(args.testing_lambda)
+lambda_test = to_bool(args.lambda_test)
 
 MARKERS = ["o", "D", "s", "^", "v", "p", "*"]
 COLORS = ["#0e5ad3", "#bc2d14", "#22aa16", "#a011a3", "#d1ba0e", "#14ccc2", "#d67413", "#ef24d4"]
@@ -102,14 +102,14 @@ def learning_rew(iterations, episodes_time, episode_rew, mean_episodes=5):
 
     return np.array(learning_rew)
 
-experiments = {
-    "mgvt_1c": "1-MGVT", 
-    "mgvt_3c": "3-MGVT", 
-    "t2vt_1c": "1-T2VT", 
-    "t2vt_3c": "3-T2VT"
-}
-
-if testing_lambda:
+if not lambda_test:
+    experiments = {
+        "mgvt_1c": "1-MGVT", 
+        "mgvt_3c": "3-MGVT", 
+        "t2vt_1c": "1-T2VT", 
+        "t2vt_3c": "3-T2VT"
+    }
+else:
     experiments = {
         "t2vt_1c_l=0.1": "1-T2VT - l = 0.1",
         "t2vt_1c_l=0.2": "1-T2VT - l = 0.2",
@@ -128,7 +128,7 @@ files = []
 names = []
 
 for exp, name in experiments.items():
-    fs = glob.glob(path + exp + "*.pkl")
+    fs = glob.glob(results_path + exp + "*.pkl")
     if len(fs) == 0:
         continue
     files.append(fs[0][:-4])
@@ -177,7 +177,7 @@ for file in files:
     y4_mean.append(np.mean(l_inf, axis=0))
     y4_std.append(2 * np.std(l_inf, axis=0) / np.sqrt(l_inf.shape[0]))
 
-plot_curves([a[1:] for a in x], [a[1:] for a in y_mean], [a[1:] for a in y_std], title=title, x_label="Iterations", y_label="Learning Reward", names=names, file_name=path + "lrev")
-plot_curves(x, y2_mean, y2_std, title=title, x_label="Iterations", y_label="Evaluation Reward", names=names, file_name=path + "erew")
-plot_curves(x, y3_mean, y3_std, title=title, x_label="Iterations", y_label="L_2", names=names, file_name=path + "l2")
-plot_curves(x, y4_mean, y4_std, title=title, x_label="Iterations", y_label="L_INF", names=names, file_name=path + "linf")
+plot_curves([a[1:] for a in x], [a[1:] for a in y_mean], [a[1:] for a in y_std], title=title, x_label="Iterations", y_label="Learning Reward", names=names, file_name=results_path + "lrev")
+plot_curves(x, y2_mean, y2_std, title=title, x_label="Iterations", y_label="Evaluation Reward", names=names, file_name=results_path + "erew")
+plot_curves(x, y3_mean, y3_std, title=title, x_label="Iterations", y_label="L_2", names=names, file_name=results_path + "l2")
+plot_curves(x, y4_mean, y4_std, title=title, x_label="Iterations", y_label="L_INF", names=names, file_name=results_path + "linf")

@@ -16,6 +16,7 @@
     - [Three-room](#three-room-2)
     - [Mountaincar](#mountaincar-2)
   - [Plotting](#plotting)
+  - [CSVs generation](#csvs-generation)
 
 This repository is the official implementation of Time-Variant Variational Transfer for Reinforcement Learning (link to be added).
 
@@ -159,11 +160,38 @@ Once an experiment is performed, it's possible to plot the results (which reside
 python3 additions/experiments/plot_results.py --path=results/path/
 ```
 
+Note: the ```/``` at the end of the path is necessary.
+
 Parameters:
 
 ```
 --show (bool): show the plots before saving them.
 --title (str): title for the plots.
---testing_lambda (bool): alternative plotting for lambda tuning purposes
+--lambda_test (bool): alternative plotting for lambda tuning purposes
 ```
 
+If the results of all the experiments are present, it's possible to batch plot them with the following command:
+
+```
+python3 additions/experiments/run_all_plots.py
+```
+
+## CSVs generation
+
+As with plots, it is possible to generate the csvs of the experiments' results (which reside in the ```results``` folder) with the following command:
+
+```
+python3 additions/experiments/gen_csv.py --path=results/path
+```
+
+Parameters:
+
+```
+--lambda_test (bool): alternative csv for lambda tuning purposes
+```
+
+Command to generate the csvs in batch:
+
+```
+python3 additions/experiments/run_all_csvs.py
+```
