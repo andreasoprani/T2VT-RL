@@ -1,0 +1,2 @@
+Folder used to store everything related to the financial experiment (not successful).
+In order to use these scripts you have to relocate every folder in the one containing current one (e.g. trading/additions/experiments/trading becomes additions/experiments/trading).
