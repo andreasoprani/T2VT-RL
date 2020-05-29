@@ -25,8 +25,10 @@ results_paths = [
     "results/two-room-gw/sin/lambda_test/ --lambda_test=True"
 ]
 
+show=False
+
 for results_path in results_paths:
     print(results_path)
     f = "plot_results.py --path=" + results_path
-    f += " --show=False"
+    f += " --show=" + str(show)
     subprocess.call(python + " " + path + f, shell=True)
