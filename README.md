@@ -3,7 +3,7 @@
 - [Time-Variant Variational Transfer for Reinforcement Learning](#time-variant-variational-transfer-for-reinforcement-learning)
   - [Requirements](#requirements)
   - [Experiments introduction](#experiments-introduction)
-  - [Complete run files](#complete-run-files)
+  - [Complete run scripts](#complete-run-scripts)
     - [Two-room](#two-room)
     - [Three-room](#three-room)
     - [Mountaincar](#mountaincar)
@@ -44,20 +44,22 @@ This work relies on the work presented in [Transfer of Value Functions via Varia
 
 The experiments performed are divided into three environments: ```two-room```, ```three-room``` and ```mountaincar```.
 
-For each environment there are four possible experiment types:
+For each environment there are three possible experiment types:
 * ```linear```
 * ```polynomial```
 * ```sin```
 
 For each environment and experiment type we tested the MGVT and T2VT algorithms, both with 1 and 3 post components (4 runs in total).
 
-## Complete run files
+## Complete run scripts
 
 Complete run files allow to generate sources and run all the experiments with a single python command. We suggest to use these scripts to test the same experiments we performed, the single samples generation and algorithms testing scripts are available too but they necessitate far more parameters.
 
-With ```experiment_type``` we refer to the 4 experiment types cited above (```linear```, ```polynomial``` and ```sin```).
+With ```experiment_type``` we refer to the 3 experiment types cited above (```linear```, ```polynomial``` and ```sin```).
 
 The default values are the ones used in our experiments.
+
+These scripts can be used to generate new sources and new results. However, the results are already provided with the repository.
 
 ### Two-room
 
@@ -68,17 +70,17 @@ python3 additions/experiments/rooms/run-2r.py --exp_type=experiment_type
 Parameters:
 
 ```
---exp_type (str): experiment type.
---gen_samples (bool): to perform samples generation or not.
+--exp_type (str): experiment type ("linear", "sin" or "polynomial").
+--gen_samples (bool): to perform samples generation or not, default=False, sources are already present.
 --max_iter_gen (int): number of iterations for samples generation.
---mgvt_1 (bool): to perform MGVT with 1 posterior component or not.
---mgvt_3 (bool): to perform MGVT with 3 posterior components or not.
---t2vt_1 (bool): to perform T2VT with 1 posterior component or not.
---t2vt_3 (bool): to perform T2VT with 3 posterior components or not.
---max_iter (int): number of iterations for algorithms test (-1 for default).
---temporal_bandwidth (float in [0,1]): temporal bandwidth for T2VT (-1 for default).
---load_results (bool): used during testing to augment the number of seeds.
---n_jobs (int): number of jobs when parallelizing.
+--mgvt_1 (bool): to perform MGVT with 1 posterior component or not, default=True.
+--mgvt_3 (bool): to perform MGVT with 3 posterior components or not, default=True.
+--t2vt_1 (bool): to perform T2VT with 1 posterior component or not, default=True.
+--t2vt_3 (bool): to perform T2VT with 3 posterior components or not, default=True.
+--max_iter (int): number of iterations for algorithms test, -1 for default.
+--temporal_bandwidth (float in [0,1]): temporal bandwidth for T2VT, -1 for default=0.3333. Note: in the "sin" experiment type, the t2vt results are stored in different directories depending on the temporal_bandwidth, mgvt doesn't take this detail into consideration, so mgvt results will be stored in the "sin" directory and it should be manually moved in order to plot the results and obtain the csvs.
+--load_results (bool): used during testing to augment the number of seeds, default=false.
+--n_jobs (int): number of jobs when parallelizing, default=1.
 ```
 
 ### Three-room
@@ -91,7 +93,7 @@ Parameters:
 
 ```
 Same as two-room + 
---no_door_zone (int): distance from the border where no door can be placed.
+--no_door_zone (int): distance from the border where no door can be placed (default=2.0).
 ```
 
 ### Mountaincar
@@ -158,7 +160,7 @@ We have tested the sensitivity of the parameter lambda and we have provided a he
 A grid of lambda values (step=0.1) and the heuristic can be tested (on the two-room environment) with the following script:
 
 ```
-python3 additions/experiments/rooms/run_test_lambda
+python3 additions/experiments/rooms/run_test_lambda.py
 ```
 
 Parameters:
@@ -185,9 +187,9 @@ Note: the ```/``` at the end of the path is necessary.
 Parameters:
 
 ```
---show (bool): show the plots before saving them.
---title (str): title for the plots.
---lambda_test (bool): alternative plotting for lambda tuning purposes
+--show (bool): show the plots before saving them, default=True.
+--title (str): title for the plots, default="".
+--lambda_test (bool): alternative plotting for lambda tuning purposes, default=False.
 ```
 
 If the results of all the experiments are present, it's possible to batch plot them with the following command:
@@ -207,7 +209,7 @@ python3 additions/experiments/gen_csv.py --path=results/path
 Parameters:
 
 ```
---lambda_test (bool): alternative csv for lambda tuning purposes
+--lambda_test (bool): alternative csv for lambda tuning purposes, default=False.
 ```
 
 Command to generate the csvs in batch:
