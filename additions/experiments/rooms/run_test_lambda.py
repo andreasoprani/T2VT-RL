@@ -12,14 +12,12 @@ path = os.path.dirname(os.path.realpath(__file__)) + "/" # path to this folder
 parser = argparse.ArgumentParser()
 parser.add_argument("--exp_type", default="") # "" for all exp_types
 parser.add_argument("--max_iter", default=3000)
-parser.add_argument("--load_results", default=False)
 parser.add_argument("--n_runs", default=20)
 parser.add_argument("--n_jobs", default=5)
 
 args = parser.parse_args()
 exp_type = str(args.exp_type)
 max_iter = int(args.max_iter)
-load_results = bool(args.load_results)
 n_runs = int(args.n_runs)
 n_jobs = int(args.n_jobs)
 
