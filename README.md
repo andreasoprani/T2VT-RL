@@ -15,6 +15,7 @@
     - [Two-room](#two-room-2)
     - [Three-room](#three-room-2)
     - [Mountaincar](#mountaincar-2)
+  - [Lambda sensitivity and tuning](#lambda-sensitivity-and-tuning)
   - [Plotting](#plotting)
   - [CSVs generation](#csvs-generation)
 
@@ -150,6 +151,26 @@ python3 additions/experiments/rooms/run_t2vt.py --env=three-room-gw --experiment
 python3 additions/experiments/mountaincar/run_mgvt.py --experiment_type=experiment_type --post_components=pc ... other params
 python3 additions/experiments/mountaincar/run_t2vt.py --experiment_type=experiment_type --post_components=pc ... other params
 ```
+
+## Lambda sensitivity and tuning
+
+We have tested the sensitivity of the parameter lambda and we have provided a heuristic for auto-tuning.  
+A grid of lambda values (step=0.1) and the heuristic can be tested (on the two-room environment) with the following script:
+
+```
+python3 additions/experiments/rooms/run_test_lambda
+```
+
+Parameters:
+
+```
+--exp_type (str): experiment type (linear, sin or polynomial), default="": it tests all of them.
+--max_iter (int): maximum number of iterations, default=3000.
+--n_runs (int): number of seeds used, default=20.
+--n_jobs (int): number of parallel jobs used, default=5.
+```
+
+The results will be stored in the correct experiment results path, in the "lambda_test" folder.
 
 ## Plotting
 
