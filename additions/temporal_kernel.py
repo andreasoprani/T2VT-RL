@@ -1,7 +1,6 @@
 import numpy as np
 from scipy.spatial import distance
-from scipy.stats import entropy, norm
-from scipy.integrate import quad
+from scipy.stats import norm
 import torch
   
 def epanechnikov(x):
@@ -217,7 +216,7 @@ def likelihood_kernel_weights(weights, samples, h, optimization="grid-search", l
         grad = float(grad)
         
         l += learning_rate * grad
-        epsilon = 0.00001
+        epsilon = 0.000001
         return np.clip(l, 1/samples + epsilon, 1)
     
     def gradient_ascent_loop(l, max_iter=50, min_diff=0.01):

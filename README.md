@@ -32,7 +32,6 @@ matplotlib
 numpy 1.17.4
 pickle
 scipy
-sklearn
 torch (PyTorch)
 ```
 
