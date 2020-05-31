@@ -26,14 +26,12 @@ This repository is the official implementation of Time-Variant Variational Trans
 ```
 python 3.7
 
-glob
-gym (by OpenAI)
-joblib
-matplotlib
+gym (by OpenAI) (we used version 0.15.4)
+joblib          (we used version 0.14.1)
+matplotlib      (we used version 3.1.1)
 numpy 1.17.4
-pickle
-scipy
-torch (PyTorch)
+scipy           (we used version 1.3.2)
+torch (PyTorch) (we used version 1.3.1)
 ```
 
 Note: the version 1.17.4 of numpy is necessary to open the provided pickle files.
