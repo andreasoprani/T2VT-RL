@@ -77,7 +77,7 @@ Parameters:
 --t2vt_3 (bool): to perform T2VT with 3 posterior components or not, default=True.
 --max_iter (int): number of iterations for algorithms test, -1 for default.
 --temporal_bandwidth (float in [0,1]): temporal bandwidth for T2VT, -1 for default=0.3333. Note: in the "sin" experiment type, the t2vt results are stored in different directories depending on the temporal_bandwidth, mgvt doesn't take this detail into consideration, so mgvt results will be stored in the "sin" directory and it should be manually moved in order to plot the results and obtain the csvs.
---load_results (bool): used during testing to augment the number of seeds, default=false.
+--load_results (bool): used during testing to augment the number of seeds, default=False.
 --n_jobs (int): number of jobs when parallelizing, default=1.
 ```
 
@@ -155,7 +155,7 @@ python3 additions/experiments/mountaincar/run_t2vt.py --experiment_type=experime
 ## Lambda sensitivity and tuning
 
 We have tested the sensitivity of the parameter lambda and we have provided a heuristic for auto-tuning.  
-A grid of lambda values (step=0.1) and the heuristic can be tested (on the two-room environment) with the following script:
+A grid of lambda values (step=0.1) and the heuristic can be tested (on the two-room and three-room environments) with the following script:
 
 ```
 python3 additions/experiments/rooms/run_test_lambda.py
@@ -165,8 +165,10 @@ Parameters:
 
 ```
 --exp_type (str): experiment type (linear, sin or polynomial), default="": it tests all of them.
---max_iter (int): maximum number of iterations, default=3000.
---n_runs (int): number of seeds used, default=20.
+--max_iter (int): maximum number of iterations, default=3000 (use 3000 for two-room and 15000 for three-room).
+--env (str): two-room-gw or three-room-gw, default=two-room-gw.
+--n_runs (int): number of seeds used, default=50.
+--load_results (bool): used during testing to augment the number of seeds, default=False.
 --n_jobs (int): number of parallel jobs used, default=5.
 ```
 
