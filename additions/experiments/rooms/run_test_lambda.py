@@ -11,7 +11,8 @@ path = os.path.dirname(os.path.realpath(__file__)) + "/" # path to this folder
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--exp_type", default="") # "" for all exp_types
-parser.add_argument("--max_iter", default=3000)
+parser.add_argument("--max_iter", default=3000) # select 3000 for two-room and 15000 for three-room
+parser.add_argument("--env", default="two-room-gw")
 parser.add_argument("--n_runs", default=50)
 parser.add_argument("--load_results", default=False) # load previously found results and extend them
 parser.add_argument("--n_jobs", default=5)
@@ -21,11 +22,10 @@ to_bool = lambda x : x in [True, "True", "true", "1"]
 args = parser.parse_args()
 exp_type = str(args.exp_type)
 max_iter = int(args.max_iter)
+env = str(args.env)
 n_runs = int(args.n_runs)
 load_results = to_bool(args.load_results)
 n_jobs = int(args.n_jobs)
-
-env = "two-room-gw"
 
 lambdas = np.linspace(0.1, 1, 10)
 lambda_presets = [
@@ -44,6 +44,7 @@ if exp_type != "":
 for i, e in enumerate(exps):
 
     task = "run_t2vt.py"
+    task += " --env=" + env
     task += " --post_components=1"
     task += " --testing_lambda=True"
     task += " --experiment_type=" + e
