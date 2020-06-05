@@ -101,7 +101,10 @@ testing_lambda = to_bool(args.testing_lambda)
 lambda_preset = str(args.lambda_preset)
 
 file_path = "results/mountaincar/" + experiment_type + "/"
-if experiment_type == "sin":
+if testing_lambda:
+    file_path += "lambda_test/"
+    file_path += "pc=" + str(post_components) + "/"
+elif experiment_type == "sin":
     file_path += "lambda=" + str(temporal_bandwidth) + "/"
 if not os.path.exists(file_path):
     os.mkdir(file_path)
