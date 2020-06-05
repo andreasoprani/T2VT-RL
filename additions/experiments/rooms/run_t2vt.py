@@ -108,6 +108,7 @@ lambda_preset = str(args.lambda_preset)
 file_path = "results/" + env + "/" + experiment_type + "/"
 if testing_lambda:
     file_path += "lambda_test/"
+    file_path += "pc=" + str(post_components) + "/"
 elif experiment_type == "sin":
     file_path += "lambda=" + str(temporal_bandwidth) + "/"
 if not os.path.exists(file_path):
