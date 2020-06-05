@@ -13,6 +13,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--exp_type", default="") # "" for all exp_types
 parser.add_argument("--max_iter", default=3000) # select 3000 for two-room and 15000 for three-room
 parser.add_argument("--env", default="two-room-gw")
+parser.add_argument("--post_components", default=3)
 parser.add_argument("--n_runs", default=50)
 parser.add_argument("--load_results", default=False) # load previously found results and extend them
 parser.add_argument("--n_jobs", default=5)
@@ -23,6 +24,7 @@ args = parser.parse_args()
 exp_type = str(args.exp_type)
 max_iter = int(args.max_iter)
 env = str(args.env)
+post_components = int(args.post_components)
 n_runs = int(args.n_runs)
 load_results = to_bool(args.load_results)
 n_jobs = int(args.n_jobs)
@@ -45,7 +47,7 @@ for i, e in enumerate(exps):
 
     task = "run_t2vt.py"
     task += " --env=" + env
-    task += " --post_components=1"
+    task += " --post_components=" + str(post_components)
     task += " --testing_lambda=True"
     task += " --experiment_type=" + e
     task += " --max_iter=" + str(max_iter)
