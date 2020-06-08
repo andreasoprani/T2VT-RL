@@ -20,12 +20,15 @@ results_paths = [
     "results/mountaincar/polynomial/",
     "results/mountaincar/sin/lambda=0.3333/",
     "results/mountaincar/sin/lambda=1.0/",
-    "results/two-room-gw/linear/lambda_test/ --lambda_test=True",
-    "results/two-room-gw/polynomial/lambda_test/ --lambda_test=True",
-    "results/two-room-gw/sin/lambda_test/ --lambda_test=True",
-    "results/three-room-gw/linear/lambda_test/ --lambda_test=True",
-    "results/three-room-gw/polynomial/lambda_test/ --lambda_test=True",
-    "results/three-room-gw/sin/lambda_test/ --lambda_test=True"
+    "results/two-room-gw/linear/lambda_test/pc=1/ --lambda_test=True",
+    "results/two-room-gw/linear/lambda_test/pc=3/ --lambda_test=True",
+    "results/two-room-gw/polynomial/lambda_test/pc=1/ --lambda_test=True",
+    "results/two-room-gw/polynomial/lambda_test/pc=3/ --lambda_test=True",
+    "results/two-room-gw/sin/lambda_test/pc=1/ --lambda_test=True",
+    "results/two-room-gw/sin/lambda_test/pc=3/ --lambda_test=True",
+    "results/three-room-gw/linear/lambda_test/pc=1/ --lambda_test=True",
+    "results/three-room-gw/polynomial/lambda_test/pc=1/ --lambda_test=True",
+    "results/three-room-gw/sin/lambda_test/pc=1/ --lambda_test=True"
 ]
 
 show = False
