@@ -121,7 +121,18 @@ else:
         "t2vt_1c_l=0.7": "1-T2VT - l = 0.7",
         "t2vt_1c_l=0.8": "1-T2VT - l = 0.8",
         "t2vt_1c_l=0.9": "1-T2VT - l = 0.9",
-        "t2vt_1c_l=1.0": "1-T2VT - l = 1.0"
+        "t2vt_1c_l=1.0": "1-T2VT - l = 1.0",
+        "t2vt_3c_l=likelihood": "3-T2VT - l = max log-likelihood",
+        "t2vt_3c_l=0.1": "3-T2VT - l = 0.1",
+        "t2vt_3c_l=0.2": "3-T2VT - l = 0.2",
+        "t2vt_3c_l=0.4": "3-T2VT - l = 0.3",
+        "t2vt_3c_l=0.3": "3-T2VT - l = 0.4",
+        "t2vt_3c_l=0.5": "3-T2VT - l = 0.5",
+        "t2vt_3c_l=0.6": "3-T2VT - l = 0.6",
+        "t2vt_3c_l=0.7": "3-T2VT - l = 0.7",
+        "t2vt_3c_l=0.8": "3-T2VT - l = 0.8",
+        "t2vt_3c_l=0.9": "3-T2VT - l = 0.9",
+        "t2vt_3c_l=1.0": "3-T2VT - l = 1.0"
     }
 
 files = []
