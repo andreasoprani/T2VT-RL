@@ -29,7 +29,9 @@ results_paths = [
     "results/three-room-gw/linear/lambda_test/pc=1/ --lambda_test=True",
     "results/three-room-gw/linear/lambda_test/pc=3/ --lambda_test=True",
     "results/three-room-gw/polynomial/lambda_test/pc=1/ --lambda_test=True",
-    "results/three-room-gw/sin/lambda_test/pc=1/ --lambda_test=True"
+    "results/three-room-gw/polynomial/lambda_test/pc=3/ --lambda_test=True",
+    "results/three-room-gw/sin/lambda_test/pc=1/ --lambda_test=True",
+    "results/three-room-gw/sin/lambda_test/pc=3/ --lambda_test=True"
 ]
 
 show = False

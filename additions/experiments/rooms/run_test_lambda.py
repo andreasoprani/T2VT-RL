@@ -13,10 +13,10 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--exp_type", default="") # "" for all exp_types
 parser.add_argument("--max_iter", default=3000) # select 3000 for two-room and 15000 for three-room
 parser.add_argument("--env", default="two-room-gw")
-parser.add_argument("--post_components", default=3)
+parser.add_argument("--post_components", default=1)
 parser.add_argument("--n_runs", default=50)
 parser.add_argument("--load_results", default=False) # load previously found results and extend them
-parser.add_argument("--n_jobs", default=5)
+parser.add_argument("--n_jobs", default=1)
 
 to_bool = lambda x : x in [True, "True", "true", "1"]
 
