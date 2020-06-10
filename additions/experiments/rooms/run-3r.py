@@ -9,7 +9,7 @@ path = os.path.dirname(os.path.realpath(__file__)) + "/" # path to this folder
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--exp_type", default="linear")
-parser.add_argument("--gen_samples", default=False)
+parser.add_argument("--gen_samples", default=True)
 parser.add_argument("--max_iter_gen", default=1500000) 
 parser.add_argument("--no_door_zone", default=2.0)
 parser.add_argument("--mgvt_1", default=True)
