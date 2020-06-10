@@ -91,7 +91,7 @@ np.random.seed(seed)
 
 file_path = "results/trading/"
 if not os.path.exists(file_path):
-    os.mkdir(file_path)
+    os.makedirs(file_path)
 
 if load_results:
     file_name = "mgvt_" + str(post_components) + "c_"

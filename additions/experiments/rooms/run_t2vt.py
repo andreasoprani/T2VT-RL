@@ -112,7 +112,7 @@ if testing_lambda:
 elif experiment_type == "sin":
     file_path += "lambda=" + str(temporal_bandwidth) + "/"
 if not os.path.exists(file_path):
-    os.mkdir(file_path)
+    os.makedirs(file_path)
     
 file_name = "t2vt_" + str(post_components) + "c_"
 
