@@ -27,13 +27,14 @@ n_runs = int(args.n_runs)
 load_results = to_bool(args.load_results)
 n_jobs = int(args.n_jobs)
 
-lambdas = np.linspace(0.1, 1, 10)
+lambdas = np.linspace(0.1, 1, 10)[:-5:-1]
+print(lambdas)
 lambda_presets = [
     "likelihood"
     ]
 
 exps = [
-    "linear",
+    #"linear",
     "polynomial",
     "sin"
 ]
