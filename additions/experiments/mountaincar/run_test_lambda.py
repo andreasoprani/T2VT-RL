@@ -12,7 +12,7 @@ path = os.path.dirname(os.path.realpath(__file__)) + "/" # path to this folder
 parser = argparse.ArgumentParser()
 parser.add_argument("--exp_type", default="") # "" for all exp_types
 parser.add_argument("--max_iter", default=75000) # select 3000 for two-room and 15000 for three-room
-parser.add_argument("--post_components", default=1)
+parser.add_argument("--post_components", default=3)
 parser.add_argument("--n_runs", default=50)
 parser.add_argument("--load_results", default=False) # load previously found results and extend them
 parser.add_argument("--n_jobs", default=5)
@@ -27,14 +27,13 @@ n_runs = int(args.n_runs)
 load_results = to_bool(args.load_results)
 n_jobs = int(args.n_jobs)
 
-lambdas = np.linspace(0.1, 1, 10)[:-5:-1]
-print(lambdas)
+lambdas = np.linspace(0.1, 1, 10)
 lambda_presets = [
     "likelihood"
     ]
 
 exps = [
-    #"linear",
+    "linear",
     "polynomial",
     "sin"
 ]
