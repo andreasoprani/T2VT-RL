@@ -33,7 +33,9 @@ results_paths = [
     "results/three-room-gw/sin/lambda_test/pc=1/ --lambda_test=True",
     "results/three-room-gw/sin/lambda_test/pc=3/ --lambda_test=True",
     "results/mountaincar/linear/lambda_test/pc=1/ --lambda_test=True",
+    "results/mountaincar/linear/lambda_test/pc=3/ --lambda_test=True",
     "results/mountaincar/polynomial/lambda_test/pc=1/ --lambda_test=True",
+    "results/mountaincar/polynomial/lambda_test/pc=3/ --lambda_test=True",
     "results/mountaincar/sin/lambda_test/pc=1/ --lambda_test=True",
     "results/mountaincar/sin/lambda_test/pc=3/ --lambda_test=True"
 ]
