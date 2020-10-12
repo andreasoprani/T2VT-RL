@@ -11,10 +11,31 @@ class LakeEnv(gym.Env):
         super(LakeEnv, self).__init__()
         self.MAX_RELEASE = 491.61 #to be checked
         self.MIN_RELEASE = 0 #to be checked
+
+        self.N_DISCRETE_ACTIONS = 19
+        self.actions_values = [0, 
+                               33.412, 
+                               66.824, 
+                               77.44626666666666, 
+                               88.06853333333333,  
+                               98.6908, 
+                               109.31306666666666,
+                               119.93533333333333, 
+                               130.55759999999998, 
+                               141.17986666666667, 
+                               151.80213333333333, 
+                               162.4244, 
+                               173.04666666666668, 
+                               183.6689333333333, 
+                               194.2912, 
+                               204.91346666666664, 
+                               215.53573333333333, 
+                               315.5357333333333, 
+                               491.61]
         # Define action and observation space
         # They must be gym.spaces objects
         # Example when using discrete actions:
-        self.action_space = spaces.Box(low=self.MIN_RELEASE, high=self.MAX_RELEASE, shape=(1,), dtype=np.float32)
+        self.action_space = spaces.Discrete(self.N_DISCRETE_ACTIONS)#spaces.Box(low=self.MIN_RELEASE, high=self.MAX_RELEASE, shape=(1,), dtype=np.float32)
         # Example for using image as input:
         low = np.array([-1, -1, -0.5])#to be checked
         high = np.array([1, 1, 1.3])#to be checked
@@ -40,7 +61,7 @@ class LakeEnv(gym.Env):
 
     def step(self, action):
         # Execute one time step within the environment
-        
+        action = self.actions_values[action]
         self.qIn = self.inflow[self.t]
         self.s[self.t+1], self.r[self.t] = self.lake.integrate(self.integration_steps, self.t, self.s[self.t], action, self.qIn)
         self.h[self.t+1] = self.lake.storageToLevel(self.s[self.t+1])
@@ -127,11 +148,12 @@ if __name__ == '__main__':
     initial_condition = 0.35#como_data.loc[como_data['year'] == 1946, 'h'].values[0]
     Lake = Lakecomo(None, None, minEnvFlow, None, None, initial_cond=initial_condition)
     env = LakeEnv(Inflow, Demand, Lake)
+    env.seed(7)
 
     obs, done, reward, t = env.reset(), False, 0.0, 0
-    env.seed(7)
+
     while not done:
-        action = actions[t]#np.random.uniform(0, 491.61)  # env.action_space.sample() uses custom samplers, need to set their seeds for deterministic behavior
+        action = np.random.randint(0, 19)#actions[t]#np.random.uniform(0, 491.61)  # env.action_space.sample() uses custom samplers, need to set their seeds for deterministic behavior
         obs, rew, done, _ = env.step(action)
         print('t-action-reward:', t, action, rew)
         reward += rew

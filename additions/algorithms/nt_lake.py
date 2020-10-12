@@ -16,6 +16,7 @@ def learn(Q,
           data,
           demand,
           min_env_flow,
+          actions_report_file = "",
           max_iter=5000,
           buffer_size=10000,
           batch_size=50,
@@ -59,9 +60,9 @@ def learn(Q,
 
     # Initialize policies
     schedule = np.linspace(eps_start, eps_end, exploration_fraction * max_iter)
-    pi = ScheduledEpsilonGreedy(Q, np.arange(mdp.action_space.shape[0]), schedule)
-    pi_u = EpsilonGreedy(Q, np.arange(mdp.action_space.shape[0]), epsilon=1)
-    pi_g = EpsilonGreedy(Q, np.arange(mdp.action_space.shape[0]), epsilon=0)
+    pi = ScheduledEpsilonGreedy(Q, np.arange(mdp.N_DISCRETE_ACTIONS), schedule)
+    pi_u = EpsilonGreedy(Q, np.arange(mdp.N_DISCRETE_ACTIONS), epsilon=1)
+    pi_g = EpsilonGreedy(Q, np.arange(mdp.N_DISCRETE_ACTIONS), epsilon=0)
 
     # Add random episodes if needed
     init_samples = utils.generate_episodes(mdp, pi_u, n_episodes=random_episodes,
@@ -102,12 +103,21 @@ def learn(Q,
 
     threshold_surpassed = 0
 
+    if actions_report_file:
+        actions_executed = []
+        
+        columns = list(range(mdp.N_DISCRETE_ACTIONS))
+        actions_report_df = pd.DataFrame(columns=columns)
+        actions_report_df.to_csv(actions_report_file, index=False)
+
     # Learning
     for i in range(max_iter):
 
         # Take epsilon-greedy action wrt current Q-function
         s_prep = preprocess(s)
         a = pi.sample_action(s_prep)
+        actions_executed.append(a)
+        
         # Step
         s_prime, r, done, _ = mdp.step(a)
         
@@ -128,6 +138,16 @@ def learn(Q,
         
         h += 1
         if done or h >= mdp.horizon:
+            
+            if actions_report_file:
+                actions_counts = np.bincount(actions_executed) 
+                actions_freqs = list(actions_counts / sum(actions_counts))
+                new_row = dict(zip(columns, actions_freqs))
+                actions_report_df = actions_report_df.append(new_row, ignore_index=True)
+                actions_report_df.to_csv(actions_report_file, index=False)
+
+                actions_executed = []
+            
             episode_rewards.append(0.0)
             
             sampled_year = np.random.choice(years)
@@ -142,6 +162,8 @@ def learn(Q,
                 
             h = 0
             episode_t.append(i)
+            
+            
 
         # Evaluate model
         if i % eval_freq == 0:
