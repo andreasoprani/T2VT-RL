@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from additions.lake.lakeEnv import LakeEnv
 from additions.lake.lakecomo import Lakecomo
-from misc.policies import EpsilonGreedy, ScheduledEpsilonGreedy
+from misc.policies import EpsilonGreedy, ScheduledEpsilonGreedy, Gibbs
 from additions.approximators.mlp_torch import MLPQFunction
 from misc.buffer import Buffer
 from misc import utils
@@ -50,7 +50,7 @@ def learn(Q,
     if sampled_year % 4 == 0:
         mdp = LakeEnv(inflow, leap_year_demand, lake)
     else:
-        mdp = LakeEnv(inflow, leap_year_demand, lake)
+        mdp = LakeEnv(inflow, demand, lake)
 
     # Randomly initialize the weights in case an MLP is used
     if isinstance(Q, MLPQFunction):
@@ -60,9 +60,12 @@ def learn(Q,
 
     # Initialize policies
     schedule = np.linspace(eps_start, eps_end, exploration_fraction * max_iter)
-    pi = ScheduledEpsilonGreedy(Q, np.arange(mdp.N_DISCRETE_ACTIONS), schedule)
-    pi_u = EpsilonGreedy(Q, np.arange(mdp.N_DISCRETE_ACTIONS), epsilon=1)
-    pi_g = EpsilonGreedy(Q, np.arange(mdp.N_DISCRETE_ACTIONS), epsilon=0)
+    #pi = ScheduledEpsilonGreedy(Q, np.arange(mdp.N_DISCRETE_ACTIONS), schedule)
+    #pi_u = EpsilonGreedy(Q, np.arange(mdp.N_DISCRETE_ACTIONS), epsilon=1)
+    #pi_g = EpsilonGreedy(Q, np.arange(mdp.N_DISCRETE_ACTIONS), epsilon=0)
+    pi = Gibbs(Q, np.arange(mdp.N_DISCRETE_ACTIONS), tau=1)
+    pi_u = Gibbs(Q, np.arange(mdp.N_DISCRETE_ACTIONS), tau=0)
+    pi_g = Gibbs(Q, np.arange(mdp.N_DISCRETE_ACTIONS), tau=np.inf)
 
     # Add random episodes if needed
     init_samples = utils.generate_episodes(mdp, pi_u, n_episodes=random_episodes,

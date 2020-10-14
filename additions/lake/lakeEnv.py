@@ -122,8 +122,8 @@ class LakeEnv(gym.Env):
         if qdiv < 0:
             qdiv = 0
         d = self.demand[self.t-1] - qdiv
-        if d < 0:
-            d = 0
+        #if d < 0:
+        #    d = 0
         if self.period == 365:
             if self.t > 120 and self.t <= 243: # from may to august
                 d = 2*d
