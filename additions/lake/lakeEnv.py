@@ -80,7 +80,7 @@ class LakeEnv(gym.Env):
              self.h[self.t]])
 
         #reward = self.deficitBeta() + (self.flooding_penalty if self.h[self.t] > self.h_flo else 0)
-        reward = -(self.h[self.t] - 0.7)**2 + (self.flooding_penalty * (self.h[self.t] - self.h_flo) if self.h[self.t] > self.h_flo else 0)
+        reward = -(self.h[self.t] - 0.4)**2 + (self.flooding_penalty * (self.h[self.t] - self.h_flo) if self.h[self.t] > self.h_flo else 0)
 
         return obs, reward, done, {}
 

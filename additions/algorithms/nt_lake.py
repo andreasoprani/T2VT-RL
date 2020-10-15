@@ -61,7 +61,7 @@ def learn(Q,
     description = str(int(years[0])) + "-" + str(int(years[-1]))
     sampled_year = np.random.choice(years)
     inflow = list(data.loc[data['year'] == sampled_year, 'in'])
-    if sampled_year % 4 == 0:
+    if sampled_year % 4 == 0: # leap years between 1946 and 2011 satisfy this condition even though it's not the complete leap year condition
         mdp = LakeEnv(inflow, leap_year_demand, lake)
     else:
         mdp = LakeEnv(inflow, demand, lake)
