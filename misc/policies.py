@@ -1,7 +1,6 @@
 import numpy as np
 from scipy import special
 
-
 class Policy:
     """Base class for all policies"""
 
@@ -65,6 +64,25 @@ class Gibbs(Policy):
         if self._tau == 0:
             return self._actions[np.random.randint(0, len(self._actions))]
         q_a = q_a*self._tau
+        s_max = special.softmax(q_a)
+        s_max = s_max/np.sum(s_max)  # for numerical stability
+        return self._actions[np.argmax(np.random.multinomial(1, s_max, 1))]
+    
+class ScheduledGibbs(Policy):
+    """A Boltzmann/Gibbs policy with scheduled temperature"""
+
+    def __init__(self, Q, actions, schedule):
+        self._q = Q
+        self._schedule = schedule
+        self._actions = actions
+        self._h = 0
+        self._H = schedule.shape[0]
+
+    def sample_action(self, s):
+        q_a = self._q.value_actions(s).ravel()
+        tau = self._schedule[self._h] if self._h < self._H else self._schedule[-1]
+        self._h += 1
+        q_a = q_a*tau
         s_max = special.softmax(q_a)
         s_max = s_max/np.sum(s_max)  # for numerical stability
         return self._actions[np.argmax(np.random.multinomial(1, s_max, 1))]

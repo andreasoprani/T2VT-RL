@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from additions.lake.lakeEnv import LakeEnv
 from additions.lake.lakecomo import Lakecomo
-from misc.policies import EpsilonGreedy, ScheduledEpsilonGreedy, Gibbs
+from misc.policies import EpsilonGreedy, ScheduledEpsilonGreedy, Gibbs, ScheduledGibbs
 from additions.approximators.mlp_torch import MLPQFunction
 from misc.buffer import Buffer
 from misc import utils
@@ -10,6 +10,21 @@ import time
 
 from operators.dqn import DQNOperator
 
+def _single_year_eval(mdp, policy, preprocess=lambda x: x):
+        
+    s = mdp.reset()
+    t = 0
+    done = False
+    score = 0
+    
+    while not done:
+        
+        a = policy.sample_action(s)
+        s, r, done, _ = mdp.step(a)
+        score += r * mdp.gamma ** t
+        t += 1
+
+    return score
 
 def learn(Q,
           operator,
@@ -45,7 +60,6 @@ def learn(Q,
     years = data.year.unique()
     description = str(int(years[0])) + "-" + str(int(years[-1]))
     sampled_year = np.random.choice(years)
-    print(sampled_year)
     inflow = list(data.loc[data['year'] == sampled_year, 'in'])
     if sampled_year % 4 == 0:
         mdp = LakeEnv(inflow, leap_year_demand, lake)
@@ -63,7 +77,7 @@ def learn(Q,
     #pi = ScheduledEpsilonGreedy(Q, np.arange(mdp.N_DISCRETE_ACTIONS), schedule)
     #pi_u = EpsilonGreedy(Q, np.arange(mdp.N_DISCRETE_ACTIONS), epsilon=1)
     #pi_g = EpsilonGreedy(Q, np.arange(mdp.N_DISCRETE_ACTIONS), epsilon=0)
-    pi = Gibbs(Q, np.arange(mdp.N_DISCRETE_ACTIONS), tau=1)
+    pi = ScheduledGibbs(Q, np.arange(mdp.N_DISCRETE_ACTIONS), schedule)
     pi_u = Gibbs(Q, np.arange(mdp.N_DISCRETE_ACTIONS), tau=0)
     pi_g = Gibbs(Q, np.arange(mdp.N_DISCRETE_ACTIONS), tau=np.inf)
 
@@ -113,6 +127,8 @@ def learn(Q,
         actions_report_df = pd.DataFrame(columns=columns)
         actions_report_df.to_csv(actions_report_file, index=False)
 
+    done_counter = 0
+
     # Learning
     for i in range(max_iter):
 
@@ -153,27 +169,37 @@ def learn(Q,
             
             episode_rewards.append(0.0)
             
-            sampled_year = np.random.choice(years)
-            print(sampled_year)
+            sampled_year = np.random.choice(years) 
             inflow = list(data.loc[data['year'] == sampled_year, 'in'])
-            lake.initial_cond = np.random.uniform(-0.5, 1.3)
-            
             if sampled_year % 4 == 0:
                 mdp = LakeEnv(inflow, leap_year_demand, lake)
             else:
-                mdp = LakeEnv(inflow, leap_year_demand, lake)
+                mdp = LakeEnv(inflow, demand, lake)
+                
+            s = mdp.reset()
                 
             h = 0
             episode_t.append(i)
             
+            done_counter += 1
             
-
         # Evaluate model
-        if i % eval_freq == 0:
+        if done_counter == eval_freq:
 
             # Evaluate greedy policy
-            rew = utils.evaluate_policy(mdp, pi_g, render=render, initial_states=eval_states,
-                                        n_episodes=eval_episodes, preprocess=preprocess)[0]
+            scores = []
+            for _ in range(eval_episodes):
+                sampled_year = np.random.choice(years) 
+                inflow = list(data.loc[data['year'] == sampled_year, 'in'])
+                if sampled_year % 4 == 0:
+                    mdp = LakeEnv(inflow, leap_year_demand, lake)
+                else:
+                    mdp = LakeEnv(inflow, demand, lake)
+                    
+                scores.append(_single_year_eval(mdp, pi_g))
+            
+            rew = np.mean(scores)
+            
             learning_rew = np.mean(episode_rewards[-mean_episodes - 1:-1]) if len(episode_rewards) > 1 else 0.0
             br = operator.bellman_residual(Q, buffer.sample_batch(batch_size)) ** 2
             l_2_err = np.average(br)
@@ -189,13 +215,14 @@ def learn(Q,
             l_inf.append(l_inf_err)
 
             sampled_year = np.random.choice(years)
-            print(sampled_year)
             inflow = list(data.loc[data['year'] == sampled_year, 'in'])
-            lake.initial_cond = np.random.uniform(-0.5, 1.3)
+            
             if sampled_year % 4 == 0:
                 mdp = LakeEnv(inflow, leap_year_demand, lake)
             else:
-                mdp = LakeEnv(inflow, leap_year_demand, lake)
+                mdp = LakeEnv(inflow, demand, lake)
+                
+            s = mdp.reset()
 
             end_time = time.time()
             elapsed_time = end_time - start_time
@@ -204,6 +231,8 @@ def learn(Q,
             if verbose:
                 print("Iter {} Episodes {} Rew(G) {} Rew(L) {} L2 {} L_inf {} time {:.1f} s".format(
                     i, episodes[-1], rew, learning_rew, l_2_err, l_inf_err, elapsed_time))
+        
+            done_counter = 0
         
         if (i * 100 / max_iter) % 10 == 0:
             print("years:", description, "- Progress:", str(int(i * 100 / max_iter)) + "%")

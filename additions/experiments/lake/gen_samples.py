@@ -26,14 +26,17 @@ parser.add_argument("--kappa", default=100.)
 parser.add_argument("--xi", default=0.5)
 parser.add_argument("--tau", default=0.0)
 parser.add_argument("--batch_size", default=32)
-parser.add_argument("--max_iter", default=2000000)
+parser.add_argument("--max_iter", default=1500000)
 parser.add_argument("--buffer_size", default=50000)
 parser.add_argument("--random_episodes", default=0)
-parser.add_argument("--exploration_fraction", default=0.5)
-parser.add_argument("--eps_start", default=1.0)
-parser.add_argument("--eps_end", default=0.01)
+#parser.add_argument("--exploration_fraction", default=0.5)
+#parser.add_argument("--eps_start", default=1.0)
+#parser.add_argument("--eps_end", default=0.01)
+parser.add_argument("--exploration_fraction", default=0.666666)
+parser.add_argument("--eps_start", default=0.5)
+parser.add_argument("--eps_end", default=20)
 parser.add_argument("--train_freq", default=1)
-parser.add_argument("--eval_freq", default=10000)
+parser.add_argument("--eval_freq", default=100)
 parser.add_argument("--mean_episodes", default=20)
 parser.add_argument("--l1", default=32)
 parser.add_argument("--l2", default=0)
@@ -116,8 +119,6 @@ if not dqn:
     Q = MLPQFunction(state_dim, n_actions, layers=layers)
 else:
     Q, operator = DQN(state_dim, action_dim, n_actions, temp_mdp.gamma, layers=layers)
-
-print(len(Q._w))
 
 def run(data, actions_report_file, seed=None):
     return learn(Q,

@@ -7,31 +7,38 @@ class LakeEnv(gym.Env):
     """Lake Environment modeling a dam control system in a generic lake. For now only the como lake system is available"""
     metadata = {'render.modes': ['human']}
 
-    def __init__(self, inflow, demand, lake, h_flo=1.24, initial_inflow=20, integration_steps=24, flooding_penalty=-10000):
+    def __init__(self, inflow, demand, lake, h_flo=1.24, initial_inflow=20, integration_steps=24, flooding_penalty=-10):
         super(LakeEnv, self).__init__()
         self.MAX_RELEASE = 491.61 #to be checked
         self.MIN_RELEASE = 0 #to be checked
 
-        self.N_DISCRETE_ACTIONS = 19
         self.actions_values = [0, 
-                               33.412, 
-                               66.824, 
-                               77.44626666666666, 
-                               88.06853333333333,  
-                               98.6908, 
-                               109.31306666666666,
-                               119.93533333333333, 
-                               130.55759999999998, 
-                               141.17986666666667, 
-                               151.80213333333333, 
-                               162.4244, 
-                               173.04666666666668, 
-                               183.6689333333333, 
-                               194.2912, 
-                               204.91346666666664, 
-                               215.53573333333333, 
-                               315.5357333333333, 
-                               491.61]
+                              66.824, 
+                              119.93533333333333, 
+                              173.04666666666668, 
+                              226.158, 
+                              491.61]
+        self.N_DISCRETE_ACTIONS = len(self.actions_values)
+        #self.N_DISCRETE_ACTIONS = 19
+        #self.actions_values = [0, 
+        #                       33.412, 
+        #                       66.824, 
+        #                       77.44626666666666, 
+        #                       88.06853333333333,  
+        #                       98.6908, 
+        #                       109.31306666666666,
+        #                       119.93533333333333, 
+        #                       130.55759999999998, 
+        #                       141.17986666666667, 
+        #                       151.80213333333333, 
+        #                       162.4244, 
+        #                       173.04666666666668, 
+        #                       183.6689333333333, 
+        #                       194.2912, 
+        #                       204.91346666666664, 
+        #                       215.53573333333333, 
+        #                       315.5357333333333, 
+        #                       491.61]
         # Define action and observation space
         # They must be gym.spaces objects
         # Example when using discrete actions:
@@ -72,7 +79,8 @@ class LakeEnv(gym.Env):
         obs = np.array([np.sin(2 * np.pi * (self.t + 1) / self.period), np.cos(2 * np.pi * (self.t + 1) / self.period),
              self.h[self.t]])
 
-        reward = self.deficitBeta() + (self.flooding_penalty if self.h[self.t] > self.h_flo else 0)
+        #reward = self.deficitBeta() + (self.flooding_penalty if self.h[self.t] > self.h_flo else 0)
+        reward = -(self.h[self.t] - 0.7)**2 + (self.flooding_penalty * (self.h[self.t] - self.h_flo) if self.h[self.t] > self.h_flo else 0)
 
         return obs, reward, done, {}
 
@@ -88,6 +96,8 @@ class LakeEnv(gym.Env):
             self.h_flo = h_flow
         if initial_inflow is not None:
             self.qIn_1 = initial_inflow
+
+        self.lake.initial_cond = np.random.uniform(-0.5, 1.23)
 
         self.qIn = None
         self.t = 0

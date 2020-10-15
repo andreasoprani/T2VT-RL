@@ -20,7 +20,7 @@ class Lakecomo(Lake):
         if initial_cond is None:
             assert seed is not None
             np.random.seed(seed)
-            initial_cond = np.random.uniform(-0.5, 1.3)
+            initial_cond = np.random.uniform(-0.5, 1.23)
         super().__init__(evap_rates, tailwater, minEnvFlow, lsv_rel, rating_curve, initial_cond, surface, EV)
 
     def storageToLevel(self, s):
