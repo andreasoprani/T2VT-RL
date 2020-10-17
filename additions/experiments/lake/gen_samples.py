@@ -46,7 +46,7 @@ parser.add_argument("--n_runs", default=1)
 parser.add_argument("--dqn", default=False)
 
 parser.add_argument("--years_per_task", default=12) # Number of years in each task
-parser.add_argument("--seeds_per_task", default=1)
+parser.add_argument("--seeds_per_task", default=5 )
 parser.add_argument("--just_one_timestep", default=-1) # Used to re-train for just one timestep. -1 = False, 0 -> (timesteps - 1) = timestep to re-train 
 parser.add_argument("--sources_file_name", default=path + "/sources")
 parser.add_argument("--tasks_file_name", default=path + "/tasks")
