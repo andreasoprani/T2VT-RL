@@ -150,6 +150,7 @@ last_rewards = 5
 results = []
 
 if just_one_timestep in range(0, len(tasks_data) - 1): # Learn optimal policies just for one timestep
+    actions_report_file = path + "/../../../actions_report_n=" + str(l1) + "_t=" + str(just_one_timestep) + "_s="
     print("Timestep", just_one_timestep)
     if n_jobs == 1:
         timestep_results = [run(tasks_data[just_one_timestep], seeds[j]) for j in range(seeds_per_task)]

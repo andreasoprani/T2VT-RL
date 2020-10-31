@@ -118,8 +118,6 @@ def learn(Q,
 
     start_time = time.time()
 
-    threshold_surpassed = 0
-
     if actions_report_file:
         actions_executed = []
         

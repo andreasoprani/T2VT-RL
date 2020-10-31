@@ -1,7 +1,10 @@
 # This is a modification of the original mgvt_torch script that can be found in algorithms/mgvt_torch.py
 
 import numpy as np
-from misc.policies import EpsilonGreedy
+import pandas as pd
+from additions.lake.lakeEnv import LakeEnv
+from additions.lake.lakecomo import Lakecomo
+from misc.policies import EpsilonGreedy, Gibbs
 from additions.approximators.mlp_torch import MLPQFunction
 from misc.buffer import Buffer
 from misc import utils
@@ -226,10 +229,27 @@ def gradient(samples, params, Q, c_bar, mu_bar, Sigma_bar, operator, n_samples, 
 
     return pack(grad_c, grad_mu, grad_L)
 
+def _single_year_eval(mdp, policy, preprocess=lambda x: x):
+        
+    s = mdp.reset()
+    t = 0
+    done = False
+    score = 0
+    
+    while not done:
+        
+        a = policy.sample_action(s)
+        s, r, done, _ = mdp.step(a)
+        score += r * mdp.gamma ** t
+        t += 1
 
-def learn(mdp,
-          Q,
+    return score
+
+def learn(Q,
           operator,
+          data,
+          demand,
+          min_env_flow,
           max_iter=5000,
           buffer_size=10000,
           batch_size=50,
@@ -259,9 +279,22 @@ def learn(mdp,
           sources=None,
           # Lambda function to calculate the weights
           weights_calculator=None):
+    
+    leap_year_demand = np.insert(demand, 60, demand[59])
 
     if seed is not None:
         np.random.seed(seed)
+        
+    # mdp creation
+    lake = Lakecomo(None, None, min_env_flow, None, None, seed=seed)
+    years = data.year.unique()
+    description = str(int(years[0])) + "-" + str(int(years[-1]))
+    sampled_year = np.random.choice(years)
+    inflow = list(data.loc[data['year'] == sampled_year, 'in'])
+    if sampled_year % 4 == 0: # leap years between 1946 and 2011 satisfy this condition even though it's not the complete leap year condition
+        mdp = LakeEnv(inflow, leap_year_demand, lake)
+    else:
+        mdp = LakeEnv(inflow, demand, lake)
 
     # Randomly initialize the weights in case an MLP is used
     if isinstance(Q, MLPQFunction):
@@ -278,7 +311,8 @@ def learn(mdp,
     posterior_normal = None
 
     # Initialize policies
-    pi_g = EpsilonGreedy(Q, np.arange(mdp.action_space.n), epsilon=0)
+    #pi_g = EpsilonGreedy(Q, np.arange(mdp.action_space.n), epsilon=0)
+    pi_g = Gibbs(Q, np.arange(mdp.N_DISCRETE_ACTIONS), tau=np.inf)
 
     # Get number of features
     K = Q._w.size
@@ -328,12 +362,12 @@ def learn(mdp,
             init_samples.append(utils.generate_episodes(mdp, pi_g, n_episodes=1, preprocess=preprocess))
         init_samples = np.concatenate(init_samples)
 
-        t, s, a, r, s_prime, absorbing, sa = utils.split_data(init_samples, mdp.state_dim, mdp.action_dim)
+        t, s, a, r, s_prime, absorbing, sa = utils.split_data(init_samples, mdp.observation_space.shape[0], mdp.N_DISCRETE_ACTIONS)
         init_samples = np.concatenate((t[:, np.newaxis], preprocess(s), a, r[:, np.newaxis], preprocess(s_prime),
                                        absorbing[:, np.newaxis]), axis=1)
 
     # Figure out the effective state-dimension after preprocessing is applied
-    eff_state_dim = preprocess(np.zeros(mdp.state_dim)).size
+    eff_state_dim = preprocess(np.zeros(mdp.observation_space.shape[0])).size
 
     # Create replay buffer
     buffer = Buffer(buffer_size, eff_state_dim)
@@ -366,6 +400,8 @@ def learn(mdp,
     Q._w = sample_posterior(params, C, K)
 
     start_time = time.time()
+
+    done_counter = 0
 
     # Learning
     for i in range(max_iter):
@@ -400,15 +436,25 @@ def learn(mdp,
         s = s_prime
         h += 1
         if done or h >= mdp.horizon:
-
+           
             episode_rewards.append(0.0)
+            
+            sampled_year = np.random.choice(years) 
+            inflow = list(data.loc[data['year'] == sampled_year, 'in'])
+            if sampled_year % 4 == 0:
+                mdp = LakeEnv(inflow, leap_year_demand, lake)
+            else:
+                mdp = LakeEnv(inflow, demand, lake)
+            
             s = mdp.reset()
             h = 0
             Q._w = sample_posterior(params, C, K)
             episode_t.append(i)
+            
+            done_counter += 1
 
         # Evaluate model
-        if i % eval_freq == 0:
+        if done_counter == eval_freq:
 
             #Save current weights
             current_w = np.array(Q._w)
@@ -418,8 +464,20 @@ def learn(mdp,
             rew = 0
             for j in range(C):
                 Q._w = mu[j]
-                rew += utils.evaluate_policy(mdp, pi_g, render=render, initial_states=eval_states,
-                                             n_episodes=eval_episodes, preprocess=preprocess)[0]
+                
+                scores = []
+                for _ in range(eval_episodes):
+                    sampled_year = np.random.choice(years) 
+                    inflow = list(data.loc[data['year'] == sampled_year, 'in'])
+                    if sampled_year % 4 == 0:
+                        mdp = LakeEnv(inflow, leap_year_demand, lake)
+                    else:
+                        mdp = LakeEnv(inflow, demand, lake)
+
+                    scores.append(_single_year_eval(mdp, pi_g))
+
+                rew += np.mean(scores)
+                
             rew /= C
 
             learning_rew = np.mean(episode_rewards[-mean_episodes - 1:-1]) if len(episode_rewards) > 1 else 0.0
@@ -439,8 +497,15 @@ def learn(mdp,
             l_inf.append(l_inf_err)
             fvals.append(fval)
 
-            # Make sure we restart from s
-            mdp.reset(s)
+            sampled_year = np.random.choice(years)
+            inflow = list(data.loc[data['year'] == sampled_year, 'in'])
+            
+            if sampled_year % 4 == 0:
+                mdp = LakeEnv(inflow, leap_year_demand, lake)
+            else:
+                mdp = LakeEnv(inflow, demand, lake)
+                
+            s = mdp.reset()
 
             # Restore weights
             Q._w = current_w
@@ -453,12 +518,14 @@ def learn(mdp,
                 print("Iter {} Episodes {} Rew(G) {} Rew(L) {} Fval {} L2 {} L_inf {} time {:.1f} s".format(
                     i, episodes[-1], rew, learning_rew, fval, l_2_err, l_inf_err, elapsed_time))
 
+            done_counter = 0
+
         if (i * 100 / max_iter) % 10 == 0:
             print("Seed: " + str(seed) + " - Progress: " + str(int(i * 100 / max_iter)) + "%")
 
     run_info = [iterations, episodes, n_samples, learning_rewards, evaluation_rewards, l_2, l_inf, fvals, episode_rewards[:len(episode_t)], episode_t]
     weights = np.array(mu)
 
-    print("Task over: ", mdp.get_info(), " - Last learning rewards: ", np.around(run_info[3][-5:], decimals=3))
+    print("Task over: ", seed, " - Last learning rewards: ", np.around(run_info[3][-5:], decimals=3))
 
-    return [mdp.get_info(), weights, run_info]
+    return [seed, weights, run_info]
