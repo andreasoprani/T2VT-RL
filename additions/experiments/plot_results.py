@@ -11,7 +11,7 @@ import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--show", default=True)
-parser.add_argument("--path", default="results/two-room-gw/linear/")
+parser.add_argument("--path", default="results/lake/")
 parser.add_argument("--title", default="")
 parser.add_argument("--lambda_test", default=False)
 
