@@ -5,6 +5,8 @@ sys.path.append(os.path.abspath(path + "/../../.."))
 
 import numpy as np
 import pandas as pd
+from torch.nn import functional as F
+from torch import tanh
 from additions.lake.lakeEnv import LakeEnv
 from additions.lake.lakecomo import Lakecomo
 from additions.approximators.mlp_torch import MLPQFunction
@@ -36,17 +38,18 @@ parser.add_argument("--exploration_fraction", default=0.666666)
 parser.add_argument("--eps_start", default=0.5)
 parser.add_argument("--eps_end", default=12.2)
 parser.add_argument("--train_freq", default=1)
-parser.add_argument("--eval_freq", default=30)
-parser.add_argument("--mean_episodes", default=20)
+parser.add_argument("--eval_freq", default=10)
+parser.add_argument("--mean_episodes", default=10)
 parser.add_argument("--l1", default=32)
-parser.add_argument("--l2", default=0)
+parser.add_argument("--l2", default=32)
+parser.add_argument("--activation", default="relu")
 parser.add_argument("--alpha", default=0.001)
 parser.add_argument("--n_jobs", default=1)
 parser.add_argument("--n_runs", default=1)
 parser.add_argument("--dqn", default=False)
 
 parser.add_argument("--years_per_task", default=12) # Number of years in each task
-parser.add_argument("--seeds_per_task", default=5 )
+parser.add_argument("--seeds_per_task", default=5)
 parser.add_argument("--just_one_timestep", default=-1) # Used to re-train for just one timestep. -1 = False, 0 -> (timesteps - 1) = timestep to re-train 
 parser.add_argument("--sources_file_name", default=path + "/sources")
 parser.add_argument("--tasks_file_name", default=path + "/tasks")
@@ -68,6 +71,7 @@ eval_freq = int(args.eval_freq)
 mean_episodes = int(args.mean_episodes)
 l1 = int(args.l1)
 l2 = int(args.l2)
+activation = str(args.activation)
 alpha = float(args.alpha)
 n_jobs = int(args.n_jobs)
 n_runs = int(args.n_runs)
@@ -78,6 +82,8 @@ seeds_per_task = int(args.seeds_per_task)
 just_one_timestep = int(args.just_one_timestep)
 sources_file_name = str(args.sources_file_name)
 tasks_file_name = str(args.tasks_file_name)
+
+activation = {"relu": F.relu, "tanh": tanh}.get(activation, F.relu)
 
 # Seed to get reproducible results
 seed = 1
@@ -93,6 +99,8 @@ l = list(range(start_year, end_year + 1))
 chunked_years = [l[i:i + years_per_task] for i in range(0, len(l), years_per_task)]
 if len(chunked_years[-1]) < years_per_task:
     chunked_years.pop()
+    
+print("# of source tasks: ", len(chunked_years) - 1)
     
 tasks_data = []
 for ys in chunked_years:
@@ -116,7 +124,7 @@ if not dqn:
     # Create BellmanOperator
     operator = MellowBellmanOperator(kappa, tau, xi, temp_mdp.gamma, state_dim, action_dim)
     # Create Q Function
-    Q = MLPQFunction(state_dim, n_actions, layers=layers)
+    Q = MLPQFunction(state_dim, n_actions, layers=layers, activation=activation)
 else:
     Q, operator = DQN(state_dim, action_dim, n_actions, temp_mdp.gamma, layers=layers)
 

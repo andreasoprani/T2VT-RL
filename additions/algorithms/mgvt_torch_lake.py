@@ -528,4 +528,5 @@ def learn(Q,
 
     print("Task over: ", seed, " - Last learning rewards: ", np.around(run_info[3][-5:], decimals=3))
 
-    return [seed, weights, run_info]
+    #return [seed, weights, run_info]
+    return [seed, weights, run_info, params]

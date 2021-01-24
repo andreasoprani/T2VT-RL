@@ -12,10 +12,11 @@ class MLPQFunction(QFunction):
     """
     A Multi Layer Perceptron Q-function
     """
-    def __init__(self, state_dim, n_actions, layers=(32,), initial_params=None):
-        self._nn = Net(state_dim, n_actions, layers)
+    def __init__(self, state_dim, n_actions, layers=(32,), initial_params=None, activation=F.relu):
+        self._nn = Net(state_dim, n_actions, layers, activation)
         self._state_dim = state_dim
         self._n_actions = n_actions
+        self.activation = activation
         self.init_weights()
         if initial_params is not None:
             self._w = initial_params
@@ -88,8 +89,9 @@ class MLPQFunction(QFunction):
 class Net(nn.Module):
     """A neural network"""
 
-    def __init__(self, state_dim, n_actions, layers=None):
+    def __init__(self, state_dim, n_actions, layers=None, activation=F.relu):
         super(Net, self).__init__()
+        self.activation=activation
         self.double()
         self.single_layer = layers is None or len(layers) == 0  # linear mapping
         if not self.single_layer:
@@ -144,9 +146,9 @@ class Net(nn.Module):
         if self.weight_batch > 1:
             x = x.unsqueeze(0)
         if not self.single_layer:
-            x = F.relu(self.input_layer(x))
+            x = self.activation(self.input_layer(x))
             for l in self.hidden_layers:
-                x = F.relu(l(x))
+                x = self.activation(l(x))
             x = self.output_layer(x)
         else:
             x = self.input_layer(x)

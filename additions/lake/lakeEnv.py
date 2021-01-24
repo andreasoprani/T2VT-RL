@@ -7,7 +7,7 @@ class LakeEnv(gym.Env):
     """Lake Environment modeling a dam control system in a generic lake. For now only the como lake system is available"""
     metadata = {'render.modes': ['human']}
 
-    def __init__(self, inflow, demand, lake, h_flo=1.24, initial_inflow=20, integration_steps=24, flooding_penalty=-10):
+    def __init__(self, inflow, demand, lake, h_flo=1.24, initial_inflow=20, integration_steps=24, flooding_penalty=-1):
         super(LakeEnv, self).__init__()
         self.MAX_RELEASE = 491.61 #to be checked
         self.MIN_RELEASE = 0 #to be checked
@@ -79,8 +79,8 @@ class LakeEnv(gym.Env):
         obs = np.array([np.sin(2 * np.pi * (self.t + 1) / self.period), np.cos(2 * np.pi * (self.t + 1) / self.period),
              self.h[self.t]])
 
-        #reward = self.deficitBeta() + (self.flooding_penalty if self.h[self.t] > self.h_flo else 0)
-        reward = -(self.h[self.t] - 0.4)**2 + (self.flooding_penalty * (self.h[self.t] - self.h_flo) if self.h[self.t] > self.h_flo else 0)
+        beta = 1/(356.434)**2
+        reward = self.deficitBeta()*beta + (self.flooding_penalty if self.h[self.t] > self.h_flo else 0)*(1-beta)
 
         return obs, reward, done, {}
 
@@ -132,8 +132,8 @@ class LakeEnv(gym.Env):
         if qdiv < 0:
             qdiv = 0
         d = self.demand[self.t-1] - qdiv
-        #if d < 0:
-        #    d = 0
+        if d < 0:
+            d = 0
         if self.period == 365:
             if self.t > 120 and self.t <= 243: # from may to august
                 d = 2*d
@@ -142,6 +142,8 @@ class LakeEnv(gym.Env):
                 d = 2*d
 
         return -d**2
+
+
 # UNIT TESTING
 if __name__ == '__main__':
     import pandas as pd
