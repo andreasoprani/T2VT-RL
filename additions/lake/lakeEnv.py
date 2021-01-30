@@ -13,32 +13,14 @@ class LakeEnv(gym.Env):
         self.MIN_RELEASE = 0 #to be checked
 
         self.actions_values = [0, 
-                              66.824, 
-                              119.93533333333333, 
-                              173.04666666666668, 
-                              226.158, 
+                              79.38777777777779,
+                              88.09601136363636,
+                              110.38678125,
+                              148.3911666666667,
+                              200.13165573770488,
+                              225.25006557377043, 
                               491.61]
         self.N_DISCRETE_ACTIONS = len(self.actions_values)
-        #self.N_DISCRETE_ACTIONS = 19
-        #self.actions_values = [0, 
-        #                       33.412, 
-        #                       66.824, 
-        #                       77.44626666666666, 
-        #                       88.06853333333333,  
-        #                       98.6908, 
-        #                       109.31306666666666,
-        #                       119.93533333333333, 
-        #                       130.55759999999998, 
-        #                       141.17986666666667, 
-        #                       151.80213333333333, 
-        #                       162.4244, 
-        #                       173.04666666666668, 
-        #                       183.6689333333333, 
-        #                       194.2912, 
-        #                       204.91346666666664, 
-        #                       215.53573333333333, 
-        #                       315.5357333333333, 
-        #                       491.61]
         # Define action and observation space
         # They must be gym.spaces objects
         # Example when using discrete actions:
@@ -79,8 +61,9 @@ class LakeEnv(gym.Env):
         obs = np.array([np.sin(2 * np.pi * (self.t + 1) / self.period), np.cos(2 * np.pi * (self.t + 1) / self.period),
              self.h[self.t]])
 
+        alpha = 1/3
         beta = 1/(356.434)**2
-        reward = self.deficitBeta()*beta + (self.flooding_penalty if self.h[self.t] > self.h_flo else 0)*(1-beta)
+        reward = alpha*beta*self.deficitBeta() + alpha*(self.flooding_penalty if self.h[self.t] > self.h_flo else 0) - alpha*np.abs(action - self.r[self.t-1])/self.MAX_RELEASE
 
         return obs, reward, done, {}
 
@@ -125,7 +108,6 @@ class LakeEnv(gym.Env):
             np.random.seed(7)
             random.seed(7)
             return [7]
-
 
     def deficitBeta(self):
         qdiv = self.r[self.t-1] - self.lake.minEnvFlow[self.t-1]

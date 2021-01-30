@@ -54,6 +54,7 @@ class Lakecomo(Lake):
             q = 33.37 * ((h + 2.5) ** 2.015)
 
         return q
+    
     def max_release(self, s):
 
         h = self.storageToLevel(s)
@@ -65,3 +66,4 @@ class Lakecomo(Lake):
             q = 33.37*((h + 2.5) ** 2.015)
 
         return q
+    
