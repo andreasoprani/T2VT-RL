@@ -5,6 +5,8 @@ sys.path.append(os.path.abspath(path + "/../../.."))
 
 import numpy as np
 import pandas as pd
+from torch.nn import functional as F
+from torch import tanh
 from additions.lake.lakeEnv import LakeEnv
 from additions.lake.lakecomo import Lakecomo
 from additions.approximators.mlp_torch import MLPQFunction
@@ -29,12 +31,12 @@ parser.add_argument("--kappa", default=100.)
 parser.add_argument("--xi", default=0.5)
 parser.add_argument("--tau", default=0.0)
 parser.add_argument("--batch_size", default=32)
-parser.add_argument("--max_iter", default=100000)
+parser.add_argument("--max_iter", default=15000)
 parser.add_argument("--buffer_size", default=10000)
 parser.add_argument("--random_episodes", default=0)
 parser.add_argument("--train_freq", default=1)
 parser.add_argument("--eval_freq", default=1)
-parser.add_argument("--mean_episodes", default=50)
+parser.add_argument("--mean_episodes", default=1)
 parser.add_argument("--alpha_adam", default=0.001)
 parser.add_argument("--alpha_sgd", default=0.0001)
 parser.add_argument("--lambda_", default=0.0001)
@@ -42,9 +44,9 @@ parser.add_argument("--time_coherent", default=False)
 parser.add_argument("--n_weights", default=4)
 parser.add_argument("--cholesky_clip", default=0.0001)
 parser.add_argument("--l1", default=32)
-parser.add_argument("--l2", default=0)
+parser.add_argument("--l2", default=32)
 parser.add_argument("--n_jobs", default=1)
-parser.add_argument("--n_runs", default=50)
+parser.add_argument("--n_runs", default=10)
 parser.add_argument("--eta", default=1e-6)  # learning rate for
 parser.add_argument("--eps", default=0.001)  # precision for the initial posterior approximation and upperbound tighting
 parser.add_argument("--bandwidth", default=.00001)  # Bandwidth for the Kernel Estimator

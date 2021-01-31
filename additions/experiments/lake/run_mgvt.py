@@ -9,7 +9,6 @@ from torch.nn import functional as F
 from torch import tanh
 from additions.lake.lakeEnv import LakeEnv
 from additions.lake.lakecomo import Lakecomo
-from envs.mountain_car import MountainCarEnv
 from additions.approximators.mlp_torch import MLPQFunction
 from operators.mellow_torch import MellowBellmanOperator
 from additions.algorithms.mgvt_torch_lake import learn
