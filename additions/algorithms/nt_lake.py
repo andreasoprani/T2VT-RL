@@ -74,9 +74,6 @@ def learn(Q,
 
     # Initialize policies
     schedule = np.linspace(eps_start, eps_end, exploration_fraction * max_iter)
-    #pi = ScheduledEpsilonGreedy(Q, np.arange(mdp.N_DISCRETE_ACTIONS), schedule)
-    #pi_u = EpsilonGreedy(Q, np.arange(mdp.N_DISCRETE_ACTIONS), epsilon=1)
-    #pi_g = EpsilonGreedy(Q, np.arange(mdp.N_DISCRETE_ACTIONS), epsilon=0)
     pi = ScheduledGibbs(Q, np.arange(mdp.N_DISCRETE_ACTIONS), schedule)
     pi_u = Gibbs(Q, np.arange(mdp.N_DISCRETE_ACTIONS), tau=0)
     pi_g = Gibbs(Q, np.arange(mdp.N_DISCRETE_ACTIONS), tau=np.inf)

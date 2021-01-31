@@ -5,6 +5,8 @@ sys.path.append(os.path.abspath(path + "/../../.."))
 
 import numpy as np
 import pandas as pd
+from torch.nn import functional as F
+from torch import tanh
 from additions.lake.lakeEnv import LakeEnv
 from additions.lake.lakecomo import Lakecomo
 from envs.mountain_car import MountainCarEnv
@@ -28,12 +30,12 @@ parser.add_argument("--kappa", default=100.)
 parser.add_argument("--xi", default=0.5)
 parser.add_argument("--tau", default=0.0)
 parser.add_argument("--batch_size", default=32)
-parser.add_argument("--max_iter", default=100000)
+parser.add_argument("--max_iter", default=15000)
 parser.add_argument("--buffer_size", default=10000)
 parser.add_argument("--random_episodes", default=0)
 parser.add_argument("--train_freq", default=1)
 parser.add_argument("--eval_freq", default=1)
-parser.add_argument("--mean_episodes", default=50)
+parser.add_argument("--mean_episodes", default=1)
 parser.add_argument("--alpha_adam", default=0.001)
 parser.add_argument("--alpha_sgd", default=0.0001)
 parser.add_argument("--lambda_", default=0.0001)
@@ -41,9 +43,10 @@ parser.add_argument("--time_coherent", default=False)
 parser.add_argument("--n_weights", default=4)
 parser.add_argument("--cholesky_clip", default=0.0001)
 parser.add_argument("--l1", default=32)
-parser.add_argument("--l2", default=0)
+parser.add_argument("--l2", default=32)
+parser.add_argument("--activation", default="relu")
 parser.add_argument("--n_jobs", default=1)
-parser.add_argument("--n_runs", default=50)
+parser.add_argument("--n_runs", default=10)
 parser.add_argument("--eta", default=1e-6)  # learning rate for
 parser.add_argument("--eps", default=0.001)  # precision for the initial posterior approximation and upperbound tighting
 parser.add_argument("--bandwidth", default=.00001)  # Bandwidth for the Kernel Estimator
@@ -76,6 +79,7 @@ n_weights = int(args.n_weights)
 cholesky_clip = float(args.cholesky_clip)
 l1 = int(args.l1)
 l2 = int(args.l2)
+activation = str(args.activation)
 n_jobs = int(args.n_jobs)
 n_runs = int(args.n_runs)
 eps = float(args.eps)
@@ -87,6 +91,8 @@ max_iter_ukl = int(args.max_iter_ukl)
 source_file = str(args.source_file)
 tasks_file = str(args.tasks_file)
 load_results = to_bool(args.load_results)
+
+activation = {"relu": F.relu, "tanh": tanh}.get(activation, F.relu)
 
 file_path = "results/lake/"
 if not os.path.exists(file_path):
@@ -129,7 +135,7 @@ operator = MellowBellmanOperator(kappa, tau, xi, temp_mdp.gamma, state_dim, acti
 layers = [l1]
 if l2 > 0:
     layers.append(l2)
-Q = MLPQFunction(state_dim, n_actions, layers=layers)
+Q = MLPQFunction(state_dim, n_actions, layers=layers, activation=activation)
 
 def run(seed=None):
     return learn(Q,

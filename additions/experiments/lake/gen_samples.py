@@ -31,9 +31,6 @@ parser.add_argument("--batch_size", default=32)
 parser.add_argument("--max_iter", default=600000)
 parser.add_argument("--buffer_size", default=50000)
 parser.add_argument("--random_episodes", default=0)
-#parser.add_argument("--exploration_fraction", default=0.5)
-#parser.add_argument("--eps_start", default=1.0)
-#parser.add_argument("--eps_end", default=0.01)
 parser.add_argument("--exploration_fraction", default=0.666666)
 parser.add_argument("--eps_start", default=0.5)
 parser.add_argument("--eps_end", default=12.2)
@@ -128,13 +125,12 @@ if not dqn:
 else:
     Q, operator = DQN(state_dim, action_dim, n_actions, temp_mdp.gamma, layers=layers)
 
-def run(data, actions_report_file, seed=None):
+def run(data, seed=None):
     return learn(Q,
                  operator,
                  data,
                  demand,
                  min_env_flow,
-                 actions_report_file=actions_report_file,
                  max_iter=max_iter,
                  buffer_size=buffer_size,
                  batch_size=batch_size,
@@ -158,7 +154,6 @@ last_rewards = 5
 results = []
 
 if just_one_timestep in range(0, len(tasks_data) - 1): # Learn optimal policies just for one timestep
-    actions_report_file = path + "/../../../actions_report_n=" + str(l1) + "_t=" + str(just_one_timestep) + "_s="
     print("Timestep", just_one_timestep)
     if n_jobs == 1:
         timestep_results = [run(tasks_data[just_one_timestep], seeds[j]) for j in range(seeds_per_task)]
@@ -171,12 +166,11 @@ if just_one_timestep in range(0, len(tasks_data) - 1): # Learn optimal policies 
 
 else: # Learn optimal policies for all sources
     for i in range(len(tasks_data) - 1):
-        actions_report_file = path + "/../../../actions_report_n=" + str(l1) + "_t=" + str(i) + "_s="
         print("Timestep", i)
         if n_jobs == 1:
-            timestep_results = [run(tasks_data[i], actions_report_file + str(j) + ".csv", seeds[j]) for j in range(seeds_per_task)]
+            timestep_results = [run(tasks_data[i], seeds[j]) for j in range(seeds_per_task)]
         elif n_jobs > 1:
-            timestep_results = Parallel(n_jobs=n_jobs)(delayed(run)(tasks_data[i], actions_report_file + str(j) + ".csv", seeds[j]) for j in range(seeds_per_task))
+            timestep_results = Parallel(n_jobs=n_jobs)(delayed(run)(tasks_data[i], seeds[j]) for j in range(seeds_per_task))
 
         results.append(timestep_results)
         utils.save_object(results, sources_file_name)
