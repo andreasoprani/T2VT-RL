@@ -45,7 +45,7 @@ parser.add_argument("--l1", default=32)
 parser.add_argument("--l2", default=32)
 parser.add_argument("--activation", default="relu")
 parser.add_argument("--n_jobs", default=1)
-parser.add_argument("--n_runs", default=10)
+parser.add_argument("--n_runs", default=50)
 parser.add_argument("--eta", default=1e-6)  # learning rate for
 parser.add_argument("--eps", default=0.001)  # precision for the initial posterior approximation and upperbound tighting
 parser.add_argument("--bandwidth", default=.00001)  # Bandwidth for the Kernel Estimator
@@ -54,7 +54,7 @@ parser.add_argument("--max_iter_ukl", default=60)
 
 parser.add_argument("--source_file", default=path + "/sources")
 parser.add_argument("--tasks_file", default=path + "/tasks")
-parser.add_argument("--load_results", default = False) # load previously found results and extend them
+parser.add_argument("--load_results", default=False) # load previously found results and extend them
 
 to_bool = lambda x : x in [True, "True", "true", "1"]
 
