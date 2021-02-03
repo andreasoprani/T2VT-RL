@@ -28,7 +28,7 @@ class LakeEnv(gym.Env):
         # Example for using image as input:
         low = np.array([-1, -1, -0.5])#to be checked
         high = np.array([1, 1, 1.3])#to be checked
-        self.observation_space = spaces.Box(low=low, high=high, dtype=np.float32)
+        self.observation_space = spaces.Box(low=np.float32(low), high=np.float32(high), dtype=np.float32)
         self.inflow = inflow
         self.t = 0
         self.period = len(inflow)
