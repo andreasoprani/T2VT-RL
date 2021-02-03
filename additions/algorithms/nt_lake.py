@@ -73,7 +73,7 @@ def learn(Q,
             operator._q_target._w = Q._w
 
     # Initialize policies
-    schedule = np.linspace(eps_start, eps_end, exploration_fraction * max_iter)
+    schedule = np.linspace(eps_start, eps_end, int(exploration_fraction * max_iter))
     pi = ScheduledGibbs(Q, np.arange(mdp.N_DISCRETE_ACTIONS), schedule)
     pi_u = Gibbs(Q, np.arange(mdp.N_DISCRETE_ACTIONS), tau=0)
     pi_g = Gibbs(Q, np.arange(mdp.N_DISCRETE_ACTIONS), tau=np.inf)
