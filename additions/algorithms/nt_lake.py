@@ -130,7 +130,8 @@ def learn(Q,
         # Take epsilon-greedy action wrt current Q-function
         s_prep = preprocess(s)
         a = pi.sample_action(s_prep)
-        actions_executed.append(a)
+        if actions_report_file:
+            actions_executed.append(a)
         
         # Step
         s_prime, r, done, _ = mdp.step(a)
