@@ -45,11 +45,11 @@ parser.add_argument("--l1", default=32)
 parser.add_argument("--l2", default=32)
 parser.add_argument("--activation", default="relu")
 parser.add_argument("--n_jobs", default=1)
-parser.add_argument("--n_runs", default=50)
+parser.add_argument("--n_runs", default=100)
 parser.add_argument("--eta", default=1e-6)  # learning rate for
 parser.add_argument("--eps", default=0.001)  # precision for the initial posterior approximation and upperbound tighting
 parser.add_argument("--bandwidth", default=.00001)  # Bandwidth for the Kernel Estimator
-parser.add_argument("--post_components", default=1)  # number of components of the posterior family
+parser.add_argument("--post_components", default=3)  # number of components of the posterior family
 parser.add_argument("--max_iter_ukl", default=60)
 
 parser.add_argument("--source_file", default=path + "/sources")
@@ -172,7 +172,13 @@ seeds = [9, 44, 404, 240, 259, 141, 371, 794, 41, 507, \
          819, 959, 829, 558, 638, 127, 672, 4, 635, 687, \
          101, 102, 103, 104, 105, 106, 107, 108, 109, 110, \
          111, 112, 113, 114, 115, 116, 117, 118, 119, 120, \
-         131, 132, 133, 134, 135, 136, 137, 138, 139, 140]
+         131, 132, 133, 134, 135, 136, 137, 138, 139, 140, \
+         141, 142, 143, 144, 145, 146, 147, 148, 149, 150, \
+         151, 152, 153, 154, 155, 156, 157, 158, 159, 160, \
+         161, 162, 163, 164, 165, 166, 167, 168, 169, 170, \
+         171, 172, 173, 174, 175, 176, 177, 178, 179, 180, \
+         181, 182, 183, 184, 185, 186, 187, 188, 189, 190]
+
 seeds = seeds[:n_runs]
 
 if load_results:

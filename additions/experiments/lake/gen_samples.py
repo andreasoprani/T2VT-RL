@@ -125,13 +125,12 @@ if not dqn:
 else:
     Q, operator = DQN(state_dim, action_dim, n_actions, temp_mdp.gamma, layers=layers)
 
-def run(data, actions_report_file, seed=None):
+def run(data, seed=None):
     return learn(Q,
                  operator,
                  data,
                  demand,
                  min_env_flow,
-                 actions_report_file=actions_report_file,
                  max_iter=max_iter,
                  buffer_size=buffer_size,
                  batch_size=batch_size,
@@ -167,12 +166,11 @@ if just_one_timestep in range(0, len(tasks_data) - 1): # Learn optimal policies 
 
 else: # Learn optimal policies for all sources
     for i in range(len(tasks_data) - 1):
-        actions_report_file = path + "/../../../actions_report__t=" + str(i) + "_s="
         print("Timestep", i)
         if n_jobs == 1:
-            timestep_results = [run(tasks_data[i], actions_report_file + str(j) + ".csv", seeds[j]) for j in range(seeds_per_task)]
+            timestep_results = [run(tasks_data[i], seeds[j]) for j in range(seeds_per_task)]
         elif n_jobs > 1:
-            timestep_results = Parallel(n_jobs=n_jobs)(delayed(run)(tasks_data[i], actions_report_file + str(j) + ".csv", seeds[j]) for j in range(seeds_per_task))
+            timestep_results = Parallel(n_jobs=n_jobs)(delayed(run)(tasks_data[i], seeds[j]) for j in range(seeds_per_task))
 
         results.append(timestep_results)
         utils.save_object(results, sources_file_name)

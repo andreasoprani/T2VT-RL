@@ -73,7 +73,7 @@ def learn(Q,
             operator._q_target._w = Q._w
 
     # Initialize policies
-    schedule = np.linspace(eps_start, eps_end, exploration_fraction * max_iter)
+    schedule = np.linspace(eps_start, eps_end, int(exploration_fraction * max_iter))
     pi = ScheduledGibbs(Q, np.arange(mdp.N_DISCRETE_ACTIONS), schedule)
     pi_u = Gibbs(Q, np.arange(mdp.N_DISCRETE_ACTIONS), tau=0)
     pi_g = Gibbs(Q, np.arange(mdp.N_DISCRETE_ACTIONS), tau=np.inf)
@@ -185,7 +185,7 @@ def learn(Q,
             # Evaluate greedy policy
             scores = []
             for _ in range(eval_episodes):
-                sampled_year = np.random.choice(years) 
+                sampled_year = np.random.choice(years)
                 inflow = list(data.loc[data['year'] == sampled_year, 'in'])
                 if sampled_year % 4 == 0:
                     mdp = LakeEnv(inflow, leap_year_demand, lake)
