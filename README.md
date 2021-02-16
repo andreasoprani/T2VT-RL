@@ -11,10 +11,12 @@
     - [Two-room](#two-room-1)
     - [Three-room](#three-room-1)
     - [Mountaincar](#mountaincar-1)
+    - [Lake](#lake)
   - [Algorithms tests](#algorithms-tests)
     - [Two-room](#two-room-2)
     - [Three-room](#three-room-2)
     - [Mountaincar](#mountaincar-2)
+    - [Lake](#lake-1)
   - [Lambda sensitivity and tuning](#lambda-sensitivity-and-tuning)
   - [Plotting](#plotting)
   - [CSVs generation](#csvs-generation)
@@ -40,9 +42,11 @@ Note: the version 1.17.4 of numpy may be necessary to open the provided pickle f
 
 This work relies on the work presented in [Transfer of Value Functions via Variational Methods](http://papers.nips.cc/paper/7856-transfer-of-value-functions-via-variational-methods) and it uses part of the [implementation](https://github.com/AndreaTirinzoni/variational-transfer-rl) of that publication. Our additions were organized in the "additions" folder.
 
-The experiments performed are divided into three environments: ```two-room```, ```three-room``` and ```mountaincar```.
+The experiments performed are divided into four environments: ```two-room```, ```three-room``` ```mountaincar``` and ```lake```.
 
-For each environment there are three possible experiment types:
+Note: the ```lake``` environment relies on some proprietary data that must be requested to the Consorzio dell'Adda. 
+
+For each environment (except ```lake```) there are three possible experiment types:
 * ```linear```
 * ```polynomial```
 * ```sin```
@@ -136,6 +140,12 @@ python3 additions/experiments/rooms/gen_samples.py --env=three-room-gw --experim
 python3 additions/experiments/mountaincar/gen_samples.py --experiment_type=experiment_type ... other params
 ```
 
+### Lake
+
+```
+python3 additions/experiments/lake/gen_samples.py ... other params
+```
+
 ## Algorithms tests
 
 Algorithm tests are performed for MGVT with ```run_mgvt.py``` scripts and for T2VT with ```run_t2vt.py``` scripts. See these scripts for the parameters.
@@ -160,6 +170,15 @@ python3 additions/experiments/rooms/run_t2vt.py --env=three-room-gw --experiment
 python3 additions/experiments/mountaincar/run_mgvt.py --experiment_type=experiment_type --post_components=pc ... other params
 python3 additions/experiments/mountaincar/run_t2vt.py --experiment_type=experiment_type --post_components=pc ... other params
 ```
+
+### Lake
+
+```
+python3 additions/experiments/lake/run_mgvt.py ... other params
+python3 additions/experiments/lake/run_t2vt.py ... other params
+```
+
+By default the lake experiments use 3 posterior components.
 
 ## Lambda sensitivity and tuning
 
