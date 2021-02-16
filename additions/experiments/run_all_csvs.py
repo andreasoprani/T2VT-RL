@@ -37,7 +37,8 @@ results_paths = [
     "results/mountaincar/polynomial/lambda_test/pc=1/ --lambda_test=True",
     "results/mountaincar/polynomial/lambda_test/pc=3/ --lambda_test=True",
     "results/mountaincar/sin/lambda_test/pc=1/ --lambda_test=True",
-    "results/mountaincar/sin/lambda_test/pc=3/ --lambda_test=True"
+    "results/mountaincar/sin/lambda_test/pc=3/ --lambda_test=True",
+    "results/lake/"
 ]
 
 for results_path in results_paths:
